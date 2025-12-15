@@ -33,6 +33,7 @@ const agentSchema = new Schema(
       enum: ['basic', 'medium', 'elite'],
       default: 'basic',
     },
+    password: { type: String, required: true }, // hashed
   },
   {
     timestamps: true,

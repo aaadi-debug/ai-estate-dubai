@@ -7,6 +7,7 @@ import connectDB from "./config/db.js";
 // Routes (we'll create soon)
 import agentRoutes from './routes/agentRoutes.js';
 import leadRoutes from './routes/leadRoutes.js';
+import authRoutes from './routes/authRoutes.js';
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ connectDB();
 // Routes
 app.use('/api/agents', agentRoutes);
 app.use('/api/leads', leadRoutes);
+app.use('/api/auth', authRoutes);
 
 app.get('/', (req, res) => {
   res.send('🚀 AI Estate Dubai Backend Running!');
