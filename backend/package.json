@@ -9,6 +9,9 @@
     "start": "node index.js",
     "dev": "nodemon index.js"
   },
+  "overrides": {
+    "path-to-regexp": "^6.2.1"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
