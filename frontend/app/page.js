@@ -1,5 +1,7 @@
 import Image from 'next/image';
 import { Bot, MessageCircle, Calendar, Zap, Shield, ArrowRight } from 'lucide-react';
+import { ChatWidget } from '@/components/chat/ChatWidget';
+
 
 export default function Home() {
   return (
@@ -61,7 +63,7 @@ export default function Home() {
             {/* Basic */}
             <div className="border rounded-xl p-8 shadow-md">
               <h3 className="text-2xl font-bold mb-4">Basic</h3>
-              <p className="text-4xl font-bold mb-6">$500 setup<br/><span className="text-xl font-normal text-gray-600">+ $99/month</span></p>
+              <p className="text-4xl font-bold mb-6">$500 setup<br /><span className="text-xl font-normal text-gray-600">+ $99/month</span></p>
               <ul className="text-left space-y-3 mb-8">
                 <li>✓ AI Chatbot</li>
                 <li>✓ Lead Storage</li>
@@ -73,7 +75,7 @@ export default function Home() {
             <div className="border-2 border-blue-600 rounded-xl p-8 shadow-xl scale-105">
               <div className="bg-blue-600 text-white text-sm inline-block px-3 py-1 rounded-full mb-4">Most Popular</div>
               <h3 className="text-2xl font-bold mb-4">Professional</h3>
-              <p className="text-4xl font-bold mb-6">$1,000 setup<br/><span className="text-xl font-normal text-gray-600">+ $199/month</span></p>
+              <p className="text-4xl font-bold mb-6">$1,000 setup<br /><span className="text-xl font-normal text-gray-600">+ $199/month</span></p>
               <ul className="text-left space-y-3 mb-8">
                 <li>✓ Everything in Basic</li>
                 <li>✓ Google Calendar Sync</li>
@@ -85,7 +87,7 @@ export default function Home() {
             {/* Elite */}
             <div className="border rounded-xl p-8 shadow-md">
               <h3 className="text-2xl font-bold mb-4">Elite</h3>
-              <p className="text-4xl font-bold mb-6">$2,000 setup<br/><span className="text-xl font-normal text-gray-600">+ $399/month</span></p>
+              <p className="text-4xl font-bold mb-6">$2,000 setup<br /><span className="text-xl font-normal text-gray-600">+ $399/month</span></p>
               <ul className="text-left space-y-3 mb-8">
                 <li>✓ Everything in Pro</li>
                 <li>✓ White Label</li>
@@ -97,6 +99,9 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Add Chat Widget Here */}
+      <ChatWidget />
     </>
   );
 }
