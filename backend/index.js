@@ -5,8 +5,8 @@ import cookieParser from "cookie-parser";
 import connectDB from "./config/db.js";
 
 // Routes (we'll create soon)
-// import agentRoutes from './routes/agentRoutes.js';
-// import leadRoutes from './routes/leadRoutes.js';
+import agentRoutes from './routes/agentRoutes.js';
+import leadRoutes from './routes/leadRoutes.js';
 
 dotenv.config();
 
@@ -20,8 +20,8 @@ app.use(express.json());
 connectDB();
 
 // Routes
-// app.use('/api/agents', agentRoutes);
-// app.use('/api/leads', leadRoutes);
+app.use('/api/agents', agentRoutes);
+app.use('/api/leads', leadRoutes);
 
 app.get('/', (req, res) => {
   res.send('🚀 AI Estate Dubai Backend Running!');

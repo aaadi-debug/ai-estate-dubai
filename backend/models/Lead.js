@@ -24,6 +24,8 @@ const leadSchema = new Schema(
     propertyType: {
       type: String,
       enum: ['apartment', 'villa', 'townhouse', 'penthouse', 'plot', 'office'],
+      lowercase: true,  // ← Add this line
+      trim: true,
     },
     locationPrefs: [String], // e.g., ["Downtown Dubai", "Palm Jumeirah"]
     preferredDateTime: Date,
