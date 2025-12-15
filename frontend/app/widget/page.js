@@ -1,20 +1,25 @@
-// frontend/app/widget/page.js
 'use client';
 
+import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { ChatWidget } from '@/components/chat/ChatWidget';
 import { ClientChatWidget } from '@/components/chat/ClientChatWidget';
 
-export default function WidgetPage() {
-    const searchParams = useSearchParams();
-    const agentId = searchParams.get('agentId') || '69406fcf735f39e09b0ea297';
+// Wrapper component that uses search params
+function WidgetContent() {
+  const searchParams = useSearchParams();
+  const agentId = searchParams.get('agentId') || 'demo-agent-123';
 
-    //   return (
-    //     <div className="fixed inset-0 bg-transparent overflow-hidden pointer-events-none">
-    //       <div className="pointer-events-auto fixed bottom-0 right-0 m-4">
-    //         <ChatWidget agentId={agentId} />
-    //       </div>
-    //     </div>
-    //   );
-    return <ClientChatWidget agentId={agentId} />;
+  return <ClientChatWidget agentId={agentId} />;
 }
+
+// Main page component with Suspense boundary
+export default function WidgetPage() {
+  return (
+    <Suspense fallback={<div>Loading widget...</div>}>
+      <WidgetContent />
+    </Suspense>
+  );
+}
+
+// IMPORTANT: Force dynamic rendering (no static prerendering)
+export const dynamic = 'force-dynamic';
