@@ -7,10 +7,11 @@ export const createLead = async (req, res) => {
     const { agentId, name, phone, email, budget, propertyType, locationPrefs, preferredDateTime, message } = req.body;
 
     // Validate agent exists
-    // const agent = await Agent.findById(agentId);
-    // if (!agent) {
-    //   return res.status(404).json({ error: 'Agent not found' });
-    // }
+    const agent = await Agent.findById(agentId.trim());
+    if (!agent) {
+      console.log(`Agent not found for ID: ${agentId}`); // log for debug
+      return res.status(404).json({ error: 'Agent not found' });
+    }
 
     const newLead = new Lead({
       agentId,
