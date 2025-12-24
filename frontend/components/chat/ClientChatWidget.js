@@ -14,5 +14,5 @@ export function ClientChatWidget({ agentId }) {
     return null; // or a placeholder floating button
   }
 
-  return <ChatWidget agentId="69406fcf735f39e09b0ea297" />;
+  return <ChatWidget agentId={agentId} />;
 }
