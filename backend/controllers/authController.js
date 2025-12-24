@@ -1,5 +1,5 @@
 import Agent from '../models/Agent.js';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'your-super-secret-key-123'; // put in .env later
