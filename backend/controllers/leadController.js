@@ -1,24 +1,37 @@
 // backend/controllers/leadController.js
 import Lead from '../models/Lead.js';
 import Agent from '../models/Agent.js';
+import validator from 'validator';
 
 export const createLead = async (req, res) => {
   try {
     const { agentId, name, phone, email, budget, propertyType, locationPrefs, preferredDateTime, message } = req.body;
 
-    // Debug: Log the raw received agentId
-    console.log('Received agentId (raw):', agentId);
-    console.log('Received agentId (type):', typeof agentId);
-    console.log('Received agentId (length):', agentId?.length);
-    console.log('Received agentId (trimmed):', agentId?.trim());
-    
-    const cleanedId = agentId?.trim(); // remove spaces
+    // Basic validation
+    if (!name || name.length < 2) {
+      return res.status(400).json({ error: 'Name must be at least 2 characters' });
+    }
 
-    // Try to find agent with cleaned ID
-    const agent = await Agent.findById(cleanedId);
+    if (!email || !validator.isEmail(email)) {
+      return res.status(400).json({ error: 'Invalid email address' });
+    }
 
-    console.log('Found agent:', agent ? agent._id : 'NOT FOUND');
+    // Block common disposable domains (add more as needed)
+    const disposableDomains = ['mailinator.com', 'tempmail.com', '10minutemail.com'];
+    if (disposableDomains.some(domain => email.toLowerCase().endsWith(domain))) {
+      return res.status(400).json({ error: 'Please use a real email address' });
+    }
 
+    if (!phone || !validator.isMobilePhone(phone, 'any', { strictMode: true })) {
+      return res.status(400).json({ error: 'Invalid phone number (include country code, e.g., +971...)' });
+    }
+
+    if (!budget || budget.length < 3) {
+      return res.status(400).json({ error: 'Please provide a valid budget' });
+    }
+
+    // Agent check (already there)
+    const agent = await Agent.findById(agentId);
     if (!agent) {
       return res.status(404).json({ error: 'Agent not found' });
     }
