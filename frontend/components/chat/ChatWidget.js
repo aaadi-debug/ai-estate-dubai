@@ -19,7 +19,7 @@ const conversationSteps = [
     { key: 'confirm', bot: 'Thank you! I\'ve captured all your details. An agent will contact you shortly via WhatsApp or call. Have a great day! 🌟', isFinal: true },
 ];
 
-export function ChatWidget({ agentId = 'demo-agent-123' }) {
+export function ChatWidget({ agentId = '694c4b3e89d43bb4f3df59b8' }) {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([]);
     const [inputValue, setInputValue] = useState('');
