@@ -6,10 +6,20 @@ export const createLead = async (req, res) => {
   try {
     const { agentId, name, phone, email, budget, propertyType, locationPrefs, preferredDateTime, message } = req.body;
 
-    // Validate agent exists
-    const agent = await Agent.findById(agentId.trim());
+    // Debug: Log the raw received agentId
+    console.log('Received agentId (raw):', agentId);
+    console.log('Received agentId (type):', typeof agentId);
+    console.log('Received agentId (length):', agentId?.length);
+    console.log('Received agentId (trimmed):', agentId?.trim());
+    
+    const cleanedId = agentId?.trim(); // remove spaces
+
+    // Try to find agent with cleaned ID
+    const agent = await Agent.findById(cleanedId);
+
+    console.log('Found agent:', agent ? agent._id : 'NOT FOUND');
+
     if (!agent) {
-      console.log(`Agent not found for ID: ${agentId}`); // log for debug
       return res.status(404).json({ error: 'Agent not found' });
     }
 
