@@ -7,8 +7,8 @@ export const createLead = async (req, res) => {
   try {
     const { agentId, name, phone, email, budget, propertyType, locationPrefs, preferredDateTime, message } = req.body;
 
-    // Basic validation
-    if (!name || name.length < 2) {
+    // Basic validation (less strict)
+    if (!name || name.trim().length < 2) {
       return res.status(400).json({ error: 'Name must be at least 2 characters' });
     }
 
@@ -16,18 +16,18 @@ export const createLead = async (req, res) => {
       return res.status(400).json({ error: 'Invalid email address' });
     }
 
-    // Block common disposable domains (add more as needed)
+    // Block disposable emails
     const disposableDomains = ['mailinator.com', 'tempmail.com', '10minutemail.com'];
     if (disposableDomains.some(domain => email.toLowerCase().endsWith(domain))) {
       return res.status(400).json({ error: 'Please use a real email address' });
     }
 
-    if (!phone || !validator.isMobilePhone(phone, 'any', { strictMode: true })) {
-      return res.status(400).json({ error: 'Invalid phone number (include country code, e.g., +971...)' });
+    if (!phone || phone.trim().length < 5) { // Allow without + for now
+      return res.status(400).json({ error: 'Invalid phone number' });
     }
 
-    if (!budget || budget.length < 3) {
-      return res.status(400).json({ error: 'Please provide a valid budget' });
+    if (!budget || budget.trim().length === 0) {
+      return res.status(400).json({ error: 'Please provide a budget' });
     }
 
     // Agent check (already there)

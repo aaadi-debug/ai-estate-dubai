@@ -10,9 +10,10 @@ import axios from 'axios';
 const conversationSteps = [
     { key: 'greeting', bot: 'Hello! 👋 I\'m your AI assistant from AI Estate Dubai. You are looking for a property in Dubai. May I know your good name?' },
     { key: 'name', bot: 'Great! May I know your name please?' },
-    { key: 'phone', bot: 'Thanks {{name}}! What\'s the best phone number to reach you?' },
+    { key: 'phone', bot: 'Thanks {{name}}! What\'s your country code?', options: ['+971 (UAE)', '+91 (India)', '+1 (USA)', 'Other'] },
+    { key: 'phoneNumber', bot: 'Now, enter your phone number (without country code):' },
     { key: 'email', bot: 'Perfect. And your email address?' },
-    { key: 'budget', bot: 'What is your budget range? (e.g., AED 1M - 2M)' },
+    { key: 'budget', bot: 'What is your budget range?', options: ['Under AED 1M', 'AED 1M - 3M', 'AED 3M - 5M', 'AED 5M - 10M', 'AED 10M+', 'Custom'] },
     { key: 'propertyType', bot: 'What type of property are you interested in?', options: ['Apartment', 'Villa', 'Townhouse', 'Penthouse', 'Office', 'Plot'] },
     { key: 'location', bot: 'Which areas in Dubai are you considering? (e.g., Downtown, Palm Jumeirah, JVC)' },
     { key: 'datetime', bot: 'When would you like to schedule a viewing or call?' },
