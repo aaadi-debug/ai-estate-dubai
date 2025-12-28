@@ -14,6 +14,8 @@ export function Header() {
           <Link href="#features" className="text-gray-700 hover:text-blue-600 font-medium">Features</Link>
           <Link href="#pricing" className="text-gray-700 hover:text-blue-600 font-medium">Pricing</Link>
           <Link href="#demo" className="text-gray-700 hover:text-blue-600 font-medium">Demo</Link>
+          <Link href="/privacy-policy" className="text-gray-700 hover:text-blue-600 font-medium">Privacy Policy</Link>
+          <Link href="/terms-and-conditions" className="text-gray-700 hover:text-blue-600 font-medium">Terms of Service</Link>
           <Link href="/dashboard" className="text-gray-700 hover:text-blue-600 font-medium">Login</Link>
         </nav>
 
