@@ -54,7 +54,7 @@ export const createLead = async (req, res) => {
     // SUCCESS: Trigger n8n webhook later
     // Trigger n8n webhook
     try {
-      await axios.post('https://n8n-production-5430.up.railway.app/webhook-test/lead-notification', {
+      await axios.post('https://n8n-production-5430.up.railway.app/webhook/lead-notification', {
         name: newLead.name,
         phone: newLead.phone,
         email: newLead.email,
