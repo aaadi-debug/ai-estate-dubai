@@ -2,6 +2,7 @@
 import Lead from '../models/Lead.js';
 import Agent from '../models/Agent.js';
 import validator from 'validator';
+import axios from 'axios';
 
 export const createLead = async (req, res) => {
   try {
@@ -51,6 +52,26 @@ export const createLead = async (req, res) => {
     await newLead.save();
 
     // SUCCESS: Trigger n8n webhook later
+    // Trigger n8n webhook
+    try {
+      await axios.post('https://n8n-production-5430.up.railway.app/webhook-test/lead-notification', {
+        name: newLead.name,
+        phone: newLead.phone,
+        email: newLead.email,
+        budget: newLead.budget,
+        propertyType: newLead.propertyType,
+        locationPrefs: newLead.locationPrefs,
+        preferredDateTime: newLead.preferredDateTime,
+        whatsappNumber: agent.whatsappNumber, // from agent document
+        agentId: agent._id,
+        agentName: agent.name
+      });
+      console.log('n8n webhook triggered successfully');
+    } catch (webhookError) {
+      console.error('Failed to trigger n8n webhook:', webhookError.message);
+      // Don't fail the lead save if n8n fails
+    }
+
     res.status(201).json({ message: 'Lead saved successfully', lead: newLead });
   } catch (error) {
     console.error('Lead save error:', error);

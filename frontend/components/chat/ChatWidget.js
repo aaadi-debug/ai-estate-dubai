@@ -13,7 +13,7 @@ const conversationSteps = [
     { key: 'phone', bot: 'Thanks {{name}}! What\'s your country code?', options: ['+971 (UAE)', '+91 (India)', '+1 (USA)', 'Other'] },
     { key: 'phoneNumber', bot: 'Now, enter your phone number (without country code):' },
     { key: 'email', bot: 'Perfect. And your email address?' },
-    { key: 'budget', bot: 'What is your budget range?', options: ['Under AED 1M', 'AED 1M - 3M', 'AED 3M - 5M', 'AED 5M - 10M', 'AED 10M+', 'Custom'] },
+    { key: 'budget', bot: 'What is your budget range in AED?', options: ['Under 1M', '1M - 3M', '3M - 5M', '5M - 10M', '10M+', 'Custom'] },
     { key: 'propertyType', bot: 'What type of property are you interested in?', options: ['Apartment', 'Villa', 'Townhouse', 'Penthouse', 'Office', 'Plot'] },
     { key: 'location', bot: 'Which areas in Dubai are you considering? (e.g., Downtown, Palm Jumeirah, JVC)' },
     { key: 'datetime', bot: 'When would you like to schedule a viewing or call?' },
