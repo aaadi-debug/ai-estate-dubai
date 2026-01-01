@@ -4,6 +4,9 @@ import Agent from '../models/Agent.js';
 import validator from 'validator';
 import axios from 'axios';
 
+/*
+📌 Create leads for agent 
+*/
 export const createLead = async (req, res) => {
   try {
     const { agentId, name, phone, email, budget, propertyType, locationPrefs, preferredDateTime, message } = req.body;
@@ -75,6 +78,54 @@ export const createLead = async (req, res) => {
     res.status(201).json({ message: 'Lead saved successfully', lead: newLead });
   } catch (error) {
     console.error('Lead save error:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+/*
+📌 Get all agent leads
+*/
+export const getAgentLeads = async (req, res) => {
+  try {
+    // Get agentId from auth (we'll add JWT auth later, for now use query)
+    const agentId = req.query.agentId || req.user?.agentId; // fallback
+
+    if (!agentId) {
+      return res.status(400).json({ error: 'Agent ID required' });
+    }
+
+    const leads = await Lead.find({ agentId })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    // Add simple score (optional, since n8n does it)
+    const scoredLeads = leads.map(lead => {
+      let score = 'Cold';
+      if (lead.budget?.includes('10M+') || lead.budget?.includes('5M - 10M')) score = 'Hot';
+      else if (lead.budget?.includes('3M - 5M')) score = 'Warm';
+      return { ...lead, score };
+    });
+
+    res.json({ leads: scoredLeads });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+/*
+📌 Mark agent lead as contacted
+*/
+export const updateLeadStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body; // "contacted"
+
+    const lead = await Lead.findByIdAndUpdate(id, { status }, { new: true });
+    if (!lead) return res.status(404).json({ error: 'Lead not found' });
+
+    res.json({ message: 'Status updated', lead });
+  } catch (error) {
     res.status(500).json({ error: 'Server error' });
   }
 };
