@@ -5,14 +5,20 @@ import { ChatWidget } from '@/components/chat/ChatWidget';
 import { ClientChatWidget } from '@/components/chat/ClientChatWidget';
 import { Herosection } from '@/components/Herosection';
 import { Features } from '@/components/Features';
+import { Testimonials } from '@/components/Testimonials';
+import PricingSection from '@/components/Pricing';
+import CTASection from '@/components/CtaSection';
 
 export default function Home() {
   return (
     <>
       <Herosection />
       <Features />
+      <Testimonials />
+      <PricingSection />
+      <CTASection />
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-blue-50 to-white text-center py-20">
+      {/* <section className="bg-gradient-to-b from-blue-50 to-white text-center py-20">
         <div className="max-w-5xl mx-auto">
           <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
             Turn Website Visitors into Booked Appointments<br />
@@ -29,14 +35,13 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Placeholder for Hero Image or Chat Demo */}
         <div className="mt-16 max-w-4xl mx-auto bg-gray-200 border-2 border-dashed rounded-xl w-full h-96 flex items-center justify-center">
           <p className="text-gray-500 text-xl">Live Chat Widget Preview Coming Here</p>
         </div>
-      </section>
+      </section> */}
 
       {/* Features Section */}
-      <section id="features" className="py-20 bg-gray-50">
+      {/* <section id="features" className="py-20 bg-gray-50">
         <div className="max-w-6xl mx-auto text-center">
           <h2 className="text-4xl font-bold mb-12">Why Dubai Agents Choose Us</h2>
           <div className="grid md:grid-cols-3 gap-10">
@@ -57,15 +62,14 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Pricing Teaser */}
-      <section id="pricing" className="py-20">
+      {/* <section id="pricing" className="py-20">
         <div className="text-center max-w-4xl mx-auto">
           <h2 className="text-4xl font-bold mb-8">Simple, Transparent Pricing</h2>
           <p className="text-xl text-gray-600 mb-12">One-time setup + affordable monthly plans</p>
           <div className="grid md:grid-cols-3 gap-8">
-            {/* Basic */}
             <div className="border rounded-xl p-8 shadow-md">
               <h3 className="text-2xl font-bold mb-4">Basic</h3>
               <p className="text-4xl font-bold mb-6">$500 setup<br /><span className="text-xl font-normal text-gray-600">+ $99/month</span></p>
@@ -76,7 +80,6 @@ export default function Home() {
               </ul>
               <button className="w-full btn-primary">Choose Plan</button>
             </div>
-            {/* Medium */}
             <div className="border-2 border-blue-600 rounded-xl p-8 shadow-xl scale-105">
               <div className="bg-blue-600 text-white text-sm inline-block px-3 py-1 rounded-full mb-4">Most Popular</div>
               <h3 className="text-2xl font-bold mb-4">Professional</h3>
@@ -89,7 +92,6 @@ export default function Home() {
               </ul>
               <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700">Choose Plan</button>
             </div>
-            {/* Elite */}
             <div className="border rounded-xl p-8 shadow-md">
               <h3 className="text-2xl font-bold mb-4">Elite</h3>
               <p className="text-4xl font-bold mb-6">$2,000 setup<br /><span className="text-xl font-normal text-gray-600">+ $399/month</span></p>
@@ -103,7 +105,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* Add Chat Widget Here */}
       {/* <ChatWidget /> */}

@@ -1,6 +1,7 @@
 import { Playfair_Display } from "next/font/google";
 import './globals.css';
 import { Header } from '@/components/Header';
+import Footer from "@/components/Footer";
 
 export const metadata = {
   title: 'AI Estate Dubai | AI Chatbot for Real Estate Agents',
@@ -19,10 +20,7 @@ export default function RootLayout({ children }) {
       <body className="min-h-screen flex flex-col">
         <Header />
         <main className="flex-1">{children}</main>
-        <footer className="bg-gray-900 text-white py-8 text-center">
-          <p>© 2025 AI Estate Dubai. All rights reserved.</p>
-          <p className="text-sm mt-2">support@aiestatedubai.com</p>
-        </footer>
+        <Footer />
       </body>
     </html>
   );

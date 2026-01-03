@@ -53,7 +53,7 @@ export function Features() {
         {
             id: 3,
             icon: "Smartphone",
-            title: "WhatsApp Integration",
+            title: "Instant SMS/WhatsApp Alerts",
             description: "Connect directly with clients on their preferred messaging platform",
             details: [
                 "Official WhatsApp Business API integration",

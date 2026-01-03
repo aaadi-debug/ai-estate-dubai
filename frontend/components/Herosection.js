@@ -57,7 +57,7 @@ export function Herosection() {
                         ><CircleDollarSign size={16} /> View Pricing</Link>
                     </div>
 
-                    <div className="flex gap-6 justify-center items-center flex-wrap mt-6">
+                    <div className="flex gap-6 justify-start items-center flex-wrap mt-10">
                         <div className="flex gap-2 items-center text-gray-400 text-xs">
                             <span className="text-green-500"><ShieldCheck size={16} /></span>
                             UAE Certified
