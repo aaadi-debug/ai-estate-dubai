@@ -34,7 +34,7 @@ export function Header() {
           </Link>
 
           <nav className="flex">
-            <Link href="#features" className="flex gap-2 items-center text-primary font-semibold hover:bg-gray-100 rounded-lg py-2 2xl:px-6 xl:px-6 lg:px-4 px-6 hover:text-secondary transition duration-300">
+            <Link href="/" className="flex gap-2 items-center text-primary font-semibold hover:bg-gray-100 rounded-lg py-2 2xl:px-6 xl:px-6 lg:px-4 px-6 hover:text-secondary transition duration-300">
               <House size={16} /> Home
             </Link>
             <Link href="/dashboard" className="flex gap-2 items-center text-primary font-semibold hover:bg-gray-100 rounded-lg py-2 2xl:px-6 xl:px-6 lg:px-4 px-6 hover:text-secondary transition duration-300">
@@ -92,7 +92,7 @@ export function Header() {
         <div className="fixed top-16 inset-0 z-50 flex border-t border-gray-300" onClick={closeMobileMenu}>
           <div className="bg-white w-full h-84 shadow-xl overflow-y-auto p-4" onClick={e => e.stopPropagation()}>
             <nav className="flex flex-col">
-              <Link href="#features" className="flex gap-2 items-center text-primary font-semibold hover:bg-gray-100 rounded-lg py-3 px-2 hover:text-secondary transition duration-300">
+              <Link href="/" className="flex gap-2 items-center text-primary font-semibold hover:bg-gray-100 rounded-lg py-3 px-2 hover:text-secondary transition duration-300">
                 <House size={20} /> Home
               </Link>
               <Link href="/dashboard" className="flex gap-2 items-center text-primary font-semibold hover:bg-gray-100 rounded-lg py-3 px-2 hover:text-secondary transition duration-300">
@@ -118,3 +118,4 @@ export function Header() {
     </header>
   );
 }
+
