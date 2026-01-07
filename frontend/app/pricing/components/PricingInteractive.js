@@ -20,22 +20,24 @@ export default function PricingInteractive() {
     {
       id: 'starter',
       name: 'Starter',
-      price: '499',
-      period: 'per month',
-      description: 'Perfect for new agents starting their AI journey',
+      price: '149',
+      oneTimeFee: 0,
+      period: 'month',
+      description: 'Perfect for individual agents testing AI lead capture',
       features: [
-        { text: '24/7 AI Chatbot', included: true },
-        { text: 'WhatsApp Integration', included: true },
-        { text: '50 SMS Notifications/month', included: true },
+        { text: '24/7 AI Chatbot on your website', included: true },
+        { text: 'Up to 200 conversations/month', included: true },
         { text: 'Email Notifications', included: true },
-        { text: 'Basic Dashboard', included: true },
-        { text: 'Basic Branding', included: true },
-        { text: '10 Custom Responses', included: true },
-        { text: 'Email Support', included: true },
+        { text: 'Basic Leads Dashboard', included: true },
+        { text: 'Standard Templates', included: true },
+        { text: 'Email Support (48h response)', included: true },
+        { text: 'WhatsApp Integration', included: false },
         { text: 'Lead Scoring', included: false },
         { text: 'Performance Analytics', included: false },
-        { text: 'Multi-language Support', included: false },
-        { text: 'Priority Support', included: false }
+        { text: 'Google Calendar Auto-booking', included: false },
+        { text: 'Priority Support', included: false },
+        { text: 'Dedicated Account Manager', included: false },
+        { text: 'White-label Option', included: false }
       ],
       isPopular: false,
       ctaText: 'Start Free Trial'
@@ -43,25 +45,22 @@ export default function PricingInteractive() {
     {
       id: 'professional',
       name: 'Professional',
-      price: '999',
-      period: 'per month',
-      description: 'For established agents scaling their business',
+      price: '499',
+      oneTimeFee: 199,
+      period: 'month',
+      description: 'Premium white-glove service for top agents & teams',
       features: [
-        { text: '24/7 AI Chatbot', included: true },
-        { text: 'WhatsApp Integration', included: true },
-        { text: '200 SMS Notifications/month', included: true },
-        { text: 'Email Notifications', included: true },
-        { text: 'Advanced Dashboard', included: true },
-        { text: 'Advanced Branding', included: true },
-        { text: '50 Custom Responses', included: true },
-        { text: 'Lead Scoring', included: true },
-        { text: 'Performance Analytics', included: true },
-        { text: 'Multi-language Support', included: true },
-        { text: 'Export Data', included: true },
-        { text: 'Priority Support', included: true },
-        { text: '1 Onboarding Session', included: true },
+        { text: 'Everything in Starter', included: true },
+        { text: 'Unlimited conversations', included: true },
+        { text: 'Instant SMS Alerts', included: true },
+        { text: 'Lead Segregation (Hot/Warm/Cold)', included: true },
+        { text: 'Google Calendar Auto-booking', included: true },
+        { text: 'Advanced Analytics & Stats', included: true },
+        { text: 'Priority Email Support (24h)', included: true },
+        { text: 'One-time Setup Assistance', included: true },
         { text: 'Dedicated Account Manager', included: false },
-        { text: 'White-label Option', included: false }
+        { text: 'White-label Option', included: false },
+        { text: 'API Access', included: false }
       ],
       isPopular: true,
       ctaText: 'Start Free Trial'
@@ -69,28 +68,31 @@ export default function PricingInteractive() {
     {
       id: 'elite',
       name: 'Elite',
-      price: '1,999',
-      period: 'per month',
-      description: 'Premium solution for top-performing agents',
+      price: '999',
+      oneTimeFee: 499,
+      period: 'month',
+      description: 'Premium solution for top-performing agents and teams',
       features: [
-        { text: '24/7 AI Chatbot', included: true },
-        { text: 'WhatsApp Integration', included: true },
+        { text: '24/7 AI Chatbot on your website', included: true },
+        { text: 'WhatsApp Business API Integration', included: true },
+        { text: 'Unlimited conversations', included: true },
         { text: 'Unlimited SMS Notifications', included: true },
-        { text: 'Email Notifications', included: true },
+        { text: 'Instant SMS & Email Notifications', included: true },
         { text: 'Premium Dashboard', included: true },
+        { text: 'Advanced Anti-spam (CAPTCHA + Honeypot)', included: true },
+        { text: 'Custom Chatbot Branding & Flows', included: true },
         { text: 'Full Custom Branding', included: true },
-        { text: 'Unlimited Custom Responses', included: true },
-        { text: 'Lead Scoring', included: true },
-        { text: 'Priority Lead Routing', included: true },
-        { text: 'Performance Analytics', included: true },
-        { text: 'Custom Reports', included: true },
+        { text: 'Lead Scoring & Priority Routing', included: true },
+        { text: 'Google Calendar Auto-booking', included: true },
+        { text: 'Performance Analytics & Custom Reports', included: true },
         { text: 'Multi-language Support', included: true },
-        { text: 'Export Data', included: true },
-        { text: 'API Access', included: true },
-        { text: 'White-label Option', included: true },
+        { text: 'API Access & Webhooks', included: true },
+        { text: 'White-label Dashboard', included: true },
+        { text: 'Team Accounts (up to 5 users)', included: true },
         { text: 'Dedicated Account Manager', included: true },
         { text: 'White-glove Onboarding', included: true },
-        { text: 'Monthly Strategy Calls', included: true }
+        { text: '24/7 Phone & WhatsApp Support', included: true },
+        { text: 'Custom AI Training (coming Q2 2026)', included: true }
       ],
       isPopular: false,
       ctaText: 'Contact Sales'
@@ -138,6 +140,7 @@ export default function PricingInteractive() {
                 key={plan.id}
                 name={plan.name}
                 price={plan.price}
+                oneTimeFee={plan.oneTimeFee}
                 period={plan.period}
                 description={plan.description}
                 features={plan.features}
@@ -150,9 +153,9 @@ export default function PricingInteractive() {
 
           {/* Trust Indicators */}
           <div className="mt-16 text-center">
-            <p className="text-muted-foreground font-body text-sm mb-4">
+            {/* <p className="text-muted-foreground font-body text-sm mb-4">
               All plans include 14-day free trial • No credit card required • Cancel anytime
-            </p>
+            </p> */}
             <div className="flex flex-wrap items-center justify-center gap-6 text-muted-foreground text-xs">
               <span>✓ UAE Business Certified</span>
               <span>✓ GDPR Compliant</span>
@@ -162,11 +165,6 @@ export default function PricingInteractive() {
           </div>
         </div>
       </section>
-{/* 
-      <ROICalculator />
-      <TestimonialSection />
-      <ComparisonTable />
-      <FAQSection /> */}
     </div>
   );
 }

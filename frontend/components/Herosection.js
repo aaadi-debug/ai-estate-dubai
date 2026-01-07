@@ -9,6 +9,11 @@ import { House, CircleDollarSign, Mail, ShieldCheck, Lock, CircleCheck, Ellipsis
 export function Herosection() {
     const [isHydrated, setIsHydrated] = useState(false);
     const [activeMessage, setActiveMessage] = useState(0);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        setIsLoggedIn(!!localStorage.getItem('token'));
+    }, []);
 
     useEffect(() => {
         setIsHydrated(true);
@@ -46,15 +51,26 @@ export function Herosection() {
                         24/7 AI-powered lead capture for Dubai's elite real estate professionals. Instant notifications, intelligent responses, and seamless WhatsApp integration.
                     </p>
                     <div className="flex max-sm:flex-col gap-4 items-center mt-10">
-                        <Link
-                            href=''
-                            className="flex gap-2 justify-center items-center text-center bg-secondary text-primary py-4 px-8 rounded-lg font-semibold hover:scale-105 transition duration-300 max-sm:w-full"
-                        >Start Free Trail <FaArrowRightLong size={16} /></Link>
+                        {!isLoggedIn && (
+                            <Link
+                                href='/signup'
+                                className="flex gap-2 justify-center items-center text-center bg-secondary text-primary py-4 px-8 rounded-lg font-semibold hover:scale-105 transition duration-300 max-sm:w-full"
+                            >Start Free Trial <FaArrowRightLong size={16} /></Link>
+                        )}
 
-                        <Link
-                            href=''
-                            className="flex gap-2 justify-center items-center text-center bg-transparent text-white border border-white py-4 px-8 rounded-lg font-semibold max-sm:w-full"
-                        ><CircleDollarSign size={16} /> View Pricing</Link>
+                        {!isLoggedIn ? (
+                            <Link
+                                href='/pricing'
+                                className="flex gap-2 justify-center items-center text-center bg-transparent text-white border border-white py-4 px-8 rounded-lg font-semibold max-sm:w-full"
+                            ><CircleDollarSign size={16} /> View Pricing</Link>
+                        ) : (
+                            <Link
+                                href='/pricing'
+                                className="flex gap-2 justify-center items-center text-center bg-secondary text-primary py-4 px-8 rounded-lg font-semibold hover:scale-105 transition duration-300 max-sm:w-full"
+                            ><CircleDollarSign size={16} /> View Pricing</Link>
+                        )}
+
+
                     </div>
 
                     <div className="flex gap-6 justify-start items-center flex-wrap mt-10">

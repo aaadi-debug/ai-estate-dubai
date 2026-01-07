@@ -7,9 +7,17 @@ import { FaArrowRightLong } from "react-icons/fa6";
 import { LuRefreshCw } from "react-icons/lu";
 import { IoMdTime } from "react-icons/io";
 import { CircleCheck } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 
 const CtaSection = ({ className = '' }) => {
+
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        setIsLoggedIn(!!localStorage.getItem('token'));
+    }, []);
+
     return (
         <section className={`py-20 bg-gradient-to-br from-primary via-[#191E39] to-primary relative overflow-hidden ${className}`}>
             {/* Background Pattern */}
@@ -51,34 +59,50 @@ const CtaSection = ({ className = '' }) => {
 
                 {/* CTA Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-                    <Link
-                        href="/signup"
-                        className="inline-flex items-center justify-center space-x-2 px-8 py-4 bg-secondary text-primary rounded-lg font-semibold hover:scale-105 hover:shadow-2xl transition-all duration-300"
-                    >
-                        <span>Start Free Trial</span>
-                        <FaArrowRightLong size={20} />
-                    </Link>
-                    <Link
-                        href="/contact"
-                        className="inline-flex items-center justify-center space-x-2 px-8 py-4 bg-transparent backdrop-blur-sm text-white border border-white rounded-lg font-semibold transition-all duration-300"
-                    >
-                        <PiChats size={20} />
-                        <span>Talk to Sales</span>
-                    </Link>
+                    {!isLoggedIn && (
+
+                        <Link
+                            href="/signup"
+                            className="inline-flex items-center justify-center space-x-2 px-8 py-4 bg-secondary text-primary rounded-lg font-semibold hover:scale-105 hover:shadow-2xl transition-all duration-300"
+                        >
+                            <span>Start Free Trial</span>
+                            <FaArrowRightLong size={20} />
+                        </Link>
+                    )}
+
+                    {!isLoggedIn ? (
+                        <Link
+                            href="/contact-us"
+                            className="inline-flex items-center justify-center space-x-2 px-8 py-4 bg-transparent backdrop-blur-sm text-white border border-white rounded-lg font-semibold transition-all duration-300"
+                        >
+                            <PiChats size={20} />
+                            <span>Talk to Sales</span>
+                        </Link>
+                    ) : (
+                        <Link
+                            href="/contact-us"
+                            className="inline-flex items-center justify-center space-x-2 px-8 py-4 bg-secondary text-primary rounded-lg font-semibold hover:scale-105 hover:shadow-2xl transition-all duration-300"
+                        >
+                            <PiChats size={20} />
+                            <span>Talk to Sales</span>
+                        </Link>
+                    )}
+
+
                 </div>
 
                 {/* Trust Signals */}
                 <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-400">
                     <div className="flex items-center space-x-2">
-                        <CircleCheck  size={16} className="text-green-500" />
+                        <CircleCheck size={16} className="text-green-500" />
                         <span>No credit card required</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <LuRefreshCw  size={16} className="text-green-500" />
+                        <LuRefreshCw size={16} className="text-green-500" />
                         <span>Cancel anytime</span>
                     </div>
                     <div className="flex items-center space-x-2">
-                        <IoMdTime  size={18} className="text-green-500" />
+                        <IoMdTime size={18} className="text-green-500" />
                         <span>Setup in 5 minutes</span>
                     </div>
                 </div>

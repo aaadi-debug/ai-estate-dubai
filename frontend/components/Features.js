@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { HiSparkles } from "react-icons/hi2";
 import { Smartphone, Cog, ChevronDown } from 'lucide-react';
 import { IoIosCheckmarkCircle } from "react-icons/io";
@@ -14,6 +14,12 @@ import Link from 'next/link';
 
 export function Features() {
     const [expandedFeature, setExpandedFeature] = useState(null);
+
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        setIsLoggedIn(!!localStorage.getItem('token'));
+    }, []);
 
     // Icon mapping: string name → React component
     const iconMap = {
@@ -173,15 +179,17 @@ export function Features() {
             </div>
 
             {/* CTA */}
-            <div className="text-center mt-12">
-                <Link
-                    href="/signup"
-                    className="inline-flex items-center space-x-2 px-8 py-4 bg-secondary text-primary rounded-lg font-semibold hover:scale-105 transition-all duration-300"
-                >
-                    <span>Start Your Free Trial</span>
-                    <FaArrowRightLong size={20}  />
-                </Link>
-            </div>
+            {!isLoggedIn && (
+                <div className="text-center mt-12">
+                    <Link
+                        href="/signup"
+                        className="inline-flex items-center space-x-2 px-8 py-4 bg-secondary text-primary rounded-lg font-semibold hover:scale-105 transition-all duration-300"
+                    >
+                        <span>Start Your Free Trial</span>
+                        <FaArrowRightLong size={20} />
+                    </Link>
+                </div>
+            )}
 
             {/* Section Content  */}
         </section>

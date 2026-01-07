@@ -6,6 +6,7 @@ import { IoCloseCircle } from "react-icons/io5";
 export default function PlanCard({
   name,
   price,
+  oneTimeFee,
   period,
   description,
   features,
@@ -29,22 +30,22 @@ export default function PlanCard({
       <div className="text-center mb-8">
         <h3 className="font-playfair font-bold text-2xl text-primary mb-2">{name}</h3>
         <p className="text-gray-500 font-body text-sm mb-6">{description}</p>
-        
+
         <div className="flex items-baseline justify-center space-x-2">
           <span className="font-playfair font-bold text-5xl text-foreground">{price}</span>
-          <span className="text-gray-500 font-body text-lg">AED</span>
+          <span className="text-gray-500 font-body text-lg">USD/{period}</span>
         </div>
-        <p className="text-gray-500 font-body text-sm mt-2">{period}</p>
+        <p className="text-sm text-gray-500 mt-2">+ ${oneTimeFee} one-time setup fee</p>
+
       </div>
 
       {/* CTA Button */}
       <button
         onClick={onSelectPlan}
-        className={`w-full py-4 rounded-lg font-cta font-semibold text-lg transition-all duration-300 mb-8 cursor-pointer ${
-          isPopular
+        className={`w-full py-4 rounded-lg font-cta font-semibold text-lg transition-all duration-300 mb-8 cursor-pointer ${isPopular
             ? 'bg-secondary text-primary hover:scale-105 hover:shadow-luxury'
             : 'bg-gray-100 text-foreground hover:bg-secondary hover:text-accent-foreground'
-        }`}
+          }`}
       >
         {ctaText}
       </button>

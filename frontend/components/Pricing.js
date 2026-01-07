@@ -32,17 +32,17 @@ const PricingSection = ({ className = '' }) => {
         {
             id: 1,
             name: "Starter",
-            price: billingPeriod === 'monthly' ? 499 : 4490,
+            price: billingPeriod === 'monthly' ? 149 : 1599,
+            oneTimeFee: 0,
             period: billingPeriod === 'monthly' ? '/month' : '/year',
-            description: "Perfect for individual agents starting their AI journey",
+            description: "Perfect for individual agents testing AI lead capture",
             features: [
-                "24/7 AI lead capture",
-                "Up to 100 conversations/month",
-                "WhatsApp integration",
+                "24/7 AI chatbot on your website",
+                "Up to 200 conversations/month",
                 "Email notifications",
-                "Basic analytics dashboard",
-                "Standard response templates",
-                "Email support"
+                "Basic lead dashboard",
+                "Standard templates",
+                "Email support (48h response)"
             ],
             popular: false,
             cta: "Start Free Trial",
@@ -51,18 +51,19 @@ const PricingSection = ({ className = '' }) => {
         {
             id: 2,
             name: "Professional",
-            price: billingPeriod === 'monthly' ? 999 : 8990,
+            price: billingPeriod === 'monthly' ? 499 : 4599,
+            oneTimeFee: 199,
             period: billingPeriod === 'monthly' ? '/month' : '/year',
-            description: "For established agents scaling their business",
+            description: "Premium white-glove service for top agents & teams",
             features: [
                 "Everything in Starter",
                 "Unlimited conversations",
-                "SMS notifications",
-                "Advanced lead scoring",
-                "Custom branding",
-                "CRM integration",
-                "Priority support",
-                "Multi-language support"
+                "Instant SMS alerts",
+                "Lead segregation (Hot/Warm/Cold)",
+                "Google Calendar auto-booking",
+                "Advanced analytics & stats",
+                "Priority email support (24h)",
+                "One-time setup assistance",
             ],
             popular: true,
             cta: "Start Free Trial",
@@ -71,18 +72,21 @@ const PricingSection = ({ className = '' }) => {
         {
             id: 3,
             name: "Elite",
-            price: billingPeriod === 'monthly' ? 1999 : 17990,
+            price: billingPeriod === 'monthly' ? 999 : 9999,
+            oneTimeFee: 499,
             period: billingPeriod === 'monthly' ? '/month' : '/year',
             description: "Premium solution for top-performing agents and teams",
             features: [
                 "Everything in Professional",
+                "WhatsApp Business API integration",
+                "Advanced anti-spam (CAPTCHA + honeypot)",
+                "Custom chatbot branding & flows",
                 "Dedicated account manager",
                 "White-label dashboard",
-                "API access",
-                "Custom AI training",
-                "Advanced analytics & reporting",
-                "Team collaboration tools",
-                "24/7 phone support"
+                "API access & webhooks",
+                "Team accounts (up to 5 users)",
+                "24/7 phone & WhatsApp support",
+                "Custom AI training (coming Q2 2026)",
             ],
             popular: false,
             cta: "Contact Sales",
@@ -172,7 +176,7 @@ const PricingSection = ({ className = '' }) => {
                             {/* Price */}
                             <div className="mb-6">
                                 <div className="flex items-baseline">
-                                    <span className="text-sm text-gray-500 mr-1">AED</span>
+                                    <span className="text-sm text-gray-500 mr-1">USD</span>
                                     <span className="font-playfair font-bold text-4xl text-foreground">
                                         {plan.price.toLocaleString()}
                                     </span>
@@ -180,10 +184,12 @@ const PricingSection = ({ className = '' }) => {
                                 </div>
                                 {billingPeriod === 'annual' && (
                                     <p className="text-sm text-green-600 mt-2">
-                                        Save AED {Math.round(plan.price / 0.9 - plan.price)} annually
+                                        Save USD {Math.round(plan.price / 0.9 - plan.price)} annually
                                     </p>
                                 )}
+                                <p className="text-sm text-gray-500 mt-2">+ ${plan.oneTimeFee} one-time setup fee</p>
                             </div>
+
 
                             {/* CTA Button */}
                             <Link
