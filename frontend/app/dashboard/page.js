@@ -12,10 +12,18 @@ export default function Dashboard() {
 
   useEffect(() => {
     const id = localStorage.getItem('agentId');
+    const plan = localStorage.getItem('plan');
+
     if (!id) {
       window.location.href = '/login';
       return;
     }
+
+    if (!plan || plan === 'none') {
+      window.location.href = '/pricing'; // force upgrade
+      return;
+    }
+
     setAgentId(id);
     fetchLeads(id);
   }, []);
@@ -133,8 +141,8 @@ export default function Dashboard() {
                       <td className="py-3 px-4">{lead.budget}</td>
                       <td className="py-3 px-4">
                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${lead.score === 'Hot' ? 'bg-red-100 text-red-800' :
-                            lead.score === 'Warm' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-blue-100 text-blue-800'
+                          lead.score === 'Warm' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-blue-100 text-blue-800'
                           }`}>
                           {lead.score}
                         </span>

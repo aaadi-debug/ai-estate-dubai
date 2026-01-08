@@ -111,7 +111,7 @@ export default function ContactForm() {
             {/* Name */}
             <div>
                 <label htmlFor="name" className="block font-medium text-primary mb-2">
-                    Full Name *
+                    Full Name <span className='text-red-500'>*</span>
                 </label>
                 <input
                     type="text"
@@ -121,7 +121,7 @@ export default function ContactForm() {
                     onChange={handleChange}
                     className={`w-full px-4 py-3 rounded-md border ${errors.name ? 'border-error' : 'border-gray-300'
                         } bg-gray-100 text-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary transition-all`}
-                    placeholder="Ahmed Al Maktoum"
+                    placeholder="John Doe"
                 />
                 {errors.name && (
                     <p className="mt-1 text-sm text-error">{errors.name}</p>
@@ -131,7 +131,7 @@ export default function ContactForm() {
             {/* Email */}
             <div>
                 <label htmlFor="email" className="block font-medium text-primary mb-2">
-                    Email Address *
+                    Email Address <span className='text-red-500'>*</span>
                 </label>
                 <input
                     type="email"
@@ -141,7 +141,7 @@ export default function ContactForm() {
                     onChange={handleChange}
                     className={`w-full px-4 py-3 rounded-md border ${errors.email ? 'border-error' : 'border-gray-300'
                         } bg-gray-100 text-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary transition-all`}
-                    placeholder="ahmed@example.com"
+                    placeholder="john@example.com"
                 />
                 {errors.email && (
                     <p className="mt-1 text-sm text-error">{errors.email}</p>
@@ -151,7 +151,7 @@ export default function ContactForm() {
             {/* Phone */}
             <div>
                 <label htmlFor="phone" className="block font-medium text-primary mb-2">
-                    Phone Number *
+                    Phone Number <span className='text-red-500'>*</span>
                 </label>
                 <input
                     type="tel"
@@ -205,7 +205,7 @@ export default function ContactForm() {
             {/* Message */}
             <div>
                 <label htmlFor="message" className="block font-medium text-primary mb-2">
-                    Message *
+                    Message <span className='text-red-500'>*</span>
                 </label>
                 <textarea
                     id="message"

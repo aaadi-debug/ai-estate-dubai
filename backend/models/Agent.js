@@ -30,9 +30,10 @@ const agentSchema = new Schema(
     },
     plan: {
       type: String,
-      enum: ['basic', 'medium', 'elite'],
-      default: 'basic',
+      eenum: ['starter', 'professional', 'elite', 'none'],
+      default: 'none',
     },
+    planExpiry: { type: Date },
     password: { type: String, required: true }, // hashed
   },
   {

@@ -53,7 +53,7 @@ export function Header() {
             {/* <Link href="/dashboard" className="text-gray-700 hover:text-blue-600 font-medium">Login</Link> */}
           </nav>
 
-          <Link href='' className="bg-secondary text-center text-primary py-2 2xl:px-6 xl:px-6 lg:px-4 px-6 rounded-lg font-semibold hover:scale-105 transition duration-300">Start Free Trial</Link>
+          <Link href='/signup' className="bg-secondary text-center text-primary py-2 2xl:px-6 xl:px-6 lg:px-4 px-6 rounded-lg font-semibold hover:scale-105 transition duration-300">Start Free Trial</Link>
         </div>
       </div>
 
