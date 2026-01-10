@@ -54,9 +54,14 @@ export default function Login() {
       const data = await res.json();
 
       if (res.ok) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('agentId', data.agent.id);
-        localStorage.setItem('plan', data.agent.plan || 'none'); // store plan
+        const { token, agent } = data;
+        
+        localStorage.setItem('token', token);
+        localStorage.setItem('agentId', agent.id);
+        localStorage.setItem('plan', agent.plan || 'none');
+        localStorage.setItem('agentName', agent.name || 'Agent');
+        localStorage.setItem('agentEmail', agent.email || 'agent@example.com');
+        localStorage.setItem('agentPhone', agent.phone || '+919876543210');
 
         setMessage('Success! Redirecting to dashboard...');
 

@@ -28,12 +28,27 @@ const agentSchema = new Schema(
       of: String,
       default: {},
     },
+
+    // ── New / improved fields for dashboard ──
+    bio: { type: String, maxlength: 500, default: '' },
+    agencyName: { type: String, trim: true },
+    reraNumber: { type: String, trim: true },
+    profilePhoto: { type: String }, // URL to photo (Cloudinary, S3, etc.)
+    notifications: {
+      email: { type: Boolean, default: true },
+      sms: { type: Boolean, default: false },
+      whatsapp: { type: Boolean, default: true },
+    },
+    
     plan: {
       type: String,
-      eenum: ['starter', 'professional', 'elite', 'none'],
+      enum: ['starter', 'professional', 'elite', 'none'],
       default: 'none',
     },
     planExpiry: { type: Date },
+    conversationCountThisMonth: { type: Number, default: 0 }, // reset monthly
+    lastConversationReset: { type: Date },
+
     password: { type: String, required: true }, // hashed
   },
   {

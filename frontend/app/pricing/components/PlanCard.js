@@ -12,6 +12,7 @@ export default function PlanCard({
   features,
   isPopular = false,
   ctaText,
+  loading,
   onSelectPlan
 }) {
   return (
@@ -36,11 +37,10 @@ export default function PlanCard({
           <span className="text-gray-500 font-body text-lg">USD/{period}</span>
         </div>
         <p className="text-sm text-gray-500 mt-2">+ ${oneTimeFee} one-time setup fee</p>
-
       </div>
 
       {/* CTA Button */}
-      <button
+      {/* <button
         onClick={onSelectPlan}
         className={`w-full py-4 rounded-lg font-cta font-semibold text-lg transition-all duration-300 mb-8 cursor-pointer ${isPopular
             ? 'bg-secondary text-primary hover:scale-105 hover:shadow-luxury'
@@ -48,6 +48,16 @@ export default function PlanCard({
           }`}
       >
         {ctaText}
+      </button> */}
+      <button
+        onClick={onSelectPlan}
+        disabled={loading}
+        className={`w-full py-4 px-6 rounded-lg font-bold transition-all mb-8 cursor-pointer ${isPopular
+            ? 'bg-secondary text-primary hover:scale-105'
+            : 'bg-gray-100 text-black hover:bg-secondary hover:text-primary'
+          } ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+      >
+        {loading ? 'Processing...' : ctaText}
       </button>
 
       {/* Features List */}

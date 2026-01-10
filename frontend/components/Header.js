@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from 'next/link';
 import Image from 'next/image';
-import { House, CircleDollarSign, Mail, ShieldCheck, X } from 'lucide-react';
+import { House, CircleDollarSign, Mail, ShieldCheck, X, UserCircle, LogOut, ChevronDown } from 'lucide-react';
 import { FaTimes } from "react-icons/fa";
 import { LiaChartBarSolid } from "react-icons/lia";
 import { IoSearch, IoMenu } from "react-icons/io5";
@@ -11,8 +11,37 @@ import { IoSearch, IoMenu } from "react-icons/io5";
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [plan, setPlan] = useState('none')
+
   const toggleMobileMenu = () => setIsMobileMenuOpen((v) => !v);
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
+
+  // Function to get first name from full name
+  function getFirstName(fullName) {
+    if (!fullName) return 'Agent';
+
+    // Split by space and take first part
+    const parts = fullName.trim().split(/\s+/);
+    return parts[0]; // first name
+  }
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    const storedPlan = localStorage.getItem('plan') || 'none'
+    setIsLoggedIn(!!token)
+    setPlan(storedPlan)
+  }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('agentId')
+    localStorage.removeItem('plan')
+    localStorage.removeItem('agentName')
+    localStorage.removeItem('agentEmail')
+    localStorage.removeItem('agentPhone')
+    window.location.href = '/login'
+  }
 
   return (
     <header className="bg-white shadow-sm fixed top-0 left-0 w-full z-100">
@@ -53,7 +82,44 @@ export function Header() {
             {/* <Link href="/dashboard" className="text-gray-700 hover:text-blue-600 font-medium">Login</Link> */}
           </nav>
 
-          <Link href='/signup' className="bg-secondary text-center text-primary py-2 2xl:px-6 xl:px-6 lg:px-4 px-6 rounded-lg font-semibold hover:scale-105 transition duration-300">Start Free Trial</Link>
+          {/* Conditional area */}
+          {isLoggedIn ? (
+            <div className="relative group">
+              <button className="flex items-center gap-2 bg-secondary text-center text-primary py-2 2xl:px-6 xl:px-6 lg:px-4 px-6 rounded-lg font-semibold transition duration-300 cursor-pointer">
+                Hi, {getFirstName(localStorage.getItem('agentName') || 'Agent')}
+                {/* <UserCircle size={24} /> */}
+                <ChevronDown size={16} />
+              </button>
+
+              {/* Dropdown */}
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-gray-300 ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                <div className="py-1">
+                  <Link
+                    href="/dashboard"
+                    className="block px-4 py-2 text-sm text-primary font-semibold hover:bg-gray-100 hover:text-secondary transition duration-300"
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    href="/profile"
+                    className="block px-4 py-2 text-sm text-primary font-semibold hover:bg-gray-100 hover:text-secondary transition duration-300"
+                  >
+                    Profile
+                  </Link>
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-gray-100 cursor-pointer"
+                  >
+                    Log out
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <>
+              <Link href='/signup' className="bg-secondary text-center text-primary py-2 2xl:px-6 xl:px-6 lg:px-4 px-6 rounded-lg font-semibold hover:scale-105 transition duration-300 cursor-pointer">Start Free Trial</Link>
+            </>
+          )}
         </div>
       </div>
 

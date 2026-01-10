@@ -11,6 +11,123 @@ import PlanCard from '@/app/pricing/components/PlanCard';
 
 export default function Pricing() {
     const plansRef = useRef(null);
+    const [loadingPlan, setLoadingPlan] = useState(null); // for button loading state
+
+    // Get agentId from localStorage (after login/signup)
+    const [agentId, setAgentId] = useState('');
+
+    const planNames = {
+        starter: 'Starter',
+        professional: 'Professional',
+        elite: 'Elite'
+    };
+
+    // Optional: also define prices if you want to display in paise or validate
+    const planPrices = {
+        starter: 14900,
+        professional: 49900,
+        elite: 99900
+    };
+
+    useEffect(() => {
+        const id = localStorage.getItem('agentId');
+        if (!id) {
+            // Redirect to login if not logged in
+            window.location.href = '/login';
+        } else {
+            setAgentId(id);
+        }
+    }, []);
+
+    console.log("Agent ID for plan purchase:", agentId);
+
+    const handleSelectPlan = async (planId) => {
+        if (!agentId) {
+            alert('Please log in');
+            window.location.href = '/login';
+            return;
+        }
+
+        setLoadingPlan(planId);
+
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/razorpay/create-order`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ plan: planId, agentId })
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                alert('Error: ' + (errorData.error || 'Failed to create order'));
+                setLoadingPlan(null);
+                return;
+            }
+
+            const { orderId, amount } = await res.json();
+
+            // Load script dynamically
+            const script = document.createElement('script');
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+            script.onload = () => {
+                const options = {
+                    key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // Must be public/test key
+                    amount,
+                    currency: 'INR',
+                    name: 'AI Estate Dubai',
+                    description: `${planNames[planId] || 'Plan'} Subscription`,
+                    order_id: orderId,
+                    handler: async (response) => {
+                        // Verify on backend
+                        try {
+                            const verifyRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/razorpay/verify-payment`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_payment_id: response.razorpay_payment_id,
+                                    razorpay_signature: response.razorpay_signature,
+                                    agentId,
+                                    plan: planId
+                                })
+                            });
+
+                            const verifyData = await verifyRes.json();
+
+                            if (verifyData.success) {
+                                alert('Payment successful! Plan activated.');
+                                localStorage.setItem('plan', planId);
+                                window.location.href = '/dashboard';
+                            } else {
+                                alert('Payment verification failed: ' + (verifyData.error || 'Unknown error'));
+                            }
+                        } catch (err) {
+                            alert('Verification error');
+                        }
+                    },
+                    prefill: {
+                        name: localStorage.getItem('agentName') || 'Agent',
+                        email: localStorage.getItem('agentEmail') || 'agent@example.com',
+                        contact: localStorage.getItem('agentPhone') || '+919876543210'
+                    },
+                    theme: { color: '#FFD700' }
+                };
+
+                const rzp = new window.Razorpay(options);
+                rzp.open();
+            };
+            script.onerror = () => {
+                alert('Failed to load Razorpay checkout');
+            };
+            document.body.appendChild(script);
+
+        } catch (err) {
+            console.error(err);
+            alert('Error initiating payment');
+        } finally {
+            setLoadingPlan(null);
+        }
+    };
 
     const plans = [
         {
@@ -36,7 +153,7 @@ export default function Pricing() {
                 { text: 'White-label Option', included: false }
             ],
             isPopular: false,
-            ctaText: 'Start Free Trial'
+            ctaText: 'Buy Starter'
         },
         {
             id: 'professional',
@@ -59,7 +176,7 @@ export default function Pricing() {
                 { text: 'API Access', included: false }
             ],
             isPopular: true,
-            ctaText: 'Start Free Trial'
+            ctaText: 'Buy Professional'
         },
         {
             id: 'elite',
@@ -91,12 +208,13 @@ export default function Pricing() {
                 { text: 'Custom AI Training (coming Q2 2026)', included: true }
             ],
             isPopular: false,
-            ctaText: 'Contact Sales'
+            ctaText: 'Buy Elite'
         }
     ];
 
     return (
         <>
+            {/* Hero Section */}
             <section className="bg-primary py-20 2xl:px-32 xl:px-28 lg:px-20 md:px-10 px-6 2xl:mt-20 xl:mt-16 lg:mt-16 mt-12 relative">
                 <div className="flex flex-col justify-center items-center">
                     {/* Section Header  */}
@@ -109,11 +227,12 @@ export default function Pricing() {
 
                     {/* Section Content  */}
                     <div className="flex max-sm:flex-col gap-4 items-center mt-10 w-full justify-center">
-                        <Link
-                            href='#plans'
-                            className="flex gap-2 justify-center items-center text-center bg-secondary text-primary py-4 px-8 rounded-lg font-semibold hover:scale-105 transition duration-300 max-sm:w-full"
-                        >Buy A Plan <FaArrowDownLong size={16} /></Link>
-
+                        <button
+                            onClick={() => plansRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                            className="flex gap-2 justify-center items-center text-center bg-secondary text-primary py-4 px-8 rounded-lg font-semibold hover:scale-105 transition duration-300 max-sm:w-full cursor-pointer"
+                        >
+                            View Plans <FaArrowDownLong size={16} />
+                        </button>
                     </div>
 
                     <div className="flex gap-10 max-sm:gap-6 justify-start max-sm:justify-center items-center flex-wrap mt-10">
@@ -148,6 +267,7 @@ export default function Pricing() {
                                 features={plan.features}
                                 isPopular={plan.isPopular}
                                 ctaText={plan.ctaText}
+                                loading={loadingPlan === plan.id}
                                 onSelectPlan={() => handleSelectPlan(plan.id)}
                             />
                         ))}

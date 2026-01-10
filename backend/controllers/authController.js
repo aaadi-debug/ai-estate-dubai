@@ -20,6 +20,7 @@ export const signup = async (req, res) => {
       phone,
       whatsappNumber,
       password: hashedPassword,
+      plan: 'none' // NEW: default plan
     });
 
     await agent.save();
@@ -28,7 +29,13 @@ export const signup = async (req, res) => {
 
     res.status(201).json({
       message: 'Agent created',
-      agent: { id: agent._id, name, email },
+      agent: {
+        id: agent._id,
+        name: agent.name,
+        email: agent.email,
+        phone: agent.phone,
+        plan: agent.plan
+      },
       token,
     });
   } catch (error) {
@@ -51,10 +58,17 @@ export const login = async (req, res) => {
 
     res.json({
       message: 'Login successful',
-      agent: { id: agent._id, name: agent.name, email },
+      agent: {
+        id: agent._id,
+        name: agent.name,
+        email: agent.email,
+        phone: agent.phone,
+        plan: agent.plan || 'none'
+      },
       token,
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Server error' });
   }
 };
