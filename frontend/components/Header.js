@@ -44,6 +44,7 @@ export function Header() {
   // In your sidebar (dashboard/layout.js or wherever)
   const handleLogout = async () => {
     try {
+      // Optional: Call backend to clear cookies
       await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/logout`, {
         method: 'POST',
         credentials: 'include',
@@ -52,11 +53,12 @@ export function Header() {
       console.error('Logout error:', err);
     }
 
-    // Clear localStorage
+    // Immediately Clear localStorage
     localStorage.clear();
 
     // Redirect
-    window.location.href = '/login';
+    // window.location.href = '/login';
+    window.location.replace('/login')
   };
 
   // Determine what to show in the header
