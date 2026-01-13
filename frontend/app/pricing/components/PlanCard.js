@@ -13,6 +13,7 @@ export default function PlanCard({
   isPopular = false,
   ctaText,
   loading,
+  isContactSales = false,
   onSelectPlan
 }) {
   return (
@@ -51,8 +52,8 @@ export default function PlanCard({
         {ctaText}
       </button> */}
       {ctaText && (
-
-        <button
+        <>
+          {/* <button
           onClick={onSelectPlan}
           disabled={loading}
           className={`w-full py-4 px-6 rounded-lg font-bold transition-all mb-8 cursor-pointer ${isPopular
@@ -61,7 +62,33 @@ export default function PlanCard({
             } ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
         >
           {loading ? 'Processing...' : ctaText}
-        </button>
+        </button> */}
+          <button
+            onClick={() => {
+              if (isContactSales) {
+                // Option 1: Simple mailto link
+                window.location.href = `mailto:aiestatedubai5@gmail.com?subject=Elite Plan Inquiry&body=Hi team,%0A%0AI'm interested in the Elite plan ($999/month).%0A%0AAgent Name: ${localStorage.getItem('agentName') || 'N/A'}%0AEmail: ${localStorage.getItem('agentEmail') || 'N/A'}%0APhone: ${localStorage.getItem('agentPhone') || 'N/A'}%0A%0AThanks!`;
+
+                // Option 2: Open WhatsApp (recommended for Dubai users)
+                // window.open('https://wa.me/+918750304088?text=Hi%20team%2C%20I%27m%20interested%20in%20Elite%20plan%20%24999%2Fmonth.%20Agent%3A%20' + (localStorage.getItem('agentName') || 'N/A'), '_blank');
+
+                // Option 3: Show a modal with contact info (best UX)
+                // alert('Please email us at aiestatedubai5@gmail.com or WhatsApp +971-50-123-4567 for Elite plan');
+              } else {
+                onSelectPlan() // your existing Razorpay flow
+              }
+            }}
+            disabled={loading}
+            className={`w-full mb-8 py-4 px-6 rounded-lg font-bold transition-all cursor-pointer ${isPopular
+              ? 'bg-secondary text-primary hover:scale-105'
+              : isContactSales
+                ? 'bg-gray-300 text-black hover:bg-secondary hover:text-primary'   // different color for contact
+                : 'bg-gray-300 text-black hover:bg-secondary hover:text-primary'
+              } ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+          >
+            {loading ? 'Processing...' : ctaText}
+          </button>
+        </>
       )}
 
 

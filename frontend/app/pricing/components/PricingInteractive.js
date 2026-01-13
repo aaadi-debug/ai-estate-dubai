@@ -40,6 +40,7 @@ export default function PricingInteractive() {
         { text: 'White-label Option', included: false }
       ],
       isPopular: false,
+      isContactSales: false,
       ctaText: 'Buy Starter'
     },
     {
@@ -63,6 +64,7 @@ export default function PricingInteractive() {
         { text: 'API Access', included: false }
       ],
       isPopular: true,
+      isContactSales: false,
       ctaText: 'Buy Professional'
     },
     {
@@ -95,7 +97,8 @@ export default function PricingInteractive() {
         { text: 'Custom AI Training (coming Q2 2026)', included: true }
       ],
       isPopular: false,
-      ctaText: 'Buy Elite'
+      isContactSales: true,
+      ctaText: 'Contact Sales'
     }
   ];
 
@@ -146,6 +149,7 @@ export default function PricingInteractive() {
                 features={plan.features}
                 isPopular={plan.isPopular}
                 ctaText={plan.ctaText}
+                isContactSales={plan.isContactSales}
                 onSelectPlan={() => handleSelectPlan(plan.id)}
               />
             ))}
