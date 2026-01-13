@@ -36,7 +36,8 @@ export default function PlanCard({
           <span className="font-playfair font-bold text-5xl text-foreground">{price}</span>
           <span className="text-gray-500 font-body text-lg">USD/{period}</span>
         </div>
-        <p className="text-sm text-gray-500 mt-2">+ ${oneTimeFee} one-time setup fee</p>
+        <p className="text-xs text-gray-600 mt-2">Billed monthly • Cancel anytime</p>
+        {/* <p className="text-sm text-gray-500 mt-2">+ ${oneTimeFee} one-time setup fee</p> */}
       </div>
 
       {/* CTA Button */}

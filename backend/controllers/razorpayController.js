@@ -1,10 +1,8 @@
 // backend/controllers/razorpayController.js  
-
 import Agent from '../models/Agent.js';
 import crypto from 'crypto';
 
-// ──────────────────────── IMPORTANT: NO TOP-LEVEL RAZORPAY INSTANCE ────────────────────────
-
+// ──────────────────────── Razorpay Instance ────────────────────────
 let razorpayInstance = null;
 
 async function getRazorpay() {
@@ -13,7 +11,6 @@ async function getRazorpay() {
       throw new Error('Razorpay keys are missing! Check your .env file.');
     }
 
-    // Dynamic import for ESM compatibility
     const { default: Razorpay } = await import('razorpay');
 
     razorpayInstance = new Razorpay({
@@ -26,118 +23,113 @@ async function getRazorpay() {
   return razorpayInstance;
 }
 
-// ──────────────────────────────────────────────────────────────────────────────────────────────
-
-export const createOrder = async (req, res) => {
-  try {
-    const razorpay = await getRazorpay(); // ← safe here, after dotenv has run
-
-    const { plan, agentId } = req.body;
-
-    if (!plan || !agentId || !planPrices[plan]) {
-      return res.status(400).json({ error: 'Invalid plan or agentId' });
-    }
-
-    // Monthly amount
-    const monthlyAmount = planPricesUSD[plan]; // e.g. 149
-
-    // One-time setup fee per plan (in USD)
-    const setupFees = {
-      starter: 0,
-      professional: 199,
-      elite: 499,
-    };
-
-    const oneTimeFee = setupFees[plan] || 0;
-
-    // Total first payment = monthly + one-time (in USD)
-    const totalFirstPayment = monthlyAmount + oneTimeFee;
-
-    // Convert to paise (Razorpay uses smallest unit)
-    const amountInPaise = totalFirstPayment * 100;
-
-    const order = await razorpay.orders.create({
-      amount: amountInPaise, // convert to paise (USD * 100)
-      currency: 'USD',                   // ← change to USD
-      receipt: `rec_${agentId.slice(-8)}_${Date.now().toString().slice(-6)}`,
-      notes: { 
-        agentId, 
-        plan,
-        monthlyAmount,
-        oneTimeFee,
-        totalFirstPayment 
-      }
-    });
-
-    res.json({
-      success: true,
-      orderId: order.id,
-      amount: order.amount,              // total amount sent to Razorpay
-      displayAmount: totalFirstPayment,  // optional: for frontend display
-      monthlyAmount,
-      oneTimeFee,
-    });
-  } catch (error) {
-    console.error('Create order failed:', error);
-    res.status(500).json({ error: 'Failed to create Razorpay order' });
-  }
-};
-
-export const verifyPayment = async (req, res) => {
-  try {
-    const {
-      razorpay_order_id,
-      razorpay_payment_id,
-      razorpay_signature,
-      agentId,
-      plan
-    } = req.body;
-
-    const sign = crypto
-      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
-      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
-      .digest('hex');
-
-    if (sign === razorpay_signature) {
-      await Agent.findByIdAndUpdate(agentId, { plan });
-      return res.json({ success: true, message: 'Payment verified & plan activated' });
-    }
-
-    return res.status(400).json({ success: false, error: 'Invalid signature' });
-  } catch (error) {
-    console.error('Verify payment failed:', error);
-    res.status(500).json({ error: 'Payment verification failed' });
-  }
-};
-
-// You can keep these if you want (but move them outside functions)
-const planPrices = {
-  starter: 14900,
-  professional: 49900,
-  elite: 99900
-};
-
+// ──────────────────────── Plan Configurations ────────────────────────
+// Monthly amounts in USD (without cents multiplication)
 const planPricesUSD = {
-  starter: 149,     // $149
+  starter: 149,
   professional: 499,
   elite: 999
 };
 
-// ──────────────────────────────────────────────────────────────────────────────────────────────
+// One-time setup fees in USD
+const setupFees = {
+  starter: 0,
+  professional: 199,
+  elite: 499
+};
+
+// Razorpay Plan IDs from .env (paste from dashboard)
+// const PLAN_IDS = {
+//   starter: process.env.RAZORPAY_PLAN_STARTER,
+//   professional: process.env.RAZORPAY_PLAN_PROFESSIONAL,
+//   elite: process.env.RAZORPAY_PLAN_ELITE
+// };
+
+// ──────────────────────── Create Subscription ────────────────────────
+export const createSubscription = async (req, res) => {
+  try {
+    const razorpay = await getRazorpay();
+
+    const { plan, agentId } = req.body;
+
+    // Define PLAN_IDS here — now it reads env at runtime
+    const PLAN_IDS = {
+      starter: process.env.RAZORPAY_PLAN_STARTER,
+      professional: process.env.RAZORPAY_PLAN_PROFESSIONAL,
+      elite: process.env.RAZORPAY_PLAN_ELITE,
+    };
+
+    console.log('[CREATE-SUB] Received body:', req.body); // ← ADD THIS
+    console.log('[CREATE-SUB] Plan:', plan);
+    console.log('[CREATE-SUB] AgentId:', agentId);
+    console.log('[CREATE-SUB] PLAN_IDS:', PLAN_IDS); // ← shows your .env values
+
+    if (!plan || !agentId || !PLAN_IDS[plan]) {
+      console.log('[CREATE-SUB] Validation failed - missing:', {
+        planMissing: !plan,
+        agentIdMissing: !agentId,
+        planIdNotFound: !PLAN_IDS[plan]
+      });
+      return res.status(400).json({ error: 'Invalid plan or agent' });
+    }
+
+    const monthlyAmount = planPricesUSD[plan];
+    // const setupFee = setupFees[plan];
+
+    // Create subscription - starts IMMEDIATELY (no start_at)
+    const subscription = await razorpay.subscriptions.create({
+      plan_id: PLAN_IDS[plan],
+      total_count: 999, // Practically unlimited (Razorpay max is 999)
+      quantity: 1,
+      customer_notify: 1, // Send emails/SMS to customer
+      // start_at: Math.floor(Date.now() / 1000) + 300, // Start after 5 mins (for testing)
+      notes: {
+        agentId,
+        plan,
+        monthlyAmount,
+        // setupFee
+      },
+      // addons: setupFee > 0 ? [{
+      //   item: {
+      //     name: `${plan} Setup Fee`,
+      //     amount: setupFee * 100, // in paise/cent
+      //     currency: 'USD',
+      //   }
+      // }] : [],
+    });
+
+    res.json({
+      success: true,
+      subscriptionId: subscription.id,
+      short_url: subscription.short_url, // Razorpay hosted payment page URL
+      firstPaymentAmount: monthlyAmount * 100, // total first in paise
+      monthlyAmount,          // ← add this
+      // setupFee                // ← add this
+    });
+  } catch (error) {
+    console.error('Create subscription failed:', error);
+    // Better error message for frontend
+    const message = error?.error?.description || 'Razorpay subscription error';
+    res.status(500).json({ error: message });
+  }
+};
+
+// ──────────────────────── Verify Payment (Optional for Subscriptions) ────────────────────────
+export const verifyPayment = async (req, res) => {
+  // Keep if you need manual verification, but subscriptions handle via webhook
+  // ... your existing code ...
+};
+
+// ──────────────────────── Webhook Handler ────────────────────────
 export const handleSubscriptionWebhook = async (req, res) => {
   try {
     const signature = req.headers['x-razorpay-signature'];
     const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
 
-    if (!webhookSecret) {
-      console.error('Webhook secret missing in .env');
-      return res.status(500).send('Server error');
-    }
-
     // Verify signature
     const isValid = crypto
       .createHmac('sha256', webhookSecret)
-      .update(JSON.stringify(req.body))
+      .update(req.body)
       .digest('hex') === signature;
 
     if (!isValid) {
@@ -148,22 +140,21 @@ export const handleSubscriptionWebhook = async (req, res) => {
     const event = req.body.event;
     const payload = req.body.payload;
 
-    console.log('[WEBHOOK] Received event:', event);
+    console.log('[WEBHOOK] Event:', event);
 
     if (event === 'subscription.activated') {
       const sub = payload.subscription.entity;
-      const notes = sub.notes;
+      const notes = sub.notes || {};
       const agentId = notes.agentId;
       const plan = notes.plan;
 
       if (agentId && plan) {
+        const nextBilling = new Date(sub.current_end * 1000);
         await Agent.findByIdAndUpdate(agentId, {
           plan,
-          planExpiry: new Date(sub.current_end * 1000), // next billing date
+          planExpiry: nextBilling,
         });
-        console.log(`[WEBHOOK] Plan activated for agent ${agentId}: ${plan}`);
-      } else {
-        console.error('[WEBHOOK] Missing agentId or plan in notes');
+        console.log(`[WEBHOOK] Activated ${plan} for agent ${agentId} - first charge successful, next due: ${nextBilling}`);
       }
     }
 
@@ -173,18 +164,15 @@ export const handleSubscriptionWebhook = async (req, res) => {
 
       if (agentId) {
         await Agent.findByIdAndUpdate(agentId, { plan: 'none' });
-        console.log(`[WEBHOOK] Subscription cancelled for agent ${agentId}`);
+        console.log(`[WEBHOOK] Cancelled subscription for agent ${agentId}`);
       }
     }
 
-    if (event === 'payment.failed') {
-      // Optional: notify admin/agent
-      console.log('[WEBHOOK] Payment failed:', payload.payment.entity.id);
-    }
-
-    res.status(200).send('Webhook received');
+    res.status(200).send('OK');
   } catch (error) {
-    console.error('[WEBHOOK] Error:', error);
+    console.error('Webhook error:', error);
     res.status(500).send('Webhook error');
   }
 };
+
+// Remove old planPrices (not needed for subscriptions)

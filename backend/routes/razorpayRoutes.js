@@ -1,11 +1,11 @@
 // backend/routes/razorpayRoutes.js
 import express from 'express';
-import { createOrder, verifyPayment, handleSubscriptionWebhook } from '../controllers/razorpayController.js';
+import { createSubscription, handleSubscriptionWebhook, verifyPayment } from '../controllers/razorpayController.js';
 
 const router = express.Router();
 
-router.post('/create-order', createOrder);
-router.post('/verify-payment', verifyPayment);
-router.post('/webhook', express.raw({ type: 'application/json' }), handleSubscriptionWebhook); // ← NEW
+router.post('/create-subscription', createSubscription); // NEW
+router.post('/verify-payment', verifyPayment); // Optional
+router.post('/webhook', handleSubscriptionWebhook); // Add this
 
 export default router;

@@ -6,7 +6,7 @@ import { IoCloseCircle } from "react-icons/io5";
 export default function BuyPlanCard({
     name,
     price,
-    oneTimeFee,
+    // oneTimeFee,
     period,
     description,
     features,
@@ -45,12 +45,13 @@ export default function BuyPlanCard({
                     <span className="font-playfair text-5xl font-bold">{price}</span>
                     <span className="text-gray-500">USD/{period}</span>
                 </div>
+                <p className="text-xs text-gray-600 mt-2">Billed monthly • Cancel anytime</p>
                 {/* {oneTimeFee > 0 && ( */}
-                <div className="mt-2 text-sm text-gray-600">
+                {/* <div className="mt-2 text-sm text-gray-600">
                     + ${oneTimeFee} one-time setup fee
                     <br />
                     <span className="text-xs text-gray-500">(First payment: ${(Number(price) + oneTimeFee).toFixed(2)} USD)</span>
-                </div>
+                </div> */}
                 {/* )} */}
             </div>
 

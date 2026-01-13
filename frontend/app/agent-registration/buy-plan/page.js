@@ -52,79 +52,90 @@ export default function Pricing() {
         setLoadingPlan(planId);
 
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/razorpay/create-order`, {
+            console.log('Creating subscription for:', { plan: planId, agentId });
+
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/razorpay/create-subscription`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ plan: planId, agentId })
+                body: JSON.stringify({ plan: planId, agentId }),
+                credentials: 'include',
             });
 
             if (!res.ok) {
                 const errorData = await res.json();
-                alert('Error: ' + (errorData.error || 'Failed to create order'));
+                alert('Error: ' + (errorData.error || 'Failed to create subscription'));
                 setLoadingPlan(null);
                 return;
             }
+            // const { short_url, firstPaymentAmount, monthlyAmount, setupFee } = await res.json();
+            const { short_url, firstPaymentAmount, monthlyAmount } = await res.json();
 
-            const { orderId, amount } = await res.json();
+            // Optional: Show friendly message before redirect
+            // alert(`You will be charged $${monthlyAmount} USD immediately to start your ${planNames[planId]} plan. Future payments will be monthly. Proceed to payment page?`);
+
+            // Redirect to Razorpay hosted subscription checkout page
+            window.location.href = short_url;
+
+            // const { orderId, amount } = await res.json();
 
             // Load script dynamically
-            const script = document.createElement('script');
-            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-            script.onload = () => {
-                const options = {
-                    key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // Must be public/test key
-                    amount,
-                    currency: 'INR',
-                    name: 'AI Estate Dubai',
-                    description: `${planNames[planId] || 'Plan'} Subscription`,
-                    order_id: orderId,
-                    handler: async (response) => {
-                        // Verify on backend
-                        try {
-                            const verifyRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/razorpay/verify-payment`, {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    razorpay_order_id: response.razorpay_order_id,
-                                    razorpay_payment_id: response.razorpay_payment_id,
-                                    razorpay_signature: response.razorpay_signature,
-                                    agentId,
-                                    plan: planId
-                                })
-                            });
+            // const script = document.createElement('script');
+            // script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+            // script.onload = () => {
+            //     const options = {
+            //         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, // Must be public/test key
+            //         amount,
+            //         currency: 'INR',
+            //         name: 'AI Estate Dubai',
+            //         description: `${planNames[planId] || 'Plan'} Subscription`,
+            //         order_id: orderId,
+            //         handler: async (response) => {
+            //             // Verify on backend
+            //             try {
+            //                 const verifyRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/razorpay/verify-payment`, {
+            //                     method: 'POST',
+            //                     headers: { 'Content-Type': 'application/json' },
+            //                     body: JSON.stringify({
+            //                         razorpay_order_id: response.razorpay_order_id,
+            //                         razorpay_payment_id: response.razorpay_payment_id,
+            //                         razorpay_signature: response.razorpay_signature,
+            //                         agentId,
+            //                         plan: planId
+            //                     })
+            //                 });
 
-                            const verifyData = await verifyRes.json();
+            //                 const verifyData = await verifyRes.json();
 
-                            if (verifyData.success) {
-                                alert('Payment successful! Plan activated.');
-                                localStorage.setItem('plan', planId);
-                                window.location.href = '/agent/dashboard';
-                            } else {
-                                alert('Payment verification failed: ' + (verifyData.error || 'Unknown error'));
-                            }
-                        } catch (err) {
-                            alert('Verification error');
-                        }
-                    },
-                    prefill: {
-                        name: localStorage.getItem('agentName') || 'Agent',
-                        email: localStorage.getItem('agentEmail') || 'agent@example.com',
-                        contact: localStorage.getItem('agentPhone') || '+919876543210'
-                    },
-                    theme: { color: '#FFD700' }
-                };
+            //                 if (verifyData.success) {
+            //                     alert('Payment successful! Plan activated.');
+            //                     localStorage.setItem('plan', planId);
+            //                     window.location.href = '/agent/dashboard';
+            //                 } else {
+            //                     alert('Payment verification failed: ' + (verifyData.error || 'Unknown error'));
+            //                 }
+            //             } catch (err) {
+            //                 alert('Verification error');
+            //             }
+            //         },
+            //         prefill: {
+            //             name: localStorage.getItem('agentName') || 'Agent',
+            //             email: localStorage.getItem('agentEmail') || 'agent@example.com',
+            //             contact: localStorage.getItem('agentPhone') || '+919876543210'
+            //         },
+            //         theme: { color: '#FFD700' }
+            //     };
 
-                const rzp = new window.Razorpay(options);
-                rzp.open();
-            };
-            script.onerror = () => {
-                alert('Failed to load Razorpay checkout');
-            };
-            document.body.appendChild(script);
+            //     const rzp = new window.Razorpay(options);
+            //     rzp.open();
+            // };
+            // script.onerror = () => {
+            //     alert('Failed to load Razorpay checkout');
+            // };
+            // document.body.appendChild(script);
 
         } catch (err) {
-            console.error(err);
-            alert('Error initiating payment');
+            console.error('Subscription error:', err);
+            alert('Error initiating subscription');
         } finally {
             setLoadingPlan(null);
         }
@@ -135,7 +146,7 @@ export default function Pricing() {
             id: 'starter',
             name: 'Starter',
             price: '149',
-            oneTimeFee: 0,
+            // oneTimeFee: 0,
             period: 'month',
             description: 'Perfect for individual agents testing AI lead capture',
             features: [
@@ -183,7 +194,7 @@ export default function Pricing() {
             id: 'elite',
             name: 'Elite',
             price: '999',
-            oneTimeFee: 499,
+            // oneTimeFee: 499,
             period: 'month',
             description: 'Premium solution for top-performing agents and teams',
             features: [
@@ -223,7 +234,7 @@ export default function Pricing() {
                             key={plan.id}
                             name={plan.name}
                             price={plan.price}
-                            oneTimeFee={plan.oneTimeFee}
+                            // oneTimeFee={plan.oneTimeFee}
                             period={plan.period}
                             description={plan.description}
                             features={plan.features}
@@ -245,7 +256,7 @@ export default function Pricing() {
                                 key={plan.id}
                                 name={plan.name}
                                 price={plan.price}
-                                oneTimeFee={plan.oneTimeFee}
+                                // oneTimeFee={plan.oneTimeFee}
                                 period={plan.period}
                                 description={plan.description}
                                 features={plan.features}
