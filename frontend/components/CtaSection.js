@@ -37,15 +37,15 @@ const CtaSection = ({ className = '' }) => {
                         Ready to Transform Your <span className="text-secondary">Real Estate Business?</span>
                     </h2>
                     <p className="text-gray-500 mt-6 lg:text-lg text-center max-w-3xl">
-                        Join 500+ elite Dubai agents who never miss a lead. Start your free trial today—no credit card required.
+                        Join 500+ elite Dubai agents who never miss a lead. Start your journey today.
                     </p>
                 </div>
 
                 {/* Stats */}
                 <div className="grid grid-cols-3 gap-6 mb-10 max-w-2xl mx-auto mt-6">
                     <div className="text-center">
-                        <div className="font-playfair font-bold text-3xl text-secondary mb-1">14 Days</div>
-                        <div className="text-sm text-gray-400">Free Trial</div>
+                        <div className="font-playfair font-bold text-3xl text-secondary mb-1">$149</div>
+                        <div className="text-sm text-gray-400">Starting Package</div>
                     </div>
                     <div className="text-center">
                         <div className="font-playfair font-bold text-3xl text-secondary mb-1">5 Min</div>
@@ -60,12 +60,11 @@ const CtaSection = ({ className = '' }) => {
                 {/* CTA Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
                     {!isLoggedIn && (
-
                         <Link
                             href="/signup"
                             className="inline-flex items-center justify-center space-x-2 px-8 py-4 bg-secondary text-primary rounded-lg font-semibold hover:scale-105 hover:shadow-2xl transition-all duration-300"
                         >
-                            <span>Start Free Trial</span>
+                            <span>Start Here</span>
                             <FaArrowRightLong size={20} />
                         </Link>
                     )}

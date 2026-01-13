@@ -4,7 +4,7 @@ import { Header } from '@/components/Header';
 import Footer from "@/components/Footer";
 
 export const metadata = {
-  title: 'AI Estate Dubai | AI Chatbot for Real Estate Agents',
+  title: 'AI Estate Dubai | AI-Powered Real Estate Intelligence',
   description: 'Never lose a lead again. AI-powered chatbot that captures, qualifies, and books appointments 24/7.',
 };
 

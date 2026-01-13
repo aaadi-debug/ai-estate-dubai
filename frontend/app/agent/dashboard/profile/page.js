@@ -1,135 +1,286 @@
+// frontend/app/dashboard/profile/page.js
 'use client';
-import { useEffect, useState } from 'react';
-import { Pencil, Save, User, Mail, Phone, Globe, Building, FileText } from 'lucide-react';
 
-export default function Profile() {
+import { useEffect, useState } from 'react';
+import { User, Mail, Phone, FileText, Building, Globe, Save, Pencil, Camera } from 'lucide-react';
+
+export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
   const [profile, setProfile] = useState({
     name: '',
     email: '',
     phone: '',
+    whatsappNumber: '',
     bio: '',
-    agency: '',
+    agencyName: '',
     reraNumber: '',
-    profilePhoto: '', // URL or base64
+    profilePhoto: '/default-avatar.png', // fallback
   });
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch profile data from backend
-    const fetchProfile = async () => {
-      try {
-        const agentId = localStorage.getItem('agentId');
-        const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/agents/profile/${agentId}`);
-        if (res.ok) {
-          const data = await res.json();
-          setProfile(data);
-        }
-      } catch (err) {
-        console.error('Failed to fetch profile:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchProfile();
+    const agentId = localStorage.getItem('agentId');
+    if (!agentId) {
+      window.location.href = '/login';
+      return;
+    }
+
+    fetchProfile(agentId);
   }, []);
 
-  const handleInputChange = (e) => {
-    setProfile({ ...profile, [e.target.name]: e.target.value });
-  };
-
-  const handleSave = async () => {
+  const fetchProfile = async (agentId) => {
     try {
-      const agentId = localStorage.getItem('agentId');
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/agents/profile/${agentId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(profile),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/agents/profile/${agentId}`
+      );
       if (res.ok) {
-        setIsEditing(false);
-        alert('Profile updated!');
+        const data = await res.json();
+        setProfile({
+          name: data.name || '',
+          email: data.email || '',
+          phone: data.phone || '',
+          whatsappNumber: data.whatsappNumber || '',
+          bio: data.bio || '',
+          agencyName: data.agencyName || '',
+          reraNumber: data.reraNumber || '',
+          profilePhoto: data.profilePhoto || '/default-avatar.png',
+        });
       }
     } catch (err) {
-      console.error('Failed to update profile:', err);
-      alert('Update failed');
+      console.error('Failed to load profile:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (loading) return <p>Loading profile...</p>;
+  const handleChange = (e) => {
+    setProfile(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    const agentId = localStorage.getItem('agentId');
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/agents/profile/${agentId}`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(profile),
+        }
+      );
+
+      if (res.ok) {
+        const updated = await res.json();
+        setProfile(updated.agent);
+        setIsEditing(false);
+        localStorage.setItem('agentName', updated.agent.name);
+        alert('Profile updated successfully!');
+      } else {
+        alert('Failed to update profile');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Something went wrong');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="p-10 flex justify-center items-center min-h-[60vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-secondary"></div>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-4xl mx-auto p-8 bg-white rounded-lg shadow-md">
-      <h1 className="text-3xl font-bold mb-6">My Profile</h1>
-      <div className="flex gap-6">
-        <div className="w-1/3">
-          <img
-            src={profile.profilePhoto || '/placeholder-avatar.jpg'}
-            alt="Profile Photo"
-            className="w-full rounded-full"
-          />
-          {isEditing && (
-            <input
-              type="file"
-              onChange={(e) => {/* Handle photo upload */}}
-              className="mt-4"
-            />
-          )}
+    <div className="p-6 md:p-8 lg:p-10">
+      <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-sm border">
+        {/* Header */}
+        <div className="p-8 border-b flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+          <div>
+            <h1 className="text-3xl font-bold">My Profile</h1>
+            <p className="text-gray-500 mt-1">Manage your personal and professional information</p>
+          </div>
+
+          <button
+            onClick={() => isEditing ? handleSave() : setIsEditing(true)}
+            disabled={saving}
+            className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${
+              isEditing
+                ? 'bg-green-600 hover:bg-green-700 text-white'
+                : 'bg-secondary hover:bg-secondary/90 text-primary'
+            } disabled:opacity-60`}
+          >
+            {saving ? (
+              'Saving...'
+            ) : isEditing ? (
+              <>
+                <Save size={18} /> Save Changes
+              </>
+            ) : (
+              <>
+                <Pencil size={18} /> Edit Profile
+              </>
+            )}
+          </button>
         </div>
-        <div className="w-2/3">
-          <div className="space-y-4">
-            <div className="flex items-center gap-2">
-              <User size={20} />
-              {isEditing ? (
-                <input name="name" value={profile.name} onChange={handleInputChange} className="border p-2 w-full" />
-              ) : (
-                <p>{profile.name}</p>
-              )}
+
+        <div className="p-8">
+          <div className="grid md:grid-cols-3 gap-10">
+            {/* Left - Photo */}
+            <div className="md:col-span-1 flex flex-col items-center">
+              <div className="relative group">
+                <img
+                  src={profile.profilePhoto}
+                  alt="Profile"
+                  className="w-48 h-48 rounded-full object-cover border-4 border-gray-200 shadow-md"
+                />
+                {isEditing && (
+                  <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button className="bg-white text-gray-800 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+                      <Camera size={18} /> Change Photo
+                    </button>
+                  </div>
+                )}
+              </div>
+              <p className="mt-4 text-sm text-gray-500">Recommended: 400×400px</p>
             </div>
-            <div className="flex items-center gap-2">
-              <Mail size={20} />
-              <p>{profile.email}</p> {/* Email usually not editable */}
-            </div>
-            <div className="flex items-center gap-2">
-              <Phone size={20} />
-              {isEditing ? (
-                <input name="phone" value={profile.phone} onChange={handleInputChange} className="border p-2 w-full" />
-              ) : (
-                <p>{profile.phone}</p>
-              )}
-            </div>
-            <div className="flex items-center gap-2">
-              <FileText size={20} />
-              {isEditing ? (
-                <textarea name="bio" value={profile.bio} onChange={handleInputChange} className="border p-2 w-full" />
-              ) : (
-                <p>{profile.bio}</p>
-              )}
-            </div>
-            <div className="flex items-center gap-2">
-              <Building size={20} />
-              {isEditing ? (
-                <input name="agency" value={profile.agency} onChange={handleInputChange} className="border p-2 w-full" />
-              ) : (
-                <p>{profile.agency}</p>
-              )}
-            </div>
-            <div className="flex items-center gap-2">
-              <Globe size={20} />
-              {isEditing ? (
-                <input name="reraNumber" value={profile.reraNumber} onChange={handleInputChange} className="border p-2 w-full" />
-              ) : (
-                <p>{profile.reraNumber}</p>
-              )}
+
+            {/* Right - Fields */}
+            <div className="md:col-span-2 space-y-7">
+              {/* Name */}
+              <div className="flex gap-4 items-start">
+                <User size={24} className="text-gray-500 mt-1" />
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                  {isEditing ? (
+                    <input
+                      name="name"
+                      value={profile.name}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-secondary outline-none"
+                    />
+                  ) : (
+                    <p className="text-lg font-medium">{profile.name || '—'}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Email */}
+              <div className="flex gap-4 items-start">
+                <Mail size={24} className="text-gray-500 mt-1" />
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                  <p className="text-lg text-gray-600">{profile.email}</p>
+                </div>
+              </div>
+
+              {/* Phone & WhatsApp */}
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="flex gap-4 items-start">
+                  <Phone size={24} className="text-gray-500 mt-1" />
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                    {isEditing ? (
+                      <input
+                        name="phone"
+                        value={profile.phone}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-secondary outline-none"
+                      />
+                    ) : (
+                      <p className="text-lg">{profile.phone || '—'}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex gap-4 items-start">
+                  <Phone size={24} className="text-gray-500 mt-1" />
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">WhatsApp Number</label>
+                    {isEditing ? (
+                      <input
+                        name="whatsappNumber"
+                        value={profile.whatsappNumber}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-secondary outline-none"
+                      />
+                    ) : (
+                      <p className="text-lg">{profile.whatsappNumber || '—'}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Bio */}
+              <div className="flex gap-4 items-start">
+                <FileText size={24} className="text-gray-500 mt-1" />
+                <div className="flex-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Bio</label>
+                  {isEditing ? (
+                    <textarea
+                      name="bio"
+                      value={profile.bio}
+                      onChange={handleChange}
+                      rows={4}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-secondary outline-none resize-none"
+                      placeholder="Tell something about yourself..."
+                    />
+                  ) : (
+                    <p className="text-gray-700 whitespace-pre-wrap">
+                      {profile.bio || 'No bio added yet.'}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Agency & RERA */}
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="flex gap-4 items-start">
+                  <Building size={24} className="text-gray-500 mt-1" />
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Agency Name</label>
+                    {isEditing ? (
+                      <input
+                        name="agencyName"
+                        value={profile.agencyName}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-secondary outline-none"
+                      />
+                    ) : (
+                      <p className="text-lg">{profile.agencyName || '—'}</p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex gap-4 items-start">
+                  <Globe size={24} className="text-gray-500 mt-1" />
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">RERA Number</label>
+                    {isEditing ? (
+                      <input
+                        name="reraNumber"
+                        value={profile.reraNumber}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-secondary outline-none"
+                      />
+                    ) : (
+                      <p className="text-lg">{profile.reraNumber || '—'}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-          <button
-            onClick={isEditing ? handleSave : () => setIsEditing(true)}
-            className="mt-6 bg-secondary text-primary py-2 px-4 rounded flex items-center gap-2"
-          >
-            {isEditing ? <Save size={20} /> : <Pencil size={20} />}
-            {isEditing ? 'Save Changes' : 'Edit Profile'}
-          </button>
         </div>
       </div>
     </div>

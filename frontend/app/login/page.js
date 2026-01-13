@@ -49,13 +49,14 @@ export default function Login() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
+        credentials: 'include'  // ← THIS IS MISSING! Add it
       });
 
       const data = await res.json();
 
       if (res.ok) {
         const { token, agent } = data;
-        
+
         localStorage.setItem('token', token);
         localStorage.setItem('agentId', agent.id);
         localStorage.setItem('plan', agent.plan || 'none');
@@ -63,14 +64,22 @@ export default function Login() {
         localStorage.setItem('agentEmail', agent.email || 'agent@example.com');
         localStorage.setItem('agentPhone', agent.phone || '+919876543210');
 
-        setMessage('Success! Redirecting to dashboard...');
+        setMessage('Success! Redirecting...');
 
-        // Redirect based on plan
-        if (data.agent.plan && data.agent.plan !== 'none') {
-          setTimeout(() => window.location.href = '/dashboard', 1500);
-        } else {
-          setTimeout(() => window.location.href = '/agent-registration/buy-plan', 1500); // or /checkout
-        }
+        // // Decide redirect based on plan
+        // if (data.agent.plan && data.agent.plan !== 'none') {
+        //   setTimeout(() => window.location.href = '/agent/dashboard', 1500);
+        // } else {
+        //   setTimeout(() => window.location.href = '/agent-registration/buy-plan', 1500); // or /checkout
+        // }
+        // Decide redirect based on plan
+        const targetPath = (agent.plan && agent.plan !== 'none')
+          ? '/agent/dashboard'                  // has plan → dashboard
+          : '/agent-registration/buy-plan'; // no plan → buy plan
+
+        setTimeout(() => {
+          window.location.href = targetPath;
+        }, 1500);
       } else {
         setMessage(data.error || 'Invalid email or password');
         setErrors({ server: data.error || 'Invalid email or password' });

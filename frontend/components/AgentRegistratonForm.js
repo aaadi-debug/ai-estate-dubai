@@ -97,8 +97,8 @@ export default function AgentRegistratonForm() {
         localStorage.setItem('agentEmail', agent.email || 'agent@example.com');
         localStorage.setItem('agentPhone', agent.phone || '+919876543210');
 
-        setMessage('Success! Redirecting to dashboard...');
-        setTimeout(() => window.location.href = '/agent-registration/buy-plan', 1500);
+        setMessage('Success! Redirecting to login...');
+        setTimeout(() => window.location.href = '/login', 1500);
       } else {
         setMessage(data.error || 'Registration failed');
         setErrors({ server: data.error || 'Registration failed' });

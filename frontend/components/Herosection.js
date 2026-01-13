@@ -55,7 +55,7 @@ export function Herosection() {
                             <Link
                                 href='/signup'
                                 className="flex gap-2 justify-center items-center text-center bg-secondary text-primary py-4 px-8 rounded-lg font-semibold hover:scale-105 transition duration-300 max-sm:w-full"
-                            >Start Free Trial <FaArrowRightLong size={16} /></Link>
+                            >Start Here <FaArrowRightLong size={16} /></Link>
                         )}
 
                         {!isLoggedIn ? (

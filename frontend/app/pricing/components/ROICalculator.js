@@ -6,6 +6,7 @@ import { AiFillDollarCircle } from "react-icons/ai";
 import { BsBarChartFill } from "react-icons/bs";
 import { FaTrophy } from "react-icons/fa";
 import { FaArrowRightLong } from "react-icons/fa6";
+import Link from 'next/link';
 
 export default function ROICalculator() {
   const [isHydrated, setIsHydrated] = useState(false);
@@ -214,12 +215,12 @@ export default function ROICalculator() {
           {/* Bottom CTA */}
           <div className="mt-8 pt-8 border-t border-border text-center">
             <p className="text-gray-500 font-body mb-4">
-              Ready to achieve these results? Start your free trial today.
+              Ready to achieve these results? Start your journey today.
             </p>
-            <button className="px-8 py-4 bg-secondary text-primary rounded-lg font-semibold text-lg hover:scale-105 transition-all duration-300 inline-flex items-center space-x-2 cursor-pointer">
-              <span>Start Free Trial</span>
+            <Link href='/signup' className="px-8 py-4 bg-secondary text-primary rounded-lg font-semibold text-lg hover:scale-105 transition-all duration-300 inline-flex items-center space-x-2 cursor-pointer">
+              <span>Start Here</span>
               <FaArrowRightLong name="ArrowRightIcon" size={20} variant="outline" />
-            </button>
+            </Link>
           </div>
         </div>
       </div>

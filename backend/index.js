@@ -13,15 +13,24 @@ import authRoutes from './routes/authRoutes.js';
 import razorpayRoutes from './routes/razorpayRoutes.js';
 
 dotenv.config();
-console.log("RAZORPAY_KEY_ID     →", process.env.RAZORPAY_KEY_ID ? 'exists' : 'MISSING!');
-console.log("RAZORPAY_KEY_SECRET →", process.env.RAZORPAY_KEY_SECRET ? 'exists' : 'MISSING!');
+// console.log("RAZORPAY_KEY_ID     →", process.env.RAZORPAY_KEY_ID ? 'exists' : 'MISSING!');
+// console.log("RAZORPAY_KEY_SECRET →", process.env.RAZORPAY_KEY_SECRET ? 'exists' : 'MISSING!');
+
+// At the top, after dotenv.config()
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 
 const app = express();
 
 // Middleware
+// app.use(cors({
+//   origin: true,
+//   credentials: true
+// }));
 app.use(cors({
-  origin: true,
-  credentials: true
+  origin: FRONTEND_URL,  // ← your frontend URL (hardcode in dev)
+  credentials: true,                // ← MUST be true for cookies
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 app.use(express.json());
 app.use(cookieParser());
@@ -60,6 +69,7 @@ app.use('/api/auth', authRoutes);
 // Apply only to leads endpoint
 app.use('/api/leads/new', leadLimiter);
 app.use('/api/razorpay', razorpayRoutes);
+app.use('/api/razorpay/webhook', express.raw({ type: 'application/json' }), razorpayRoutes); // ← add this line
 
 app.get('/', (req, res) => {
   res.send('🚀 AI Estate Dubai Backend Running!');

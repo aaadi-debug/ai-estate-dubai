@@ -8,6 +8,7 @@ import { House, CircleDollarSign, Mail, ShieldCheck, Lock, CircleCheck, Ellipsis
 
 import Link from "next/link";
 import PlanCard from '@/app/pricing/components/PlanCard';
+import BuyPlanCard from '@/components/BuyPlanCard';
 
 export default function Pricing() {
     const plansRef = useRef(null);
@@ -97,7 +98,7 @@ export default function Pricing() {
                             if (verifyData.success) {
                                 alert('Payment successful! Plan activated.');
                                 localStorage.setItem('plan', planId);
-                                window.location.href = '/dashboard';
+                                window.location.href = '/agent/dashboard';
                             } else {
                                 alert('Payment verification failed: ' + (verifyData.error || 'Unknown error'));
                             }
@@ -216,39 +217,22 @@ export default function Pricing() {
         <>
             {/* Hero Section */}
             <section className="bg-primary py-20 2xl:px-32 xl:px-28 lg:px-20 md:px-10 px-6 2xl:mt-20 xl:mt-16 lg:mt-16 mt-12 relative">
-                <div className="flex flex-col justify-center items-center">
-                    {/* Section Header  */}
-                    <h1 className="2xl:text-[60px] xl:text-[60px] lg:text-[48px] md:text-[64px] text-[36px] text-white mt-6 font-playfair font-semibold leading-none text-center">
-                        Start Your <span className="text-secondary">Journey</span>
-                    </h1>
-                    <p className="text-gray-500 mt-6 lg:text-lg max-w-3xl text-center">
-                        Choose the perfect plan to capture every lead, maximize conversions, and dominate Dubai's luxury real estate market. Trusted by 500+ elite agents.
-                    </p>
-
-                    {/* Section Content  */}
-                    <div className="flex max-sm:flex-col gap-4 items-center mt-10 w-full justify-center">
-                        <button
-                            onClick={() => plansRef.current?.scrollIntoView({ behavior: 'smooth' })}
-                            className="flex gap-2 justify-center items-center text-center bg-secondary text-primary py-4 px-8 rounded-lg font-semibold hover:scale-105 transition duration-300 max-sm:w-full cursor-pointer"
-                        >
-                            View Plans <FaArrowDownLong size={16} />
-                        </button>
-                    </div>
-
-                    <div className="flex gap-10 max-sm:gap-6 justify-start max-sm:justify-center items-center flex-wrap mt-10">
-                        <div className="flex gap-2 items-center text-gray-400 text-sm">
-                            <span className="text-green-500"><ShieldCheck size={20} /></span>
-                            UAE Certified
-                        </div>
-                        <div className="flex gap-2 items-center text-gray-400 text-sm">
-                            <span className="text-yellow-500"><CircleCheck size={20} /></span>
-                            WhatsApp Partner
-                        </div>
-                        <div className="flex gap-2 items-center text-gray-400 text-sm">
-                            <span className="text-green-500"><Lock size={20} /></span>
-                            GDPR Compliant
-                        </div>
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {plans.map((plan) => (
+                        <BuyPlanCard
+                            key={plan.id}
+                            name={plan.name}
+                            price={plan.price}
+                            oneTimeFee={plan.oneTimeFee}
+                            period={plan.period}
+                            description={plan.description}
+                            features={plan.features}
+                            isPopular={plan.isPopular}
+                            ctaText={plan.ctaText}
+                            loading={loadingPlan === plan.id}
+                            onSelectPlan={() => handleSelectPlan(plan.id)}
+                        />
+                    ))}
                 </div>
             </section>
 
@@ -266,7 +250,7 @@ export default function Pricing() {
                                 description={plan.description}
                                 features={plan.features}
                                 isPopular={plan.isPopular}
-                                ctaText={plan.ctaText}
+                                // ctaText={plan.ctaText}
                                 loading={loadingPlan === plan.id}
                                 onSelectPlan={() => handleSelectPlan(plan.id)}
                             />

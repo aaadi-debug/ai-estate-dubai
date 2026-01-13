@@ -1,3 +1,4 @@
+// frontend/app/widget/page.js
 'use client';
 
 import { Suspense } from 'react';

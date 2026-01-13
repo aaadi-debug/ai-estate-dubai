@@ -40,7 +40,7 @@ export default function PricingInteractive() {
         { text: 'White-label Option', included: false }
       ],
       isPopular: false,
-      ctaText: 'Start Free Trial'
+      ctaText: 'Buy Starter'
     },
     {
       id: 'professional',
@@ -63,7 +63,7 @@ export default function PricingInteractive() {
         { text: 'API Access', included: false }
       ],
       isPopular: true,
-      ctaText: 'Start Free Trial'
+      ctaText: 'Buy Professional'
     },
     {
       id: 'elite',
@@ -95,7 +95,7 @@ export default function PricingInteractive() {
         { text: 'Custom AI Training (coming Q2 2026)', included: true }
       ],
       isPopular: false,
-      ctaText: 'Contact Sales'
+      ctaText: 'Buy Elite'
     }
   ];
 

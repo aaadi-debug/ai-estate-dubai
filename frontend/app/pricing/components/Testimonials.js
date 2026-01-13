@@ -3,6 +3,7 @@
 import { Star, MessageSquareText, ArrowRight } from 'lucide-react';
 import { PiChats } from "react-icons/pi";
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function Testimonials() {
     const testimonials = [
@@ -124,10 +125,10 @@ export default function Testimonials() {
                     <p className="text-white text-lg mb-6">
                         Join 500+ elite agents who never miss a lead
                     </p>
-                    <button className="px-8 py-4 bg-secondary text-primary rounded-lg font-semibold text-lg hover:scale-105 transition-all duration-300 inline-flex items-center space-x-2 cursor-pointer">
+                    <Link href='/signup' className="px-8 py-4 bg-secondary text-primary rounded-lg font-semibold text-lg hover:scale-105 transition-all duration-300 inline-flex items-center space-x-2 cursor-pointer">
                         <span>Start Your Success Story</span>
                         <ArrowRight size={20} />
-                    </button>
+                    </Link>
                 </div>
             </div>
         </section>

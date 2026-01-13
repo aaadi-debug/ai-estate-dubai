@@ -1,3 +1,4 @@
+// frontend/components/chat/ChatWidget.js
 'use client';
 
 import { useState, useEffect, useRef } from 'react';

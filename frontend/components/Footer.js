@@ -23,7 +23,7 @@ const Footer = ({ className = '' }) => {
         company: [
             { label: 'About Us', href: '/homepage#about' },
             { label: 'Case Studies', href: '/homepage#testimonials' },
-            { label: 'Contact', href: '/contact' },
+            { label: 'Contact', href: '/contact-us' },
             { label: 'Security', href: '/security' }
         ],
         legal: [
@@ -193,7 +193,7 @@ const Footer = ({ className = '' }) => {
                             <Link href="/terms-and-conditions" className="text-sm text-gray-400 hover:text-accent transition-colors duration-300">
                                 Terms
                             </Link>
-                            <Link href="/cookies" className="text-sm text-gray-400 hover:text-accent transition-colors duration-300">
+                            <Link href="/cookies-policy" className="text-sm text-gray-400 hover:text-accent transition-colors duration-300">
                                 Cookies
                             </Link>
                         </div>

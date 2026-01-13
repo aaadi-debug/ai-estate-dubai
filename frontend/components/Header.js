@@ -10,7 +10,6 @@ import { IoSearch, IoMenu } from "react-icons/io5";
 
 export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [plan, setPlan] = useState('none')
 
@@ -33,15 +32,142 @@ export function Header() {
     setPlan(storedPlan)
   }, [])
 
-  const handleLogout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('agentId')
-    localStorage.removeItem('plan')
-    localStorage.removeItem('agentName')
-    localStorage.removeItem('agentEmail')
-    localStorage.removeItem('agentPhone')
-    window.location.href = '/login'
-  }
+  // const handleLogout = () => {
+  //   localStorage.removeItem('token')
+  //   localStorage.removeItem('agentId')
+  //   localStorage.removeItem('plan')
+  //   localStorage.removeItem('agentName')
+  //   localStorage.removeItem('agentEmail')
+  //   localStorage.removeItem('agentPhone')
+  //   window.location.href = '/login'
+  // }
+  // In your sidebar (dashboard/layout.js or wherever)
+  const handleLogout = async () => {
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/auth/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
+
+    // Clear localStorage
+    localStorage.clear();
+
+    // Redirect
+    window.location.href = '/login';
+  };
+
+  // Determine what to show in the header
+  const renderAuthSection = () => {
+    if (!isLoggedIn) {
+      // Not logged in → show Login/Register
+      return (
+        <Link
+          href="/login"
+          className="bg-secondary text-center text-primary py-2 2xl:px-6 xl:px-6 lg:px-4 px-6 rounded-lg font-semibold hover:scale-105 transition duration-300 cursor-pointer"
+        >
+          Login/Register
+        </Link>
+      );
+    }
+
+    // Logged in → always show name, but dropdown only if has paid plan
+    if (plan !== 'none') {
+      // Has paid plan → full dropdown
+      return (
+        <div className="relative group">
+          <button className="flex items-center gap-2 bg-secondary text-center text-primary py-2 2xl:px-6 xl:px-6 lg:px-4 px-6 rounded-lg font-semibold transition duration-300 cursor-pointer">
+            Hi, {getFirstName(localStorage.getItem('agentName') || 'Agent')}
+            <ChevronDown size={16} />
+          </button>
+
+          {/* Dropdown - only shown if logged in with plan */}
+          <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-gray-300 ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+            <div className="py-1">
+              <Link
+                href="/agent/dashboard"
+                className="block px-4 py-2 text-sm text-primary font-semibold hover:bg-gray-100 hover:text-secondary transition duration-300"
+              >
+                Dashboard
+              </Link>
+              <Link
+                href="/agent/dashboard/leads"
+                className="block px-4 py-2 text-sm text-primary font-semibold hover:bg-gray-100 hover:text-secondary transition duration-300"
+              >
+                Leads
+              </Link>
+              <Link
+                href="/agent/dashboard/analytics"
+                className="block px-4 py-2 text-sm text-primary font-semibold hover:bg-gray-100 hover:text-secondary transition duration-300"
+              >
+                Analytics
+              </Link>
+              <Link
+                href="/agent/dashboard/my-plan"
+                className="block px-4 py-2 text-sm text-primary font-semibold hover:bg-gray-100 hover:text-secondary transition duration-300"
+              >
+                My Plan
+              </Link>
+              <Link
+                href="/agent/dashboard/profile"
+                className="block px-4 py-2 text-sm text-primary font-semibold hover:bg-gray-100 hover:text-secondary transition duration-300"
+              >
+                Profile
+              </Link>
+              <Link
+                href="/agent/dashboard/settings"
+                className="block px-4 py-2 text-sm text-primary font-semibold hover:bg-gray-100 hover:text-secondary transition duration-300"
+              >
+                Settings
+              </Link>
+
+              <button
+                onClick={handleLogout}
+                className="w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-gray-100 cursor-pointer"
+              >
+                Log out
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    } else {
+      // Logged in but plan = 'none' → just name (no dropdown), or redirect to buy-plan
+      return (
+        <div className="relative group">
+          <button
+            className="flex items-center gap-2 bg-secondary text-center text-primary py-2 2xl:px-6 xl:px-6 lg:px-4 px-6 rounded-lg font-semibold transition duration-300 cursor-pointer"
+          >
+            <div className="flex flex-col leading-none">
+              Hi, {getFirstName(localStorage.getItem('agentName') || 'Agent')}
+              <span className="text-xs p-0 m-0">(start here)</span>
+            </div>
+            <ChevronDown size={16} />
+          </button>
+
+          {/* Dropdown - only shown if logged in with plan */}
+          <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-gray-300 ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+            <div className="py-1">
+              <Link
+                href="/agent-registration/buy-plan"
+                className="block px-4 py-2 text-sm text-primary font-semibold hover:bg-gray-100 hover:text-secondary transition duration-300"
+              >
+                Buy A Plan
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-gray-100 cursor-pointer"
+              >
+                Log out
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+  };
 
   return (
     <header className="bg-white shadow-sm fixed top-0 left-0 w-full z-100">
@@ -66,9 +192,9 @@ export function Header() {
             <Link href="/" className="flex gap-2 items-center text-primary font-semibold hover:bg-gray-100 rounded-lg py-2 2xl:px-6 xl:px-6 lg:px-4 px-6 hover:text-secondary transition duration-300">
               <House size={16} /> Home
             </Link>
-            <Link href="/dashboard" className="flex gap-2 items-center text-primary font-semibold hover:bg-gray-100 rounded-lg py-2 2xl:px-6 xl:px-6 lg:px-4 px-6 hover:text-secondary transition duration-300">
+            {/* <Link href="/dashboard" className="flex gap-2 items-center text-primary font-semibold hover:bg-gray-100 rounded-lg py-2 2xl:px-6 xl:px-6 lg:px-4 px-6 hover:text-secondary transition duration-300">
               <LiaChartBarSolid size={16} /> Dashboard
-            </Link>
+            </Link> */}
             <Link href="/pricing" className="flex gap-2 items-center text-primary font-semibold hover:bg-gray-100 rounded-lg py-2 2xl:px-6 xl:px-6 lg:px-4 px-6 hover:text-secondary transition duration-300">
               <CircleDollarSign size={16} /> Pricing
             </Link>
@@ -83,43 +209,9 @@ export function Header() {
           </nav>
 
           {/* Conditional area */}
-          {isLoggedIn ? (
-            <div className="relative group">
-              <button className="flex items-center gap-2 bg-secondary text-center text-primary py-2 2xl:px-6 xl:px-6 lg:px-4 px-6 rounded-lg font-semibold transition duration-300 cursor-pointer">
-                Hi, {getFirstName(localStorage.getItem('agentName') || 'Agent')}
-                {/* <UserCircle size={24} /> */}
-                <ChevronDown size={16} />
-              </button>
-
-              {/* Dropdown */}
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-gray-300 ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
-                <div className="py-1">
-                  <Link
-                    href="/dashboard"
-                    className="block px-4 py-2 text-sm text-primary font-semibold hover:bg-gray-100 hover:text-secondary transition duration-300"
-                  >
-                    Dashboard
-                  </Link>
-                  <Link
-                    href="/profile"
-                    className="block px-4 py-2 text-sm text-primary font-semibold hover:bg-gray-100 hover:text-secondary transition duration-300"
-                  >
-                    Profile
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="w-full text-left px-4 py-2 text-sm text-red-700 hover:bg-gray-100 cursor-pointer"
-                  >
-                    Log out
-                  </button>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <>
-              <Link href='/signup' className="bg-secondary text-center text-primary py-2 2xl:px-6 xl:px-6 lg:px-4 px-6 rounded-lg font-semibold hover:scale-105 transition duration-300 cursor-pointer">Start Free Trial</Link>
-            </>
-          )}
+          <div className="flex items-center gap-4">
+            {renderAuthSection()}
+          </div>
         </div>
       </div>
 
@@ -175,7 +267,7 @@ export function Header() {
               </Link>
 
               {/* <Link href="/dashboard" className="text-gray-700 hover:text-blue-600 font-medium">Login</Link> */}
-              <Link href='' className="mt-2 w-full bg-secondary text-primary text-center py-3 px-6 rounded-lg font-semibold hover:scale-105 transition duration-300">Start Free Trial</Link>
+              <Link href='' className="mt-2 w-full bg-secondary text-primary text-center py-3 px-6 rounded-lg font-semibold hover:scale-105 transition duration-300">Start Here</Link>
             </nav>
 
           </div>

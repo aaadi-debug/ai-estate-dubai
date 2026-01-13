@@ -151,7 +151,7 @@ export default function SecurityFeatures({ className = '' }) {
                     href="/signup"
                     className="inline-flex items-center space-x-2 px-8 py-4 bg-secondary text-primary rounded-lg font-semibold hover:scale-105 transition-all duration-300"
                 >
-                    <span>Start Your Free Trial</span>
+                    <span>Start Here</span>
                     <FaArrowRightLong size={20} />
                 </Link>
             </div>

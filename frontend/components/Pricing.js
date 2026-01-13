@@ -45,7 +45,7 @@ const PricingSection = ({ className = '' }) => {
                 "Email support (48h response)"
             ],
             popular: false,
-            cta: "Start Free Trial",
+            cta: "Buy Starter",
             icon: "IoRocketSharp"
         },
         {
@@ -66,7 +66,7 @@ const PricingSection = ({ className = '' }) => {
                 "One-time setup assistance",
             ],
             popular: true,
-            cta: "Start Free Trial",
+            cta: "Buy Professional",
             icon: "HiSparkles"
         },
         {
@@ -89,7 +89,7 @@ const PricingSection = ({ className = '' }) => {
                 "Custom AI training (coming Q2 2026)",
             ],
             popular: false,
-            cta: "Contact Sales",
+            cta: "Buy Elite",
             icon: "FaTrophy"
         }
     ];
@@ -193,7 +193,7 @@ const PricingSection = ({ className = '' }) => {
 
                             {/* CTA Button */}
                             <Link
-                                href={plan.id === 3 ? '/contact' : '/signup'}
+                                href={plan.id === 3 ? '/signup' : '/signup'}
                                 className={`block w-full text-center px-6 py-3 rounded-lg font-cta font-semibold transition-all duration-300 mb-6 ${plan.popular
                                     ? 'bg-secondary text-primary hover:scale-105 shadow-lg'
                                     : 'bg-gray-100 text-black hover:bg-secondary hover:text-primary'
