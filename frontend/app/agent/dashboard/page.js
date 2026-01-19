@@ -36,7 +36,7 @@ export default function DashboardOverview() {
   const fetchLeads = async (id) => {
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/leads/agent?agentId=${id}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/leads/agent?agentId=${id}`
       );
       if (!res.ok) throw new Error('Failed to fetch leads');
 

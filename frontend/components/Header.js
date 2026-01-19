@@ -49,6 +49,15 @@ export function Header() {
         method: 'POST',
         credentials: 'include',
       });
+
+      localStorage.removeItem('token')
+      localStorage.removeItem('agentId')
+      localStorage.removeItem('plan')
+      localStorage.removeItem('agentName')
+      localStorage.removeItem('agentEmail')
+      localStorage.removeItem('agentPhone')
+
+      // console.log("User logged out")
     } catch (err) {
       console.error('Logout error:', err);
     }
