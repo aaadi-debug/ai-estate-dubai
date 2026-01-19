@@ -1,3 +1,4 @@
+// backend/controllers/authCOntroller.js
 import Agent from '../models/Agent.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -94,6 +95,32 @@ export const login = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
+
+// 📌 Logout
+export const logout = async (req, res) => {
+  try {
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      path: '/',
+      domain: '.aiestatedubai.com',
+    });
+
+    res.clearCookie('plan', {
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      path: '/',
+      domain: '.aiestatedubai.com',
+    });
+
+    return res.status(200).json({ message: 'Logged out successfully' });
+  } catch (err) {
+    console.error('Logout error:', err);
+    res.status(500).json({ error: 'Logout failed' });
+  }
+};
+
 
 // 📌 Change Password
 export const changePassword = async (req, res) => {

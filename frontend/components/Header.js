@@ -1,3 +1,4 @@
+// frontend/components/Header.js
 'use client'
 
 import React, { useState, useEffect } from "react";
@@ -50,12 +51,12 @@ export function Header() {
         credentials: 'include',
       });
 
-      localStorage.removeItem('token')
-      localStorage.removeItem('agentId')
-      localStorage.removeItem('plan')
-      localStorage.removeItem('agentName')
-      localStorage.removeItem('agentEmail')
-      localStorage.removeItem('agentPhone')
+      // localStorage.removeItem('token')
+      // localStorage.removeItem('agentId')
+      // localStorage.removeItem('plan')
+      // localStorage.removeItem('agentName')
+      // localStorage.removeItem('agentEmail')
+      // localStorage.removeItem('agentPhone')
 
       // console.log("User logged out")
     } catch (err) {
@@ -66,8 +67,8 @@ export function Header() {
     localStorage.clear();
 
     // Redirect
-    // window.location.href = '/login';
-    window.location.replace('/login')
+    window.location.href = '/login';
+    // window.location.replace('/login')
   };
 
   // Determine what to show in the header

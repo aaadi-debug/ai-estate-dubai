@@ -14,6 +14,12 @@ export function middleware(request) {
   const publicRoutes = ['/login', '/signup', '/']
   const buyPlanRoute = '/agent-registration/buy-plan'
 
+  // Allow logout request to pass
+if (pathname === '/auth/logout') {
+  return NextResponse.next();
+}
+
+
   // 1. Not logged in
   if (!token) {
     console.log('[MIDDLEWARE] No token → checking if public route')
