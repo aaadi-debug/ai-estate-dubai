@@ -111,4 +111,81 @@ export const getUsageStats = async (req, res) => {
   }
 };
 
-export default { getProfile, updateProfile, getUsageStats };
+export const updateNotifications = async (req, res) => {
+  try {
+    const agentId = req.params.agentId || req.user?.agentId;
+    const { email, sms, whatsapp } = req.body;
+
+    const agent = await Agent.findByIdAndUpdate(
+      agentId,
+      { 
+        'notifications.email': email,
+        'notifications.sms': sms,
+        'notifications.whatsapp': whatsapp 
+      },
+      { new: true }
+    );
+
+    if (!agent) return res.status(404).json({ error: 'Agent not found' });
+
+    res.json({ message: 'Notifications updated', notifications: agent.notifications });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+// Increment conversation count + enforce limit
+// export const incrementConversation = async (req, res) => {
+//   try {
+//     const { agentId, message } = req.body;
+
+//     if (!agentId) {
+//       return res.status(400).json({ error: 'Agent ID required' });
+//     }
+
+//     const agent = await Agent.findById(agentId);
+//     if (!agent) {
+//       return res.status(404).json({ error: 'Agent not found' });
+//     }
+
+//     // Monthly reset check
+//     const now = new Date();
+//     const lastReset = agent.lastConversationReset || new Date(0);
+//     if (
+//       now.getMonth() !== lastReset.getMonth() ||
+//       now.getFullYear() !== lastReset.getFullYear()
+//     ) {
+//       agent.conversationCountThisMonth = 0;
+//       agent.lastConversationReset = now;
+//     }
+
+//     // Get limit
+//     const maxConversations = {
+//       starter: 200,
+//       professional: Infinity,
+//       elite: Infinity,
+//       none: 0,
+//     }[agent.plan] || 0;
+
+//     // Enforce limit for Starter
+//     if (agent.plan === 'starter' && agent.conversationCountThisMonth >= maxConversations) {
+//       return res.status(403).json({ 
+//         error: 'Monthly conversation limit reached. Please upgrade your plan.' 
+//       });
+//     }
+
+//     // Increment
+//     agent.conversationCountThisMonth += 1;
+//     await agent.save();
+
+//     // Optional: Log the message if you want (for debugging)
+//     // console.log(`Conversation #${agent.conversationCountThisMonth} from agent ${agentId}: ${message}`);
+
+//     res.json({ success: true, count: agent.conversationCountThisMonth });
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).json({ error: 'Server error' });
+//   }
+// };
+
+export default { getProfile, updateProfile, getUsageStats, updateNotifications };

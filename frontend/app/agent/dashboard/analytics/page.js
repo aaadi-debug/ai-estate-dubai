@@ -1,29 +1,18 @@
-// frontend/app/agent/dashboard/analytics/page.js
 'use client';
 
 import { useState, useEffect } from 'react';
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
-  LineChart,
-  Line,
-  AreaChart,
-  Area,
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, Line, AreaChart, Area,
 } from 'recharts';
-import { 
-  TrendingUp, Users, DollarSign, Calendar, 
-  ArrowUpRight, ArrowDownRight, RefreshCw,  CheckCircle2
+import {
+  TrendingUp, Users, DollarSign, Calendar, ArrowUpRight, ArrowDownRight, RefreshCw, CheckCircle2, AlertCircle,
 } from 'lucide-react';
+import Link from 'next/link';
 
 export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true);
-  const [timeRange, setTimeRange] = useState('6m'); // 1m, 3m, 6m, 12m
+  const [error, setError] = useState(null);
+  const [timeRange, setTimeRange] = useState('12m'); // 1m, 3m, 6m, 12m
   const [stats, setStats] = useState({
     totalLeads: 0,
     qualifiedLeads: 0,
@@ -31,57 +20,64 @@ export default function AnalyticsPage() {
     conversionRate: '0%',
     leadGrowth: '+0%',
     monthlyData: [],
+    todayLeads: 0,
   });
+  const [plan, setPlan] = useState('starter');
 
-  // Mock data - in real app replace with API fetch
   useEffect(() => {
-    // Simulate API delay
-    setTimeout(() => {
-      const monthlyData = [
-        { month: 'Jan', leads: 145, qualified: 89, converted: 34 },
-        { month: 'Feb', leads: 178, qualified: 112, converted: 45 },
-        { month: 'Mar', leads: 203, qualified: 134, converted: 52 },
-        { month: 'Apr', leads: 189, qualified: 121, converted: 48 },
-        { month: 'May', leads: 234, qualified: 156, converted: 61 },
-        { month: 'Jun', leads: 267, qualified: 178, converted: 72 },
-        { month: 'Jul', leads: 298, qualified: 201, converted: 85 },
-        { month: 'Aug', leads: 312, qualified: 219, converted: 94 },
-        { month: 'Sep', leads: 345, qualified: 238, converted: 102 },
-        { month: 'Oct', leads: 378, qualified: 256, converted: 115 },
-        { month: 'Nov', leads: 401, qualified: 278, converted: 128 },
-        { month: 'Dec', leads: 432, qualified: 301, converted: 142 },
-      ];
+    const storedPlan = localStorage.getItem('plan') || 'starter';
+    setPlan(storedPlan);
 
-      // Filter based on timeRange (mock - take last N months)
-      let filtered = monthlyData;
-      if (timeRange === '1m') filtered = monthlyData.slice(-1);
-      else if (timeRange === '3m') filtered = monthlyData.slice(-3);
-      else if (timeRange === '6m') filtered = monthlyData.slice(-6);
-      // 12m = all
-
-      const totalLeads = filtered.reduce((sum, d) => sum + d.leads, 0);
-      const qualified = filtered.reduce((sum, d) => sum + d.qualified, 0);
-      const converted = filtered.reduce((sum, d) => sum + d.converted, 0);
-
-      const prevMonth = monthlyData[monthlyData.length - 2] || { leads: 0 };
-      const currMonth = monthlyData[monthlyData.length - 1];
-      const leadGrowth = ((currMonth.leads - prevMonth.leads) / prevMonth.leads * 100).toFixed(1);
-
-      setStats({
-        totalLeads,
-        qualifiedLeads: qualified,
-        convertedLeads: converted,
-        conversionRate: totalLeads > 0 ? ((converted / totalLeads) * 100).toFixed(1) + '%' : '0%',
-        leadGrowth: leadGrowth > 0 ? `+${leadGrowth}%` : `${leadGrowth}%`,
-        monthlyData: filtered,
-      });
-
-      setLoading(false);
-    }, 800);
+    fetchAnalytics();
   }, [timeRange]);
 
-  const StatCard = ({ title, value, change, icon: Icon, color = 'text-secondary' }) => (
-    <div className="bg-white rounded-xl shadow-sm border p-6 hover:shadow-md transition-shadow">
+  const fetchAnalytics = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const agentId = localStorage.getItem('agentId');
+      if (!agentId) {
+        window.location.href = '/login';
+        return;
+      }
+
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/leads/analytics?agentId=${agentId}`
+      );
+
+      if (!res.ok) throw new Error('Failed to load analytics');
+
+      const data = await res.json();
+
+      // Filter monthly data based on timeRange
+      let filteredMonthly = data.monthlyData;
+      if (timeRange === '1m') filteredMonthly = data.monthlyData.slice(-1);
+      else if (timeRange === '3m') filteredMonthly = data.monthlyData.slice(-3);
+      else if (timeRange === '6m') filteredMonthly = data.monthlyData.slice(-6);
+      // 12m = all
+
+      setStats({
+        totalLeads: data.totalLeads,
+        qualifiedLeads: data.qualifiedLeads,
+        convertedLeads: data.convertedLeads,
+        conversionRate: data.conversionRate,
+        leadGrowth: data.leadGrowth,
+        monthlyData: filteredMonthly,
+        todayLeads: data.todayLeads,
+      });
+    } catch (err) {
+      console.error(err);
+      setError('Failed to load analytics data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const isStarter = plan === 'starter';
+
+  const StatCard = ({ title, value, change, icon: Icon, color = 'text-secondary', locked = false }) => (
+    <div className={`bg-white rounded-xl shadow-sm border p-6 relative ${locked ? 'opacity-50 blur-sm pointer-events-none' : ''}`}>
       <div className="flex justify-between items-start">
         <div>
           <p className="text-sm text-gray-600 font-medium">{title}</p>
@@ -91,7 +87,7 @@ export default function AnalyticsPage() {
           <Icon size={24} className={color} />
         </div>
       </div>
-      {change && (
+      {change && !locked && (
         <div className="mt-4 flex items-center gap-2 text-sm">
           {parseFloat(change) >= 0 ? (
             <ArrowUpRight size={16} className="text-green-600" />
@@ -103,138 +99,173 @@ export default function AnalyticsPage() {
           </span>
         </div>
       )}
+      {locked && (
+        <div className="absolute inset-0 flex items-center justify-center">
+          <AlertCircle size={24} className="text-amber-600" />
+          <span className="ml-2 text-sm font-medium text-amber-800">Upgrade to see</span>
+        </div>
+      )}
     </div>
   );
 
   return (
-    <div className="p-6 md:p-8 lg:p-10">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-10">
-          <div>
-            <h1 className="text-3xl font-bold">Analytics & Performance</h1>
-            <p className="text-gray-600 mt-1">Track your leads, conversions and growth over time</p>
-          </div>
+    <div className="p-6 min-h-screen bg-[#FAFBFC]">
+      {/* Header */}
+      <div className="flex justify-between items-end gap-6 border-b border-gray-300 mb-4 pb-4">
+        <div>
+          <h1 className="lg:text-4xl md:text-3xl text-2xl font-bold mb-2 text-primary">Analytics & Performance</h1>
+          <p className="text-secondary">Track your leads, conversions and growth over time</p>
+        </div>
 
-          <div className="flex items-center gap-3">
-            <select
-              value={timeRange}
-              onChange={(e) => setTimeRange(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-secondary outline-none"
-            >
-              <option value="1m">Last 1 Month</option>
-              <option value="3m">Last 3 Months</option>
-              <option value="6m">Last 6 Months</option>
-              <option value="12m">Last 12 Months</option>
-            </select>
+        <div className="flex items-center gap-3">
+          <select
+            value={timeRange}
+            onChange={(e) => setTimeRange(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-secondary outline-none"
+          >
+            <option value="1m">Last 1 Month</option>
+            <option value="3m">Last 3 Months</option>
+            <option value="6m">Last 6 Months</option>
+            <option value="12m">Last 12 Months</option>
+          </select>
 
-            <button className="p-2 hover:bg-gray-100 rounded-lg transition">
-              <RefreshCw size={20} />
-            </button>
+          <button 
+            onClick={fetchAnalytics}
+            disabled={loading}
+            className="flex items-center gap-2 px-4 py-2 bg-secondary text-primary rounded-lg hover:scale-105 transition disabled:opacity-50"
+          >
+            <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
+            Refresh
+          </button>
+        </div>
+      </div>
+
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700">
+          {error}
+        </div>
+      )}
+
+      {/* Stats Overview */}
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <StatCard
+          title="Total Leads"
+          value={stats.totalLeads.toLocaleString()}
+          change={stats.leadGrowth}
+          icon={Users}
+        />
+        <StatCard
+          title="Qualified Leads"
+          value={stats.qualifiedLeads.toLocaleString()}
+          icon={CheckCircle2}
+          color="text-green-600"
+          locked={isStarter}
+        />
+        <StatCard
+          title="Converted"
+          value={stats.convertedLeads.toLocaleString()}
+          icon={DollarSign}
+          color="text-purple-600"
+          locked={isStarter}
+        />
+        <StatCard
+          title="Conversion Rate"
+          value={stats.conversionRate}
+          icon={TrendingUp}
+          color="text-amber-600"
+          locked={isStarter}
+        />
+      </div>
+
+      {/* Charts – Blurred for Starter */}
+      <div className={`grid lg:grid-cols-2 gap-8 ${isStarter ? 'relative' : ''}`}>
+        {/* Monthly Bar Chart */}
+        <div className="bg-white rounded-xl shadow-sm border p-6">
+          <h2 className="text-xl font-semibold mb-6">Monthly Lead Performance</h2>
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={stats.monthlyData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis dataKey="month" stroke="#64748b" />
+                <YAxis stroke="#64748b" />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="leads" name="Total Leads" fill="#D4AF37" radius={[8, 8, 0, 0]} />
+                {!isStarter && (
+                  <>
+                    <Bar dataKey="qualified" name="Qualified" fill="#059669" radius={[8, 8, 0, 0]} />
+                    <Bar dataKey="converted" name="Converted" fill="#0A0E27" radius={[8, 8, 0, 0]} />
+                  </>
+                )}
+              </BarChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Stats Overview */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <StatCard 
-            title="Total Leads" 
-            value={stats.totalLeads.toLocaleString()} 
-            change={stats.leadGrowth}
-            icon={Users}
-          />
-          <StatCard 
-            title="Qualified Leads" 
-            value={stats.qualifiedLeads.toLocaleString()} 
-            icon={CheckCircle2}
-            color="text-green-600"
-          />
-          <StatCard 
-            title="Converted" 
-            value={stats.convertedLeads.toLocaleString()} 
-            icon={DollarSign}
-            color="text-purple-600"
-          />
-          <StatCard 
-            title="Conversion Rate" 
-            value={stats.conversionRate} 
-            icon={TrendingUp}
-            color="text-amber-600"
-          />
-        </div>
-
-        {/* Charts */}
-        <div className="grid lg:grid-cols-2 gap-8">
-          {/* Bar Chart - Monthly Performance */}
-          <div className="bg-white rounded-xl shadow-sm border p-6">
-            <h2 className="text-xl font-semibold mb-6">Monthly Lead Performance</h2>
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={stats.monthlyData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                  <XAxis dataKey="month" stroke="#64748b" />
-                  <YAxis stroke="#64748b" />
-                  <Tooltip 
-                    contentStyle={{ 
-                      backgroundColor: 'rgba(255,255,255,0.95)',
-                      border: '1px solid #e2e8f0',
-                      borderRadius: '8px',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
-                    }}
+        {/* Growth Trend */}
+        <div className="bg-white rounded-xl shadow-sm border p-6">
+          <h2 className="text-xl font-semibold mb-6">Lead Growth Trend</h2>
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={stats.monthlyData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+                <defs>
+                  <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#D4AF37" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#D4AF37" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+                <XAxis dataKey="month" stroke="#64748b" />
+                <YAxis stroke="#64748b" />
+                <Tooltip />
+                <Area
+                  type="monotone"
+                  dataKey="leads"
+                  stroke="#D4AF37"
+                  fillOpacity={1}
+                  fill="url(#colorLeads)"
+                  name="Total Leads"
+                />
+                {!isStarter && (
+                  <Line
+                    type="monotone"
+                    dataKey="converted"
+                    stroke="#0A0E27"
+                    strokeWidth={2}
+                    dot={{ r: 4 }}
+                    name="Converted"
                   />
-                  <Legend />
-                  <Bar dataKey="leads" name="Total Leads" fill="#D4AF37" radius={[8, 8, 0, 0]} />
-                  <Bar dataKey="qualified" name="Qualified" fill="#059669" radius={[8, 8, 0, 0]} />
-                  <Bar dataKey="converted" name="Converted" fill="#0A0E27" radius={[8, 8, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
+                )}
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Lock overlay for Starter */}
+        {isStarter && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white/70 backdrop-blur-sm z-10 rounded-xl">
+            <div className="text-center max-w-md px-6">
+              <AlertCircle size={48} className="text-amber-600 mx-auto mb-4" />
+              <h3 className="text-2xl font-bold text-amber-900 mb-3">Upgrade to Unlock Analytics</h3>
+              <p className="text-amber-800 mb-6">
+                Detailed charts, conversion rates, and growth trends are available on Professional and Elite plans.
+              </p>
+              <Link
+                href="/agent/dashboard/my-plan"
+                className="inline-block bg-secondary text-primary px-8 py-3 rounded-lg font-medium hover:scale-105 transition"
+              >
+                Upgrade Now
+              </Link>
             </div>
-          </div>
-
-          {/* Line + Area Chart - Growth Trend */}
-          <div className="bg-white rounded-xl shadow-sm border p-6">
-            <h2 className="text-xl font-semibold mb-6">Lead Growth Trend</h2>
-            <div className="h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={stats.monthlyData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-                  <defs>
-                    <linearGradient id="colorLeads" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#D4AF37" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#D4AF37" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                  <XAxis dataKey="month" stroke="#64748b" />
-                  <YAxis stroke="#64748b" />
-                  <Tooltip />
-                  <Area 
-                    type="monotone" 
-                    dataKey="leads" 
-                    stroke="#D4AF37" 
-                    fillOpacity={1} 
-                    fill="url(#colorLeads)" 
-                    name="Total Leads" 
-                  />
-                  <Line 
-                    type="monotone" 
-                    dataKey="converted" 
-                    stroke="#0A0E27" 
-                    strokeWidth={2} 
-                    dot={{ r: 4 }} 
-                    name="Converted" 
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </div>
-
-        {/* Loading State */}
-        {loading && (
-          <div className="absolute inset-0 bg-white/60 flex items-center justify-center z-10 rounded-xl">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-secondary"></div>
           </div>
         )}
       </div>
+
+      {loading && (
+        <div className="fixed inset-0 bg-white/60 flex items-center justify-center z-50">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-secondary"></div>
+        </div>
+      )}
     </div>
   );
 }

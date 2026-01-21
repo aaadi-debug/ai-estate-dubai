@@ -7,6 +7,7 @@ import { ChatBubble } from './ChatBubble';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
 
 const conversationSteps = [
     { key: 'greeting', bot: 'Hello! 👋 I\'m your AI assistant from AI Estate Dubai. You are looking for a property in Dubai. May I know your good name?' },
@@ -21,7 +22,7 @@ const conversationSteps = [
     { key: 'confirm', bot: 'Thank you! I\'ve captured all your details. An agent will contact you shortly via WhatsApp or call. Have a great day! 🌟', isFinal: true },
 ];
 
-export function ChatWidget({ agentId }) {
+export function ChatWidget({ agentId, mode }) {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([]);
     const [inputValue, setInputValue] = useState('');
@@ -29,6 +30,13 @@ export function ChatWidget({ agentId }) {
     const [leadData, setLeadData] = useState({});
     const [isTyping, setIsTyping] = useState(false);
     const messagesEndRef = useRef(null);
+    const sessionIdRef = useRef(null);
+    const hasStartedRef = useRef(false);
+
+    // if (mode !== 'embed') return; // 🔥 BLOCK demo bot
+
+    // Near top of component
+    console.log("[ChatWidget] agentId:", agentId, "mode:", mode);
 
     if (!agentId) {
         console.error('Missing agentId in ChatWidget');
@@ -38,6 +46,13 @@ export function ChatWidget({ agentId }) {
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
+
+    useEffect(() => {
+        if (!sessionIdRef.current) {
+            sessionIdRef.current = uuidv4();
+        }
+    }, []);
+
 
     useEffect(() => {
         scrollToBottom();
@@ -68,10 +83,27 @@ export function ChatWidget({ agentId }) {
     };
 
     const handleSend = (text = inputValue.trim()) => {
-        if (!text) return;
+        // Inside handleSend(), before the if
+        console.log("[handleSend] mode:", mode, "hasStarted:", hasStartedRef.current);
 
+        if (!text) {
+            console.log('SKIP: No text to send');
+            return;
+        }
+
+        // START conversation ONLY ON FIRST USER MESSAGE
+        // if (!hasStartedRef.current && mode === 'embed') {
+        //     hasStartedRef.current = true;
+        //     startConversation(); // 🔥 increments only once
+        // }
+
+        console.log('🟢 User sent message:', text);
+        console.log('Current step:', currentStep);
+
+        // Add user message to UI
         setMessages(prev => [...prev, { text, isBot: false }]);
         setInputValue('');
+
 
         // Save to leadData based on step
         const stepKey = conversationSteps[currentStep]?.key;
@@ -109,6 +141,33 @@ export function ChatWidget({ agentId }) {
         handleSend(lowerCaseOption);
     };
 
+    const startConversation = async () => {
+        try {
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/conversations/start`,
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        agentId,
+                        sessionId: sessionIdRef.current,
+                    }),
+                }
+            );
+
+            if (!res.ok) {
+                const err = await res.json();
+                if (res.status === 403) {
+                    alert(err.error || 'Conversation limit reached');
+                    setIsOpen(false); // close chat
+                }
+            }
+        } catch (error) {
+            console.error('Failed to start conversation', error);
+        }
+    };
+
+
     const sendLeadToBackend = async (data) => {
         console.log('🚀 Attempting to send lead:', { ...data, agentId });
 
@@ -120,6 +179,18 @@ export function ChatWidget({ agentId }) {
             console.log('✅ Lead saved successfully:', response.data);
         } catch (error) {
             console.error('❌ Failed to save lead:', error.response?.data || error.message);
+            if (error.response?.status === 403) {
+                // Show friendly message in chat
+                setMessages(prev => [
+                    ...prev,
+                    {
+                        text: error.response.data.error || "You've reached your monthly conversation limit. Upgrade your plan to continue!",
+                        isBot: true,
+                        isError: true
+                    }
+                ]);
+            }
+
             if (error.response) {
                 console.error('Status:', error.response.status);
                 console.error('Data:', error.response.data);

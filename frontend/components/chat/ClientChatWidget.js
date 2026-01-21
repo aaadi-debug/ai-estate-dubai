@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import { ChatWidget } from './ChatWidget';
 
-export function ClientChatWidget({ agentId }) {
+export function ClientChatWidget({ agentId, mode }) {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -15,5 +15,5 @@ export function ClientChatWidget({ agentId }) {
     return null; // or a placeholder floating button
   }
 
-  return <ChatWidget agentId={agentId} />;
+  return <ChatWidget agentId={agentId} mode={mode} />;
 }

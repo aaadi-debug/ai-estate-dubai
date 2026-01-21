@@ -35,6 +35,14 @@ const leadSchema = new Schema(
       enum: ['new', 'contacted', 'appointment_booked', 'closed'],
       default: 'new',
     },
+
+    notes: [
+      {
+        text: { type: String, required: true },
+        createdAt: { type: Date, default: Date.now },
+        createdBy: { type: Schema.Types.ObjectId, ref: 'Agent' }, // optional: who added it
+      }
+    ],
   },
   {
     timestamps: true,

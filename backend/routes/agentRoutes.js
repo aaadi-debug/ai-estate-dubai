@@ -4,6 +4,8 @@ import {
   getProfile,
   updateProfile,
   getUsageStats,
+  updateNotifications,
+  // incrementConversation
 } from '../controllers/agentController.js';
 
 const router = express.Router();
@@ -19,5 +21,8 @@ router.get('/usage/:agentId', getUsageStats);
 router.get('/test', (req, res) => {
   res.json({ message: 'Agent routes working' });
 });
+
+router.put('/notifications/:agentId', updateNotifications);
+// router.post('/conversation/increment', incrementConversation);
 
 export default router;
