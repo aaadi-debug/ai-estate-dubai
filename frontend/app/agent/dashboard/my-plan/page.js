@@ -74,9 +74,18 @@ export default function MyPlanPage() {
   const isProfessional = usage?.plan === 'professional';
   const isElite = usage?.plan === 'elite';
   const isUnlimited = usage?.isUnlimited;
-  const progress = usage?.conversationsLimit === Infinity
+
+  // const progress = usage?.conversationsLimit === Infinity
+  //   ? 100
+  //   : Math.min(100, (usage?.conversationsUsed / usage?.conversationsLimit) * 100 || 0);
+
+  const progress = isUnlimited
     ? 100
     : Math.min(100, (usage?.conversationsUsed / usage?.conversationsLimit) * 100 || 0);
+
+  const remaining = isUnlimited
+    ? 'Unlimited'
+    : usage?.conversationsLimit - (usage?.conversationsUsed || 0);
 
   return (
     <div className="p-6 min-h-screen bg-[#FAFBFC]">
@@ -158,7 +167,7 @@ export default function MyPlanPage() {
                 </div>
 
                 <div className="text-right text-sm text-gray-500">
-                  {usage?.conversationsLimit - (usage?.conversationsUsed || 0)} remaining
+                  {remaining} remaining this month
                 </div>
               </>
             )}
@@ -167,18 +176,30 @@ export default function MyPlanPage() {
               <div className="mt-10 pt-8 border-t">
                 <h4 className="text-lg font-semibold mb-4 flex items-center gap-2">
                   <AlertCircle size={20} className="text-amber-600" />
-                  Upgrade for more features
+                  Unlock more leads & features
                 </h4>
                 <div className="grid md:grid-cols-2 gap-6">
-                  <div className="bg-amber-50 p-5 rounded-xl">
-                    <h5 className="font-medium mb-2">Professional</h5>
-                    <p className="text-sm text-gray-700">Unlimited conversations • WhatsApp • Advanced analytics</p>
+                  <div className="bg-blue-50 p-5 rounded-xl border border-blue-100">
+                    <h5 className="font-medium mb-2 text-blue-800">Professional – 300 leads/month</h5>
+                    <p className="text-sm text-gray-700">
+                      Unlimited WhatsApp, advanced analytics, SMS alerts, priority support
+                    </p>
                   </div>
-                  <div className="bg-purple-50 p-5 rounded-xl">
-                    <h5 className="font-medium mb-2">Elite</h5>
-                    <p className="text-sm text-gray-700">Everything in Professional + priority support • team accounts</p>
+                  <div className="bg-purple-50 p-5 rounded-xl border border-purple-100">
+                    <h5 className="font-medium mb-2 text-purple-800">Elite – Unlimited</h5>
+                    <p className="text-sm text-gray-700">
+                      Everything in Professional + dedicated manager, team access, white-glove support
+                    </p>
                   </div>
                 </div>
+              </div>
+            )}
+
+            {isProfessional && (
+              <div className="mt-10 pt-8 border-t text-center">
+                <p className="text-gray-600">
+                  You're on the perfect plan for growing agencies. Upgrade to Elite for unlimited scale.
+                </p>
               </div>
             )}
           </div>
@@ -187,17 +208,33 @@ export default function MyPlanPage() {
         {/* Quick Upgrade Card */}
         <div className="bg-gradient-to-br from-secondary/10 to-amber-50/30 rounded-2xl shadow-sm border border-gray-200 p-8 flex flex-col justify-between">
           <div>
-            <h3 className="text-2xl font-bold mb-4">Ready for More?</h3>
+            {!isElite ? (
+              <h3 className="text-2xl font-bold mb-4">Ready for More Leads?</h3>
+            ) : (
+              <h3 className="text-2xl font-bold mb-4">Unlimited Leads</h3>
+            )}
             <p className="text-gray-700 mb-6">
-              Unlock unlimited conversations, WhatsApp integration, advanced lead scoring, and priority support.
+              {isStarter
+                ? 'Upgrade now to get 300 leads/month (Professional) or unlimited (Elite).'
+                : isProfessional
+                  ? 'Go unlimited with Elite – perfect for scaling your business.'
+                  : 'You already have the best plan! Enjoy unlimited access.'}
             </p>
           </div>
-          <Link
+          {!isElite && (
+            <Link
+              href="/agent/dashboard/upgrade"
+              className="block w-full text-center py-4 bg-secondary text-primary rounded-xl font-medium hover:scale-105 transition duration-300 transform mt-6"
+            >
+              View Plans & Upgrade <ArrowUpRight size={18} className="inline ml-1" />
+            </Link>
+          )}
+          {/* <Link
             href="/agent/dashboard/upgrade"
             className="block w-full text-center py-4 bg-secondary text-primary rounded-xl font-medium hover:scale-105 transition duration-300 transform mt-6"
           >
             See All Plans & Upgrade <ArrowUpRight size={18} className="inline ml-1" />
-          </Link>
+          </Link> */}
         </div>
       </div>
 

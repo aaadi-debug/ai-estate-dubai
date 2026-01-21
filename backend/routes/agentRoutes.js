@@ -5,6 +5,7 @@ import {
   updateProfile,
   getUsageStats,
   updateNotifications,
+  deleteAccount
   // incrementConversation
 } from '../controllers/agentController.js';
 
@@ -24,5 +25,7 @@ router.get('/test', (req, res) => {
 
 router.put('/notifications/:agentId', updateNotifications);
 // router.post('/conversation/increment', incrementConversation);
+
+router.post('/delete/:agentId', deleteAccount);
 
 export default router;

@@ -21,7 +21,6 @@ export default function LeadsPage() {
     const [selectedLead, setSelectedLead] = useState(null);
     const [plan, setPlan] = useState('starter');
 
-
     // Pagination
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 15;
@@ -34,6 +33,8 @@ export default function LeadsPage() {
     const isStarter = plan === 'starter';
     const isProfessional = plan === 'professional';
     const isElite = plan === 'elite';
+
+    const canManageAdvancedStatus = isProfessional || isElite; // Starter cannot
 
     useEffect(() => {
         const agentId = localStorage.getItem('agentId');
@@ -122,6 +123,57 @@ export default function LeadsPage() {
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+    // Updated markContacted → generic update function
+    const updateLeadStatus = async (leadId, newStatus) => {
+        try {
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_BACKEND_URL}/leads/${leadId}/status`,
+                {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus }),
+                }
+            );
+
+            if (!res.ok) throw new Error('Failed to update status');
+
+            // Update local state
+            const updateFn = (arr) => arr.map(l =>
+                l._id === leadId ? { ...l, status: newStatus } : l
+            );
+
+            setLeads(updateFn);
+            setFilteredLeads(updateFn);
+            if (selectedLead?._id === leadId) {
+                setSelectedLead(prev => ({ ...prev, status: newStatus }));
+            }
+
+            // Optional toast/success message
+            console.log(`Lead ${leadId} updated to ${newStatus}`);
+        } catch (err) {
+            console.error(err);
+            alert('Failed to update lead status');
+        }
+    };
+
+    // Status display helper
+    const getStatusBadge = (status) => {
+        let classes = 'inline-block px-3 py-1 rounded-full text-xs font-medium ';
+        let text = status ? status.charAt(0).toUpperCase() + status.slice(1) : 'New';
+
+        if (status === 'contacted') {
+            classes += 'bg-green-100 text-green-800';
+        } else if (status === 'appointment_booked') {
+            classes += 'bg-blue-100 text-blue-800';
+        } else if (status === 'closed') {
+            classes += 'bg-purple-100 text-purple-800';
+        } else {
+            classes += 'bg-gray-100 text-gray-800';
+        }
+
+        return <span className={classes}>{text}</span>;
+    };
+
     const markContacted = async (leadId) => {
         try {
             const res = await fetch(
@@ -185,6 +237,37 @@ export default function LeadsPage() {
         link.click();
         document.body.removeChild(link);
     };
+
+    // const updateLeadStatus = async (leadId, newStatus) => {
+    //     try {
+    //         const res = await fetch(
+    //             `${process.env.NEXT_PUBLIC_BACKEND_URL}/leads/${leadId}/status`,
+    //             {
+    //                 method: 'PATCH',
+    //                 headers: { 'Content-Type': 'application/json' },
+    //                 body: JSON.stringify({ status: newStatus }),
+    //             }
+    //         );
+
+    //         if (!res.ok) throw new Error('Failed to update status');
+
+    //         // Update local state
+    //         const updatedLead = { ...selectedLead, status: newStatus };
+    //         setSelectedLead(updatedLead);
+
+    //         setLeads(prev =>
+    //             prev.map(l => (l._id === leadId ? { ...l, status: newStatus } : l))
+    //         );
+    //         setFilteredLeads(prev =>
+    //             prev.map(l => (l._id === leadId ? { ...l, status: newStatus } : l))
+    //         );
+
+    //         alert(`Lead marked as ${newStatus}!`);
+    //     } catch (err) {
+    //         console.error(err);
+    //         alert('Failed to update lead status');
+    //     }
+    // };
 
     const addNote = async (leadId, text) => {
         try {
@@ -320,6 +403,8 @@ export default function LeadsPage() {
                                 <option value="all">All Statuses</option>
                                 <option value="new">New</option>
                                 <option value="contacted">Contacted</option>
+                                <option value="appointment_booked">Appointment Booked</option>
+                                <option value="closed">Closed</option>
                             </select>
                             <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" size={18} />
                         </div>
@@ -408,15 +493,25 @@ export default function LeadsPage() {
                                                     {lead.budget || '—'}
                                                 </div>
                                             </td>
+                                            {!isStarter && (
+                                                <td className="py-4 px-6">
+                                                    <span className={`inline-flex px-3 py-1 rounded-full text-xs font-medium ${getScoreColor(lead.score)}`}>
+                                                        {lead.score || 'Cold'}
+                                                    </span>
+                                                </td>
+                                            )}
 
-                                            {isStarter ? null : (
+                                            <td className="py-4 px-6">
+                                                {getStatusBadge(lead.status)}
+                                            </td>
+
+                                            {/* {isStarter ? null : (
                                                 <td className="py-4 px-6">
                                                     <div className="flex items-center gap-2">
                                                         <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getScoreColor(lead.score)}`}>
                                                             {lead.score || 'Cold'}
                                                         </span>
 
-                                                        {/* Visual indicator */}
                                                         {lead.score === 'Hot' && (
                                                             <span className="text-red-500 animate-pulse">●</span>
                                                         )}
@@ -428,16 +523,16 @@ export default function LeadsPage() {
                                                         )}
                                                     </div>
                                                 </td>
-                                            )}
+                                            )} */}
 
-                                            <td className="py-4 px-6">
+                                            {/* <td className="py-4 px-6">
                                                 <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium ${lead.status === 'contacted'
                                                     ? 'bg-green-100 text-green-800'
                                                     : 'bg-blue-100 text-blue-800'
                                                     }`}>
                                                     {lead.status === 'contacted' ? 'Contacted' : 'New'}
                                                 </span>
-                                            </td>
+                                            </td> */}
                                             <td className="py-4 px-6 flex gap-2 items-center">
                                                 <button
                                                     className='bg-blue-100 text-blue-500 rounded-lg p-2 cursor-pointer hover:scale-105 transition duration-300'
@@ -446,15 +541,66 @@ export default function LeadsPage() {
                                                     <Eye size={18} />
                                                     {/* View */}
                                                 </button>
-                                                {lead.status !== 'contacted' && (
+
+                                                {/* Status Dropdown - Professional+ only */}
+                                                {canManageAdvancedStatus ? (
+                                                    <div className="relative inline-block text-left">
+                                                        <select
+                                                            value={lead.status || 'new'}
+                                                            onChange={(e) => updateLeadStatus(lead._id, e.target.value)}
+                                                            className="appearance-none bg-white border border-gray-300 text-gray-700 py-2 px-4 pr-10 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-secondary text-sm font-medium cursor-pointer hover:bg-gray-50 transition min-w-[140px]"
+                                                        >
+                                                            <option value="new">New</option>
+                                                            <option value="contacted">Contacted</option>
+                                                            <option value="appointment_booked">Appointment Booked</option>
+                                                            <option value="closed">Deal Closed</option>
+                                                        </select>
+                                                        <span className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                                            <ChevronDown size={16} className="text-gray-500" />
+                                                        </span>
+                                                    </div>
+                                                ) : (
+                                                    // Starter sees only Contacted button if applicable
+                                                    lead.status !== 'contacted' && (
+                                                        <button
+                                                            onClick={() => updateLeadStatus(lead._id, 'contacted')}
+                                                            className="px-4 py-1.5 bg-green-50 hover:bg-green-100 text-green-700 rounded-lg text-sm font-medium transition"
+                                                        >
+                                                            Mark Contacted
+                                                        </button>
+                                                    )
+                                                )}
+                                                {/* Status actions – conditional */}
+                                                {/* {lead.status !== 'contacted' && (
                                                     <button
-                                                        onClick={() => markContacted(lead._id)}
-                                                        className="text-primary bg-secondary px-6 py-2 rounded-lg hover:scale-105 transition duration-300 cursor-pointer"
+                                                        onClick={() => updateLeadStatus(lead._id, 'contacted')}
+                                                        className="bg-green-100 text-green-700 px-4 py-1.5 rounded-lg hover:bg-green-200 transition text-sm"
                                                     >
-                                                        {/* <CheckCircle2 size={16} /> */}
                                                         Mark Contacted
                                                     </button>
-                                                )}
+                                                )} */}
+
+                                                {/* {canManageAdvancedStatus && (
+                                                    <>
+                                                        {lead.status !== 'appointment_booked' && lead.status !== 'closed' && (
+                                                            <button
+                                                                onClick={() => updateLeadStatus(lead._id, 'appointment_booked')}
+                                                                className="bg-blue-100 text-blue-700 px-4 py-1.5 rounded-lg hover:bg-blue-200 transition text-sm"
+                                                            >
+                                                                Booked Viewing
+                                                            </button>
+                                                        )}
+
+                                                        {lead.status !== 'closed' && (
+                                                            <button
+                                                                onClick={() => updateLeadStatus(lead._id, 'closed')}
+                                                                className="bg-purple-100 text-purple-700 px-4 py-1.5 rounded-lg hover:bg-purple-200 transition text-sm"
+                                                            >
+                                                                Deal Closed
+                                                            </button>
+                                                        )}
+                                                    </>
+                                                )} */}
                                                 {!isStarter ? (
                                                     <button
                                                         onClick={() => {
@@ -613,37 +759,55 @@ export default function LeadsPage() {
                             {/* Right Column - Actions & Notes */}
                             <div className="space-y-6">
                                 <div className="bg-gray-50 p-5 rounded-xl border border-gray-200">
-                                    <h3 className="font-semibold mb-4 flex items-center gap-2">
-                                        {/* <MessageSquare size={20} />  */}
-                                        Lead Status
-                                    </h3>
+                                    <h3 className="font-semibold mb-4">Lead Status</h3>
                                     <div className="flex flex-col gap-4">
                                         <div className="flex items-center justify-between">
-                                            <span className="text-gray-500">Current Status:</span>
-                                            <span className={`px-4 py-1.5 rounded-full text-xs font-medium ${selectedLead.status === 'contacted'
-                                                ? 'bg-green-100 text-green-800'
-                                                : 'bg-blue-100 text-blue-800'
-                                                }`}>
-                                                {selectedLead.status === 'contacted' ? 'Contacted' : 'New'}
-                                            </span>
+                                            <span className="text-gray-500">Current:</span>
+                                            {getStatusBadge(selectedLead.status)}
                                         </div>
 
-                                        {selectedLead.status !== 'contacted' && (
-                                            <button
-                                                onClick={() => {
-                                                    markContacted(selectedLead._id);
-                                                    setSelectedLead(prev => ({ ...prev, status: 'contacted' }));
-                                                }}
-                                                className="w-full bg-green-600 hover:bg-green-700 text-white py-3 rounded-lg font-medium transition cursor-pointer"
-                                            >
-                                                Mark as Contacted
-                                            </button>
-                                        )}
+                                        <div className="flex flex-wrap gap-3">
+                                            {selectedLead.status !== 'contacted' && (
+                                                <button
+                                                    onClick={() => updateLeadStatus(selectedLead._id, 'contacted')}
+                                                    className="flex-1 bg-green-600 text-white py-2.5 rounded-lg hover:bg-green-700"
+                                                >
+                                                    Mark Contacted
+                                                </button>
+                                            )}
+
+                                            {canManageAdvancedStatus && (
+                                                <>
+                                                    {selectedLead.status !== 'appointment_booked' && selectedLead.status !== 'closed' && (
+                                                        <button
+                                                            onClick={() => updateLeadStatus(selectedLead._id, 'appointment_booked')}
+                                                            className="flex-1 bg-blue-600 text-white py-2.5 rounded-lg hover:bg-blue-700"
+                                                        >
+                                                            Booked Viewing
+                                                        </button>
+                                                    )}
+
+                                                    {selectedLead.status !== 'closed' && (
+                                                        <button
+                                                            onClick={() => updateLeadStatus(selectedLead._id, 'closed')}
+                                                            className="flex-1 bg-purple-600 text-white py-2.5 rounded-lg hover:bg-purple-700"
+                                                        >
+                                                            Deal Closed
+                                                        </button>
+                                                    )}
+                                                </>
+                                            )}
+
+                                            {!canManageAdvancedStatus && selectedLead.status !== 'contacted' && (
+                                                <div className="text-sm text-amber-700 bg-amber-50 p-3 rounded-lg w-full text-center">
+                                                    Upgrade to Professional+ to track appointments & closed deals
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
 
                                 {/* Notes Section (placeholder for future) */}
-                                {/* Notes Section */}
                                 <div className="bg-gray-50 p-5 rounded-xl border border-gray-200">
                                     <h3 className="font-semibold mb-4 flex items-center justify-between">
                                         <span className="flex items-center gap-2">

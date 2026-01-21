@@ -79,7 +79,7 @@ export const getUsageStats = async (req, res) => {
 
     if (!agent) return res.status(404).json({ error: 'Agent not found' });
 
-    // Very simple monthly reset logic (you can make it cron later)
+    // Monthly reset logic
     const now = new Date();
     const lastReset = agent.lastConversationReset || new Date(0);
     if (
@@ -91,9 +91,10 @@ export const getUsageStats = async (req, res) => {
       await agent.save();
     }
 
+    // ── NEW LIMITS ──
     const maxConversations = {
-      starter: 200,
-      professional: Infinity,
+      starter: 50,
+      professional: 300,
       elite: Infinity,
       none: 0,
     }[agent.plan] || 0;
@@ -118,10 +119,10 @@ export const updateNotifications = async (req, res) => {
 
     const agent = await Agent.findByIdAndUpdate(
       agentId,
-      { 
+      {
         'notifications.email': email,
         'notifications.sms': sms,
-        'notifications.whatsapp': whatsapp 
+        'notifications.whatsapp': whatsapp
       },
       { new: true }
     );
@@ -129,6 +130,33 @@ export const updateNotifications = async (req, res) => {
     if (!agent) return res.status(404).json({ error: 'Agent not found' });
 
     res.json({ message: 'Notifications updated', notifications: agent.notifications });
+  } catch (err) {
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+export const deleteAccount = async (req, res) => {
+  try {
+    const agentId = req.params.agentId;
+    const { password, reason } = req.body;
+
+    const agent = await Agent.findById(agentId);
+    if (!agent) return res.status(404).json({ error: 'Agent not found' });
+
+    // Verify password (use bcrypt.compare)
+    const isMatch = await bcrypt.compare(password, agent.password);
+    if (!isMatch) return res.status(401).json({ error: 'Incorrect password' });
+
+    // Soft delete
+    agent.isDeleted = true;
+    agent.deletionReason = reason; // Add to model: deletionReason: { type: Object }
+    agent.deletionDate = new Date();
+    await agent.save();
+
+    // Trigger email/n8n for confirmation/undo
+    // e.g., axios.post('your-n8n-webhook', { email: agent.email, undoLink: `.../undo-delete/${token}` });
+
+    res.json({ message: 'Account deletion requested' });
   } catch (err) {
     res.status(500).json({ error: 'Server error' });
   }
@@ -188,4 +216,4 @@ export const updateNotifications = async (req, res) => {
 //   }
 // };
 
-export default { getProfile, updateProfile, getUsageStats, updateNotifications };
+export default { getProfile, updateProfile, getUsageStats, updateNotifications, deleteAccount };

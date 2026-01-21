@@ -22,7 +22,12 @@ export const signup = async (req, res) => {
       phone,
       whatsappNumber,
       password: hashedPassword,
-      plan: 'none' // NEW: default plan
+      plan: 'none', // NEW: default plan
+      notifications: {
+        email: true,       // always default on
+        sms: false,        // off until Professional+
+        whatsapp: false,   // ← CHANGED: false by default (Elite-only feature)
+      },
     });
 
     await agent.save();

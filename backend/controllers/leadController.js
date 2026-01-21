@@ -52,10 +52,20 @@ export const createLead = async (req, res) => {
     }
 
     // Enforce limit for starter only
-    if (agent.plan === 'starter' && agent.conversationCountThisMonth >= 200) {
+    if (agent.plan === 'starter' && agent.conversationCountThisMonth >= 50) {
       return res.status(403).json({
-        error: 'Monthly conversation limit reached (200). Please upgrade your plan.',
+        error: 'Monthly conversation limit reached (50). Please upgrade your plan.',
       });
+    }
+
+    // Simple budget-based scoring (you can make this smarter later)
+    let score = 'Cold';
+    const budgetLower = budget?.toLowerCase() || '';
+
+    if (budgetLower.includes('5m - 10m') || budgetLower.includes('10m+') || budgetLower.includes('custom')) {
+      score = 'Hot';
+    } else if (budgetLower.includes('3m - 5m')) {
+      score = 'Warm';
     }
 
     const newLead = new Lead({
@@ -68,6 +78,7 @@ export const createLead = async (req, res) => {
       locationPrefs: Array.isArray(locationPrefs) ? locationPrefs : [locationPrefs].filter(Boolean),
       preferredDateTime: preferredDateTime ? new Date(preferredDateTime) : null,
       message,
+      score
     });
 
     await newLead.save();
@@ -271,17 +282,26 @@ export const getAnalytics = async (req, res) => {
     leads.forEach(lead => {
       totalLeads++;
 
-      // Score-based qualification
-      if (lead.score === 'Hot' || lead.score === 'Warm') qualifiedLeads++;
-      if (lead.status === 'closed' || lead.status === 'appointment_booked') convertedLeads++;
+      // Qualification logic (use improved version you already have)
+      const isQualified =
+        (lead.score === 'Hot' || lead.score === 'Warm') ||
+        (lead.budget?.toLowerCase().includes('5m') && lead.preferredDateTime) ||
+        (lead.propertyType && lead.locationPrefs?.length > 0);
+
+      if (isQualified) qualifiedLeads++;
+
+      // Conversion logic
+      const isConverted = lead.status === 'closed' || lead.status === 'appointment_booked';
+      if (isConverted) convertedLeads++;
 
       // Monthly bucketing
       const leadDate = new Date(lead.createdAt);
       const monthDiff = (currentYear - leadDate.getFullYear()) * 12 + (currentMonth - leadDate.getMonth());
       if (monthDiff >= 0 && monthDiff < 12) {
-        monthlyData[11 - monthDiff].leads++;
-        if (lead.score === 'Hot' || lead.score === 'Warm') monthlyData[11 - monthDiff].qualified++;
-        if (lead.status === 'closed' || lead.status === 'appointment_booked') monthlyData[11 - monthDiff].converted++;
+        const idx = 11 - monthDiff;
+        monthlyData[idx].leads++;
+        if (isQualified) monthlyData[idx].qualified++;
+        if (isConverted) monthlyData[idx].converted++;
       }
 
       // Today

@@ -71,6 +71,13 @@ const leadLimiter = rateLimit({
   },
 });
 
+// Near other rate limiters
+const deleteLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 5,                 // max 5 delete attempts per IP
+  message: { error: 'Too many delete requests. Try again later.' },
+});
+
 // Routes
 app.use('/api/agents', agentRoutes);
 app.use('/api/leads', leadRoutes);
@@ -78,6 +85,9 @@ app.use('/api/auth', authRoutes);
 
 // Apply only to leads endpoint
 app.use('/api/leads/new', leadLimiter);
+
+// Apply only to delete route
+app.use('/api/agents/delete', deleteLimiter);
 
 // Razorpay routes (with raw for webhook)
 app.use('/api/razorpay', razorpayRoutes);

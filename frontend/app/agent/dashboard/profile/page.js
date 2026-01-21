@@ -134,7 +134,7 @@ export default function ProfilePage() {
         <button
           onClick={() => isEditing ? handleSave() : setIsEditing(true)}
           disabled={saving}
-          className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all ${isEditing
+          className={`flex items-center gap-2 px-6 py-3 rounded-lg font-medium transition-all cursor-pointer ${isEditing
             ? 'bg-green-600 hover:bg-green-700 text-white'
             : 'bg-secondary hover:bg-secondary/90 text-primary'
             } disabled:opacity-60`}

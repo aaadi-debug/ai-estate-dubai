@@ -35,6 +35,11 @@ const leadSchema = new Schema(
       enum: ['new', 'contacted', 'appointment_booked', 'closed'],
       default: 'new',
     },
+    score: {
+      type: String,
+      enum: ['Hot', 'Warm', 'Cold'],
+      default: 'Cold',
+    },
 
     notes: [
       {

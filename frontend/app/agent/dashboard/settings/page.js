@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Lock, Bell, Mail, Phone, Save, Shield, Eye, EyeOff, MessageSquareText, AlertCircle, X } from 'lucide-react';
+import { Lock, Bell, Mail, Phone, Save, Shield, Eye, EyeOff, MessageSquareText, AlertCircle, X, Trash2 } from 'lucide-react';
 import { IoLogoWhatsapp } from "react-icons/io5";
 import Link from 'next/link';
 
@@ -31,12 +31,53 @@ export default function SettingsPage() {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [upgradeMessage, setUpgradeMessage] = useState('');
 
-  useEffect(() => {
-    // Load current plan from localStorage
-    const storedPlan = localStorage.getItem('plan') || 'starter';
-    setPlan(storedPlan);
+  // New: For account deletion
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteReason, setDeleteReason] = useState({
+    tooExpensive: false,
+    notUseful: false,
+    switchingProvider: false,
+    other: false,
+    otherText: '',
+  });
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState('');
 
-    // Optional: Load saved notification prefs from backend/localStorage in future
+  useEffect(() => {
+    const agentId = localStorage.getItem('agentId');
+    if (!agentId) {
+      window.location.href = '/login';
+      return;
+    }
+
+    // Fetch notifications + plan
+    const fetchData = async () => {
+      try {
+        // Fetch plan from /usage endpoint
+        const usageRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/agents/usage/${agentId}`);
+        if (!usageRes.ok) throw new Error('Failed to fetch usage');
+        const usageData = await usageRes.json();
+        setPlan(usageData.plan);
+
+        // Fetch full profile (including notifications)
+        const profileRes = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/agents/profile/${agentId}`);
+        if (!profileRes.ok) throw new Error('Failed to fetch profile');
+        const profileData = await profileRes.json();
+
+        // Update notifications if they exist in response
+        if (profileData.notifications) {
+          setNotifications(profileData.notifications);
+        }
+      } catch (err) {
+        console.error('Failed to load settings:', err);
+        // Optional: fallback to localStorage plan if fetch fails
+        const storedPlan = localStorage.getItem('plan') || 'starter';
+        setPlan(storedPlan);
+      }
+    };
+
+    fetchData();
   }, []);
 
   const isStarter = plan === 'starter';
@@ -142,6 +183,59 @@ export default function SettingsPage() {
     } finally {
       setSavingNotifs(false);
     }
+  };
+
+  // New: Handle account deletion
+  const handleDeleteAccount = async () => {
+    setDeleteError('');
+    if (!deletePassword) {
+      setDeleteError('Please enter your password to confirm.');
+      return;
+    }
+
+    const selectedReasons = Object.keys(deleteReason).filter(key => deleteReason[key] && key !== 'otherText');
+    if (selectedReasons.length === 0 && !deleteReason.otherText) {
+      setDeleteError('Please select at least one reason or provide details.');
+      return;
+    }
+
+    setDeleting(true);
+    const agentId = localStorage.getItem('agentId');
+
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/agents/delete/${agentId}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            password: deletePassword,
+            reason: {
+              checkboxes: selectedReasons,
+              text: deleteReason.otherText,
+            },
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert('Account deletion requested. Check your email for confirmation. You will be logged out.');
+        localStorage.clear(); // Clear session
+        window.location.href = '/login'; // Redirect to login
+      } else {
+        setDeleteError(data.error || 'Failed to request deletion');
+      }
+    } catch (err) {
+      setDeleteError('Network error');
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const handleReasonChange = (key) => {
+    setDeleteReason(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
   const renderLockedFeature = (featureName, requiredPlan, toggleType) => (
@@ -357,7 +451,11 @@ export default function SettingsPage() {
         <p className="text-gray-700 mb-6">
           Once you delete your account, there is no going back. Please be certain.
         </p>
-        <button className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium hover:scale-105 transition duration-300 cursor-pointer">
+        <button
+          onClick={() => setShowDeleteModal(true)}
+          className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-medium hover:scale-105 transition duration-300 cursor-pointer flex items-center gap-2"
+        >
+          <Trash2 size={18} />
           Delete Account
         </button>
       </div>
@@ -384,6 +482,110 @@ export default function SettingsPage() {
               >
                 Upgrade Now
               </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
+
+      {/* New: Delete Account Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-8 relative overflow-y-auto max-h-[90vh]">
+            <button
+              onClick={() => setShowDeleteModal(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 cursor-pointer"
+            >
+              <X size={24} />
+            </button>
+
+            <div className="text-center mb-6">
+              <Trash2 size={64} className="mx-auto text-red-600 mb-4" />
+              <h2 className="text-2xl font-bold mb-2">Delete Your Account?</h2>
+              <p className="text-gray-700">
+                This action is irreversible. Your data will be permanently deleted after 30 days.
+                Leads, profile, and settings will be lost immediately. Why are you leaving?
+              </p>
+            </div>
+
+            <div className="space-y-4 mb-6">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={deleteReason.tooExpensive}
+                  onChange={() => handleReasonChange('tooExpensive')}
+                  className="w-5 h-5 text-secondary border-gray-300 rounded focus:ring-secondary"
+                />
+                Too expensive
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={deleteReason.notUseful}
+                  onChange={() => handleReasonChange('notUseful')}
+                  className="w-5 h-5 text-secondary border-gray-300 rounded focus:ring-secondary"
+                />
+                Not useful for my needs
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={deleteReason.switchingProvider}
+                  onChange={() => handleReasonChange('switchingProvider')}
+                  className="w-5 h-5 text-secondary border-gray-300 rounded focus:ring-secondary"
+                />
+                Switching to another provider
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={deleteReason.other}
+                  onChange={() => handleReasonChange('other')}
+                  className="w-5 h-5 text-secondary border-gray-300 rounded focus:ring-secondary"
+                />
+                Other
+              </label>
+              {deleteReason.other && (
+                <textarea
+                  value={deleteReason.otherText}
+                  onChange={(e) => setDeleteReason(prev => ({ ...prev, otherText: e.target.value }))}
+                  placeholder="Please provide more details (optional)"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-secondary outline-none"
+                  rows={3}
+                />
+              )}
+            </div>
+
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Confirm Password
+              </label>
+              <input
+                type="password"
+                value={deletePassword}
+                onChange={(e) => setDeletePassword(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-secondary focus:border-secondary outline-none"
+              />
+            </div>
+
+            {deleteError && (
+              <p className="text-red-600 mb-4 text-center">{deleteError}</p>
+            )}
+
+            <div className="flex gap-4 justify-center">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:scale-105 transition cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteAccount}
+                disabled={deleting}
+                className="px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg hover:scale-105 transition disabled:opacity-60 cursor-pointer"
+              >
+                {deleting ? 'Deleting...' : 'Confirm Deletion'}
+              </button>
             </div>
           </div>
         </div>

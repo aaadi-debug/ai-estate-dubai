@@ -50,6 +50,10 @@ const agentSchema = new Schema(
     lastConversationReset: { type: Date },
 
     password: { type: String, required: true }, // hashed
+
+    isDeleted: { type: Boolean, default: false }, 
+    deletionReason: Object, 
+    deletionDate: Date
   },
   {
     timestamps: true,
