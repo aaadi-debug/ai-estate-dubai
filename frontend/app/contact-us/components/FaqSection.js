@@ -16,10 +16,10 @@ export function FaqSection() {
       question: 'Do you offer consultation calls before signing up?',
       answer: 'Yes, we offer complimentary 30-minute consultation calls to discuss your specific needs and demonstrate how AI Estate Dubai can benefit your real estate business. You can schedule a call through our contact form or by reaching out via WhatsApp.'
     },
-    {
-      question: 'Can I visit your office in person?',
-      answer: 'Absolutely! We welcome in-person visits to our Business Bay office. We recommend scheduling an appointment in advance to ensure our team is available to provide you with dedicated attention and a comprehensive product demonstration.'
-    },
+    // {
+    //   question: 'Can I visit your office in person?',
+    //   answer: 'Absolutely! We welcome in-person visits to our Business Bay office. We recommend scheduling an appointment in advance to ensure our team is available to provide you with dedicated attention and a comprehensive product demonstration.'
+    // },
     {
       question: 'What languages does your support team speak?',
       answer: 'Our support team is fluent in both English and Arabic, ensuring we can effectively communicate with all clients in Dubai\'s diverse real estate market. We understand the importance of clear communication in business relationships.'

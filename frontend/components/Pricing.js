@@ -32,16 +32,17 @@ const PricingSection = ({ className = '' }) => {
         {
             id: 1,
             name: "Starter",
-            price: billingPeriod === 'monthly' ? 149 : 1599,
+            monthlyPrice: 149,
+            annualPrice: 1499, // 10% discount example
             oneTimeFee: 0,
             period: billingPeriod === 'monthly' ? '/month' : '/year',
             description: "Perfect for individual agents testing AI lead capture",
             features: [
-                "24/7 AI chatbot on your website",
-                "Up to 200 conversations/month",
-                "Email notifications",
-                "Basic lead dashboard",
-                "Standard templates",
+                "24/7 AI Chatbot on your website",
+                "Up to 50 conversations/month",
+                "Basic Chatbot, No Branding",
+                "Email Notifications",
+                "Basic Leads Dashboard",
                 "Email support (48h response)"
             ],
             popular: false,
@@ -51,19 +52,21 @@ const PricingSection = ({ className = '' }) => {
         {
             id: 2,
             name: "Professional",
-            price: billingPeriod === 'monthly' ? 499 : 4599,
+            monthlyPrice: 349,
+            annualPrice: 3499, // ≈ 3769.2, or set fixed 3499 as you have
             oneTimeFee: 199,
             period: billingPeriod === 'monthly' ? '/month' : '/year',
             description: "Premium white-glove service for top agents & teams",
             features: [
                 "Everything in Starter",
-                "Unlimited conversations",
-                "Instant SMS alerts",
-                "Lead segregation (Hot/Warm/Cold)",
-                "Google Calendar auto-booking",
-                "Advanced analytics & stats",
-                "Priority email support (24h)",
-                "One-time setup assistance",
+                "Up to 300 conversations/month",
+                "Advanced Chatbot with Branding",
+                "Instant SMS Alerts",
+                "Google Calendar Auto-booking",
+                "Lead Segregation (Hot/Warm/Cold)",
+                "Advanced Analytics & Stats",
+                "Priority Email Support (2h response)",
+                "One-time Setup Assistance",
             ],
             popular: true,
             cta: "Buy Professional",
@@ -72,21 +75,26 @@ const PricingSection = ({ className = '' }) => {
         {
             id: 3,
             name: "Elite",
-            price: billingPeriod === 'monthly' ? 999 : 9999,
+            monthlyPrice: 499,
+            annualPrice: 4799, // ≈ 5389.2, or fixed 4599
             oneTimeFee: 499,
             period: billingPeriod === 'monthly' ? '/month' : '/year',
             description: "Premium solution for top-performing agents and teams",
             features: [
                 "Everything in Professional",
-                "WhatsApp Business API integration",
-                "Advanced anti-spam (CAPTCHA + honeypot)",
-                "Custom chatbot branding & flows",
-                "Dedicated account manager",
-                "White-label dashboard",
-                "API access & webhooks",
-                "Team accounts (up to 5 users)",
-                "24/7 phone & WhatsApp support",
-                "Custom AI training (coming Q2 2026)",
+                "Unlimited conversations",
+                "Custom Chatbot Branding & Flows",
+                "Instant SMS & Email Notifications",
+                "WhatsApp Integration",
+                "Premium Dashboard'",
+                "Advanced Anti-spam (CAPTCHA + Honeypot)",
+                "Performance Analytics & Custom Reports",
+                "Priority Email Support (30 mins response)",
+                "White-label Dashboard",
+                "Dedicated Account Manager",
+                "White-glove Onboarding",
+                "24/7 Phone & WhatsApp Support",
+                "Custom AI Training (coming Q2 2026)",
             ],
             popular: false,
             cta: "Buy Elite",
@@ -142,7 +150,13 @@ const PricingSection = ({ className = '' }) => {
             <div className="grid md:grid-cols-3 gap-8 mb-12">
                 {plans.map((plan) => {
                     const IconComponent = iconMap[plan.icon] || IoRocketSharp; // fallback icon
+                    const currentPrice = billingPeriod === 'monthly'
+                        ? plan.monthlyPrice
+                        : plan.annualPrice;
 
+                    const savings = billingPeriod === 'annual'
+                        ? Math.round(plan.monthlyPrice * 12 - plan.annualPrice)
+                        : 0;
                     return (
                         <div
                             key={plan.id}
@@ -178,16 +192,24 @@ const PricingSection = ({ className = '' }) => {
                                 <div className="flex items-baseline">
                                     <span className="text-sm text-gray-500 mr-1">USD</span>
                                     <span className="font-playfair font-bold text-4xl text-foreground">
-                                        {plan.price.toLocaleString()}
+                                        {currentPrice.toLocaleString()}
                                     </span>
-                                    <span className="text-gray-500 ml-2">{plan.period}</span>
+                                    <span className="text-gray-500 ml-2">
+                                        {billingPeriod === 'monthly' ? '/month' : '/year'}
+                                    </span>
                                 </div>
-                                {billingPeriod === 'annual' && (
+
+                                {billingPeriod === 'annual' && savings > 0 && (
                                     <p className="text-sm text-green-600 mt-2">
-                                        Save USD {Math.round(plan.price / 0.9 - plan.price)} annually
+                                        Save USD {savings} annually (vs monthly billing)
                                     </p>
                                 )}
-                                <p className="text-sm text-gray-500 mt-2">+ ${plan.oneTimeFee} one-time setup fee</p>
+
+                                {plan.oneTimeFee > 0 && (
+                                    <p className="text-sm text-gray-500 mt-1">
+                                        + USD {plan.oneTimeFee} one-time setup fee
+                                    </p>
+                                )}
                             </div>
 
 
@@ -238,7 +260,7 @@ const PricingSection = ({ className = '' }) => {
                 {
                     [
                         { icon: "ShieldCheck", text: "Money-back guarantee" },
-                        { icon: "FaRegCreditCard", text: "No credit card required" },
+                        { icon: "FaRegCreditCard", text: "Start easily with your credit/debit card" },
                         { icon: "LuRefreshCw", text: "Cancel anytime" },
                         { icon: "PiChats", text: "24/7 support" }
                     ].map((item, index) => {

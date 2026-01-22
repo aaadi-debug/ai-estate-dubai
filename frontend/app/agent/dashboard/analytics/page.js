@@ -83,7 +83,7 @@ export default function AnalyticsPage() {
   const isProfessionalOrElite = plan === 'professional' || plan === 'elite';
 
   const StatCard = ({ title, value, change, icon: Icon, color = 'text-secondary', locked = false }) => (
-    <div className={`bg-white rounded-xl shadow-sm border p-6 relative ${locked ? 'opacity-50 blur-[2px] pointer-events-none' : ''}`}>
+    <div className={`bg-white rounded-xl shadow-sm border p-6 relative ${locked ? 'pointer-events-none' : ''}`}>
       <div className="flex justify-between items-start">
         <div>
           <p className="text-sm text-gray-600 font-medium">{title}</p>
@@ -106,9 +106,9 @@ export default function AnalyticsPage() {
         </div>
       )}
       {locked && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 backdrop-blur-sm rounded-xl">
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60  rounded-xl">
           <AlertCircle size={32} className="text-amber-600 mb-2" />
-          <span className="text-sm font-medium text-amber-800">Upgrade to Professional+</span>
+          <span className="text-sm font-medium text-amber-800 text-center">Upgrade to Professional+</span>
         </div>
       )}
     </div>
@@ -199,7 +199,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Charts */}
-      <div className={`grid lg:grid-cols-2 gap-8 relative ${isStarter ? 'blur-sm pointer-events-none' : ''}`}>
+      <div className={`grid lg:grid-cols-2 gap-8 relative ${isStarter ? '' : ''}`}>
         {/* Monthly Bar Chart */}
         <div className="bg-white rounded-xl shadow-sm border p-6">
           <h2 className="text-xl font-semibold mb-6">Monthly Lead Performance</h2>

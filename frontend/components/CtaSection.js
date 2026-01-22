@@ -37,7 +37,7 @@ const CtaSection = ({ className = '' }) => {
                         Ready to Transform Your <span className="text-secondary">Real Estate Business?</span>
                     </h2>
                     <p className="text-gray-500 mt-6 lg:text-lg text-center max-w-3xl">
-                        Join 500+ elite Dubai agents who never miss a lead. Start your journey today.
+                        Join 100+ elite Dubai agents who never miss a lead. Start your journey today.
                     </p>
                 </div>
 
@@ -94,7 +94,7 @@ const CtaSection = ({ className = '' }) => {
                 <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-gray-400">
                     <div className="flex items-center space-x-2">
                         <CircleCheck size={16} className="text-green-500" />
-                        <span>No credit card required</span>
+                        <span>Start easily with your credit/debit card</span>
                     </div>
                     <div className="flex items-center space-x-2">
                         <LuRefreshCw size={16} className="text-green-500" />

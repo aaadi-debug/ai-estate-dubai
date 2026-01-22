@@ -21,7 +21,7 @@ const PricingHero = () => {
                     Invest in Your <span className="text-secondary">Success</span>
                 </h1>
                 <p className="text-gray-500 mt-6 lg:text-lg max-w-3xl text-center">
-                    Choose the perfect plan to capture every lead, maximize conversions, and dominate Dubai's luxury real estate market. Trusted by 500+ elite agents.
+                    Choose the perfect plan to capture every lead, maximize conversions, and dominate Dubai's luxury real estate market. Trusted by 100+ elite agents.
                 </p>
 
                 {/* Section Content  */}
@@ -32,7 +32,7 @@ const PricingHero = () => {
                     >View Plans <FaArrowDownLong size={16} /></Link>
 
                     <Link
-                        href=''
+                        href='#roiCalculator'
                         className="flex gap-2 justify-center items-center text-center bg-transparent text-white border border-white py-4 px-8 rounded-lg font-semibold max-sm:w-full"
                     ><LuCalculator size={18} /> Calculate ROI</Link>
                 </div>

@@ -79,7 +79,7 @@ const TermsAndConditions = () => {
 
         <h2 className="text-2xl font-bold mt-10">11. Contact</h2>
         <p>
-          Questions or concerns: <Link href="mailto:support@aiestatedubai.com" className="text-blue-600 hover:underline">support@aiestatedubai.com</Link>
+          Questions or concerns: <Link href="mailto:aiestatedubai5@gmail.com" className="text-blue-600 hover:underline">aiestatedubai5@gmail.com</Link>
         </p>
       </div>
     </>

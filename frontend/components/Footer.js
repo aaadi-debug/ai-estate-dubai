@@ -1,6 +1,9 @@
 'use client';
 import { Mail, Phone, MessagesSquare, ShieldCheck, TicketCheck, Lock, CircleCheck } from 'lucide-react'
 import { PiChats } from "react-icons/pi";
+import { FaWhatsapp } from "react-icons/fa";
+import { FiLinkedin } from "react-icons/fi";
+import { BsInstagram } from "react-icons/bs";
 import Link from 'next/link';
 
 const Footer = ({ className = '' }) => {
@@ -9,8 +12,8 @@ const Footer = ({ className = '' }) => {
     // Icon mapping: string name → React component
     const iconMap = {
         PiChats: PiChats,
-        Phone: Phone,
-        Mail: Mail,
+        FiLinkedin: FiLinkedin,
+        BsInstagram: BsInstagram,
     };
 
     const footerLinks = {
@@ -21,16 +24,18 @@ const Footer = ({ className = '' }) => {
             { label: 'Integrations', href: '/homepage#integrations' }
         ],
         company: [
-            { label: 'About Us', href: '/homepage#about' },
-            { label: 'Case Studies', href: '/homepage#testimonials' },
-            { label: 'Contact', href: '/contact-us' },
-            { label: 'Security', href: '/security' }
+            // { label: 'Home', href: '/' },
+            { label: 'Pricing', href: '/pricing' },
+            // { label: 'About Us', href: '/about-us' },
+            // { label: 'Case Studies', href: '/homepage#testimonials' },
+            { label: 'Security', href: '/security' },
+            { label: 'Contact Us', href: '/contact-us' },
         ],
         legal: [
-            { label: 'Privacy Policy', href: '/privacy' },
-            { label: 'Terms of Service', href: '/terms' },
-            { label: 'Cookie Policy', href: '/cookies' },
-            { label: 'GDPR Compliance', href: '/security#gdpr' }
+            { label: 'Privacy Policy', href: '/privacy-policy' },
+            { label: 'Terms of Service', href: '/terms-and-conditions' },
+            { label: 'Cookie Policy', href: '/cookies-policy' },
+            // { label: 'GDPR Compliance', href: '/security#gdpr' }
         ],
         support: [
             { label: 'Help Center', href: '/help' },
@@ -41,9 +46,8 @@ const Footer = ({ className = '' }) => {
     };
 
     const socialLinks = [
-        { icon: 'Mail', href: 'mailto:aiestatedubai5@gmail.com', label: 'Email' },
-        { icon: 'Phone', href: 'tel:+919289584268', label: 'Phone' },
-        { icon: 'PiChats', href: 'https://wa.me/+919289584268', label: 'WhatsApp' }
+        { icon: 'FiLinkedin', href: 'https://www.linkedin.com/company/aiestatedubai/', label: 'LinkedIn' },
+        { icon: 'BsInstagram', href: 'https://www.instagram.com/aiestatedubai/', label: 'Instagram' },
     ];
 
     return (
@@ -51,6 +55,7 @@ const Footer = ({ className = '' }) => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 {/* Main Footer Content */}
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mb-12">
+                {/* <div className="grid lg:grid-cols-5 gap-8 mb-12"> */}
                     {/* Brand Column */}
                     <div className="col-span-2">
                         <Link href="/" className="flex items-center gap-2">
@@ -82,7 +87,7 @@ const Footer = ({ className = '' }) => {
                                         className="w-10 h-10 rounded-full bg-white/20 text-white hover:bg-secondary hover:text-primary flex items-center justify-center transition-all duration-300"
                                         aria-label={social.label}
                                     >
-                                       <IconComponent size={18} />
+                                        <IconComponent size={18} />
                                     </a>
                                 )
                             })}
@@ -90,22 +95,21 @@ const Footer = ({ className = '' }) => {
                     </div>
 
                     {/* Product Links */}
-                    <div>
+                    {/* <div>
                         <h3 className="font-playfair text-white font-bold text-sm uppercase tracking-wider mb-4">Product</h3>
                         <ul className="space-y-2">
                             {footerLinks.product.map((link) => (
                                 <li key={link.href}>
                                     <Link
                                         href={link.href}
-                                        className="text-gray-400 hover:text-accent transition-colors duration-300 text-sm"
+                                        className="text-gray-400 hover:text-white transition-colors duration-300 text-sm"
                                     >
                                         {link.label}
                                     </Link>
                                 </li>
                             ))}
                         </ul>
-                    </div>
-
+                    </div> */}
                     {/* Company Links */}
                     <div>
                         <h3 className="font-playfair text-white font-bold text-sm uppercase tracking-wider mb-4">Company</h3>
@@ -114,7 +118,7 @@ const Footer = ({ className = '' }) => {
                                 <li key={link.href}>
                                     <Link
                                         href={link.href}
-                                        className="text-gray-400 hover:text-accent transition-colors duration-300 text-sm"
+                                        className="text-gray-400 hover:text-white transition-colors duration-300 text-sm"
                                     >
                                         {link.label}
                                     </Link>
@@ -131,7 +135,7 @@ const Footer = ({ className = '' }) => {
                                 <li key={link.href}>
                                     <Link
                                         href={link.href}
-                                        className="text-gray-400 hover:text-accent transition-colors duration-300 text-sm"
+                                        className="text-gray-400 hover:text-white transition-colors duration-300 text-sm"
                                     >
                                         {link.label}
                                     </Link>
@@ -140,22 +144,77 @@ const Footer = ({ className = '' }) => {
                         </ul>
                     </div>
 
+                    {/* Quick Contacts */}
+                    <div className='col-span-2'>
+                        <h3 className="font-playfair text-white font-bold text-sm uppercase tracking-wider mb-4">Quick Contacts</h3>
+                        <ul className="space-y-2">
+                            <li className='flex items-center gap-2 group'>
+                                <span
+                                    className="w-8 h-8 rounded-full bg-white/20 text-white group-hover:bg-secondary group-hover:text-primary flex items-center justify-center transition-all duration-300"
+                                >
+                                    <Mail size={16} />
+                                </span>
+                                <a
+                                    href="mailto:aiestatedubai5@gmail.com"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className='text-gray-400 group-hover:text-white transition-colors duration-300 text-sm'
+                                    aria-label="Email"
+                                >
+                                    aiestatedubai5@gmail.com
+                                </a>
+                            </li>
+                            <li className='flex items-center gap-2 group'>
+                                <span
+                                    className="w-8 h-8 rounded-full bg-white/20 text-white group-hover:bg-secondary group-hover:text-primary flex items-center justify-center transition-all duration-300"
+                                >
+                                    <Phone size={16} />
+                                </span>
+                                <a
+                                    href="tel:+919289584268"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className='text-gray-400 group-hover:text-white transition-colors duration-300 text-sm'
+                                    aria-label="Email"
+                                >
+                                    +91-9289584268
+                                </a>
+                            </li>
+                            <li className='flex items-center gap-2 group'>
+                                <span
+                                    className="w-8 h-8 rounded-full bg-white/20 text-white group-hover:bg-secondary group-hover:text-primary flex items-center justify-center transition-all duration-300"
+                                >
+                                    <FaWhatsapp size={16} />
+                                </span>
+                                <a
+                                    href="https://wa.me/+919289584268"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className='text-gray-400 group-hover:text-white transition-colors duration-300 text-sm'
+                                    aria-label="Email"
+                                >
+                                    +91-9289584268
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
                     {/* Support Links */}
-                    <div>
+                    {/* <div>
                         <h3 className="font-playfair text-white font-bold text-sm uppercase tracking-wider mb-4">Support</h3>
                         <ul className="space-y-2">
                             {footerLinks.support.map((link) => (
                                 <li key={link.href}>
                                     <Link
                                         href={link.href}
-                                        className="text-gray-400 hover:text-accent transition-colors duration-300 text-sm"
+                                        className="text-gray-400 hover:text-white transition-colors duration-300 text-sm"
                                     >
                                         {link.label}
                                     </Link>
                                 </li>
                             ))}
                         </ul>
-                    </div>
+                    </div> */}
                 </div>
 
                 {/* Trust Badges */}
@@ -187,13 +246,13 @@ const Footer = ({ className = '' }) => {
                             &copy; {currentYear} AI Estate Dubai. All rights reserved.
                         </p>
                         <div className="flex items-center space-x-6">
-                            <Link href="/privacy-policy" className="text-sm text-gray-400 hover:text-accent transition-colors duration-300">
+                            <Link href="/privacy-policy" className="text-sm text-gray-400 hover:text-white transition-colors duration-300">
                                 Privacy
                             </Link>
-                            <Link href="/terms-and-conditions" className="text-sm text-gray-400 hover:text-accent transition-colors duration-300">
+                            <Link href="/terms-and-conditions" className="text-sm text-gray-400 hover:text-white transition-colors duration-300">
                                 Terms
                             </Link>
-                            <Link href="/cookies-policy" className="text-sm text-gray-400 hover:text-accent transition-colors duration-300">
+                            <Link href="/cookies-policy" className="text-sm text-gray-400 hover:text-white transition-colors duration-300">
                                 Cookies
                             </Link>
                         </div>

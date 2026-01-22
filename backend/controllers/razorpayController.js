@@ -27,8 +27,8 @@ async function getRazorpay() {
 // Monthly amounts in USD (without cents multiplication)
 const planPricesUSD = {
   starter: 149,
-  professional: 499,
-  elite: 999
+  professional: 349,
+  elite: 499
 };
 
 // One-time setup fees in USD

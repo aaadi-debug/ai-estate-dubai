@@ -168,7 +168,7 @@ export default function DataProtectionSection({ className = '' }) {
                             className="inline-flex items-center space-x-2 px-6 py-3 bg-secondary text-primary rounded-lg font-cta font-semibold hover:scale-105 transition-all duration-300"
                         >
                             <Mail size={20} />
-                            <span>aiestatedubai5@gmail.com</span>
+                            <span>Mail Us</span>
                         </Link>
                     </div>
                 </div>

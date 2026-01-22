@@ -12,7 +12,7 @@ export default function Testimonials() {
             name: 'Ahmed Al Mansouri',
             role: 'Senior Real Estate Consultant',
             company: 'Dubai Marina Properties',
-            image: "https://img.rocket.new/generatedImages/rocket_gen_img_19458974c-1763300956934.png",
+            image: "/assets/images/Ahmed.png",
             alt: 'Professional Middle Eastern man in navy suit with confident smile in modern office',
             plan: 'Elite Plan',
             quote: 'AI Estate Dubai transformed my business. I never miss a lead, even when I\'m showing properties. The ROI is incredible - I closed 3 deals in the first month that came directly from the chatbot.',
@@ -27,7 +27,7 @@ export default function Testimonials() {
             name: 'Sarah Johnson',
             role: 'Luxury Property Specialist',
             company: 'Palm Jumeirah Estates',
-            image: "https://img.rocket.new/generatedImages/rocket_gen_img_1f8f896f2-1763299689286.png",
+            image: "/assets/images/Sarah.png",
             alt: 'Professional woman with blonde hair in elegant business attire smiling in bright office',
             plan: 'Professional Plan',
             quote: 'The 24/7 lead capture is a game-changer. My clients love the instant responses, and I love waking up to qualified leads every morning. Best investment I\'ve made in my career.',
@@ -39,17 +39,17 @@ export default function Testimonials() {
         },
         {
             id: 3,
-            name: 'Mohammed Hassan',
-            role: 'Real Estate Broker',
-            company: 'Downtown Dubai Realty',
-            image: "https://img.rocket.new/generatedImages/rocket_gen_img_156f1c7a4-1763295792285.png",
+            name: 'Elena Petrova',
+            role: 'Sales Manager',
+            company: 'Global Estates Dubai',
+            image: "/assets/images/Elena.png",
             alt: 'Middle Eastern businessman with beard in gray suit standing in modern corporate lobby',
             plan: 'Elite Plan',
             quote: 'The white-glove service and dedicated account manager make all the difference. They helped optimize my chatbot for Dubai\'s luxury market, and now I\'m closing deals worth AED 5M+ monthly.',
             metrics: [
                 { label: 'Deal Value', value: '+120%' },
                 { label: 'Conversion Rate', value: '22%' },
-                { label: 'Annual Revenue', value: '+AED 2.4M' }
+                { label: 'First Month', value: '+AED 2.4M' }
             ]
         }
     ];
@@ -123,7 +123,7 @@ export default function Testimonials() {
                 {/* Bottom CTA */}
                 <div className="mt-16 text-center">
                     <p className="text-white text-lg mb-6">
-                        Join 500+ elite agents who never miss a lead
+                        Join 100+ elite agents who never miss a lead
                     </p>
                     <Link href='/signup' className="px-8 py-4 bg-secondary text-primary rounded-lg font-semibold text-lg hover:scale-105 transition-all duration-300 inline-flex items-center space-x-2 cursor-pointer">
                         <span>Start Your Success Story</span>

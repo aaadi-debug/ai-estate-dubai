@@ -239,7 +239,7 @@ export default function MyPlanPage() {
       </div>
 
       <div className="mt-10 text-center text-gray-500 text-sm">
-        Need help with billing? <Link href="/dashboard/support" className="text-secondary hover:underline">Contact Support</Link>
+        Need help with billing? <Link href="/contact-us" className="text-secondary hover:underline">Contact Support</Link>
       </div>
     </div>
   );

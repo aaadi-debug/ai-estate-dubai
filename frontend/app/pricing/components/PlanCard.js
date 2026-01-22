@@ -53,17 +53,17 @@ export default function PlanCard({
       </button> */}
       {ctaText && (
         <>
-          {/* <button
-          onClick={onSelectPlan}
-          disabled={loading}
-          className={`w-full py-4 px-6 rounded-lg font-bold transition-all mb-8 cursor-pointer ${isPopular
-            ? 'bg-secondary text-primary hover:scale-105'
-            : 'bg-gray-100 text-black hover:bg-secondary hover:text-primary'
-            } ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
-        >
-          {loading ? 'Processing...' : ctaText}
-        </button> */}
           <button
+            onClick={onSelectPlan}
+            disabled={loading}
+            className={`w-full py-4 px-6 rounded-lg font-bold transition-all mb-8 cursor-pointer ${isPopular
+              ? 'bg-secondary text-primary hover:scale-105'
+              : 'bg-gray-100 text-black hover:bg-secondary hover:text-primary'
+              } ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+          >
+            {loading ? 'Processing...' : ctaText}
+          </button>
+          {/* <button
             onClick={() => {
               if (isContactSales) {
                 // Option 1: Simple mailto link
@@ -87,7 +87,7 @@ export default function PlanCard({
               } ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
           >
             {loading ? 'Processing...' : ctaText}
-          </button>
+          </button> */}
         </>
       )}
 

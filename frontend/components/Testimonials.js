@@ -26,8 +26,8 @@ export function Testimonials() {
             name: "Ahmed Al Mansouri",
             role: "Senior Real Estate Consultant",
             company: "Luxury Properties Dubai",
-            location: "Dubai Marina",
-            image: "https://img.rocket.new/generatedImages/rocket_gen_img_19458974c-1763300956934.png",
+            location: "Dubai Marina Properties",
+            image: "/assets/images/Ahmed.png",
             alt: "Professional Middle Eastern man in navy suit with confident smile in modern office",
             rating: 5,
             quote: "AI Estate Dubai transformed my business overnight. I'm now capturing leads 24/7, even while I sleep. The WhatsApp integration is seamless, and the lead quality has improved by 40%.",
@@ -38,8 +38,8 @@ export function Testimonials() {
             name: "Sarah Johnson",
             role: "Luxury Property Specialist",
             company: "Elite Estates",
-            location: "Palm Jumeirah",
-            image: "https://img.rocket.new/generatedImages/rocket_gen_img_1fca82876-1763294352035.png",
+            location: "Palm Jumeirah Estates",
+            image: "/assets/images/Sarah.png",
             alt: "Professional woman with blonde hair in white blazer smiling confidently in bright office",
             rating: 5,
             quote: "The AI assistant handles initial inquiries perfectly, qualifying leads before they reach me. I can focus on closing deals instead of answering basic questions. Game-changer for high-end properties.",
@@ -47,11 +47,11 @@ export function Testimonials() {
         },
         {
             id: 3,
-            name: "Mohammed Hassan",
-            role: "Real Estate Broker",
+            name: "Rajesh Gupta",
+            role: "Investment Advisor",
             company: "Premium Realty Group",
             location: "Downtown Dubai",
-            image: "https://img.rocket.new/generatedImages/rocket_gen_img_1f1bb3f73-1763293392766.png",
+            image: "/assets/images/Rajesh.png",
             alt: "Middle Eastern businessman with beard in gray suit standing in modern glass office",
             rating: 5,
             quote: "I was skeptical about AI, but this platform exceeded all expectations. The Arabic language support is flawless, and my clients love the instant responses. ROI was positive within two weeks.",
@@ -60,10 +60,10 @@ export function Testimonials() {
         {
             id: 4,
             name: "Elena Petrova",
-            role: "International Property Advisor",
+            role: "Sales Manager",
             company: "Global Estates Dubai",
             location: "Emirates Hills",
-            image: "https://img.rocket.new/generatedImages/rocket_gen_img_1f8b16ff9-1763296233454.png",
+            image: "/assets/images/Elena.png",
             alt: "Professional woman with dark hair in black business suit with warm smile in corporate setting",
             rating: 5,
             quote: "Working with international clients across time zones was challenging. Now, AI Estate captures leads from Europe and Asia while I'm offline. The analytics dashboard helps me optimize my strategy daily.",
@@ -112,7 +112,7 @@ export function Testimonials() {
                 <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
                     <div className="grid lg:grid-cols-2 gap-0">
                         {/* Image Side */}
-                        <div className="relative h-64 lg:h-auto">
+                        <div className="relative h-64 lg:h-[500px]">
                             <div className="absolute inset-0 bg-gradient-to-br from-accent/20 to-transparent"></div>
                             {isHydrated ? (
                                 <Image
@@ -120,7 +120,7 @@ export function Testimonials() {
                                     alt={currentTestimonial.alt}
                                     height={100}
                                     width={100}
-                                    className="w-full h-full object-cover" 
+                                    className="w-full h-full object-contain" 
                                 />
                             ) : (
                                 <Image
@@ -128,13 +128,13 @@ export function Testimonials() {
                                     alt={testimonials[0].alt}
                                     height={100}
                                     width={100}
-                                    className="w-full h-full object-cover"
+                                    className="w-full h-full object-contain"
                                 />
 
                             )}
 
                             {/* Results Badge */}
-                            <div className="absolute bottom-6 left-6 bg-card/95 backdrop-blur-sm rounded-xl px-4 py-3 shadow-lg">
+                            <div className="absolute bottom-6 left-6 bg-white backdrop-blur-sm rounded-xl px-4 py-3 shadow-lg">
                                 <div className="flex items-center space-x-2">
                                     <FaTrophy className='text-secondary' size={20} />
                                     <span className="font-cta font-semibold text-sm text-foreground">
@@ -227,7 +227,7 @@ export function Testimonials() {
             {/* Stats Bar */}
             {/* <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mt-16 max-w-5xl mx-auto">
                 {[
-                    { icon: "UserGroupIcon", value: "500+", label: "Active Agents" },
+                    { icon: "UserGroupIcon", value: "100+", label: "Active Agents" },
                     { icon: "ChatBubbleLeftRightIcon", value: "10K+", label: "Leads Monthly" },
                     { icon: "ChartBarIcon", value: "40%", label: "Avg. Increase" },
                     { icon: "ClockIcon", value: "24/7", label: "Availability" }

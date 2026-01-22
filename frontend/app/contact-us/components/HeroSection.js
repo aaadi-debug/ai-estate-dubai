@@ -21,7 +21,7 @@ export function HeroSection() {
                 {/* Section Content  */}
                 <div className="flex flex-wrap items-center justify-center gap-4 mt-6">
                     <a
-                        href="https://wa.me/971501234567"
+                        href="https://wa.me/+919289584268"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center space-x-2 px-6 py-3 bg-secondary text-accent-foreground rounded font-cta font-semibold hover:scale-105 hover:shadow-lg transition-all duration-300"
@@ -30,7 +30,7 @@ export function HeroSection() {
                         <span>WhatsApp Us</span>
                     </a>
                     <a
-                        href="tel:+971501234567"
+                        href="tel:+919289584268"
                         className="inline-flex items-center space-x-2 px-6 py-3 bg-white text-foreground rounded font-cta font-semibold hover:scale-105 hover:shadow-lg transition-all duration-300"
                     >
                         <Phone size={20} />

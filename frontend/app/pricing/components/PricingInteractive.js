@@ -26,11 +26,13 @@ export default function PricingInteractive() {
       description: 'Perfect for individual agents testing AI lead capture',
       features: [
         { text: '24/7 AI Chatbot on your website', included: true },
-        { text: 'Up to 200 conversations/month', included: true },
+        { text: 'Up to 50 conversations/month', included: true },
+        { text: 'Basic Chatbot, No Branding', included: true },
         { text: 'Email Notifications', included: true },
         { text: 'Basic Leads Dashboard', included: true },
-        { text: 'Standard Templates', included: true },
         { text: 'Email Support (48h response)', included: true },
+        // { text: 'Standard Templates', included: true },
+        { text: 'SMS Alert Setup', included: false },
         { text: 'WhatsApp Integration', included: false },
         { text: 'Lead Scoring', included: false },
         { text: 'Performance Analytics', included: false },
@@ -46,22 +48,24 @@ export default function PricingInteractive() {
     {
       id: 'professional',
       name: 'Professional',
-      price: '499',
+      price: '349',
       oneTimeFee: 199,
       period: 'month',
       description: 'Premium white-glove service for top agents & teams',
       features: [
         { text: 'Everything in Starter', included: true },
-        { text: 'Unlimited conversations', included: true },
+        { text: 'Up to 300 conversations/month', included: true },
+        { text: 'Advanced Chatbot with Branding', included: true },
         { text: 'Instant SMS Alerts', included: true },
-        { text: 'Lead Segregation (Hot/Warm/Cold)', included: true },
         { text: 'Google Calendar Auto-booking', included: true },
+        { text: 'Lead Segregation (Hot/Warm/Cold)', included: true },
         { text: 'Advanced Analytics & Stats', included: true },
-        { text: 'Priority Email Support (24h)', included: true },
+        { text: 'Priority Email Support (2h response)', included: true },
         { text: 'One-time Setup Assistance', included: true },
+        { text: 'WhatsApp Integration', included: false },
         { text: 'Dedicated Account Manager', included: false },
         { text: 'White-label Option', included: false },
-        { text: 'API Access', included: false }
+        // { text: 'API Access', included: false }
       ],
       isPopular: true,
       isContactSales: false,
@@ -70,35 +74,32 @@ export default function PricingInteractive() {
     {
       id: 'elite',
       name: 'Elite',
-      price: '999',
+      price: '499',
       oneTimeFee: 499,
       period: 'month',
       description: 'Premium solution for top-performing agents and teams',
       features: [
-        { text: '24/7 AI Chatbot on your website', included: true },
-        { text: 'WhatsApp Business API Integration', included: true },
+        { text: 'Everything in Professional', included: true },
         { text: 'Unlimited conversations', included: true },
-        { text: 'Unlimited SMS Notifications', included: true },
+        { text: 'Custom Chatbot Branding & Flows', included: true },
         { text: 'Instant SMS & Email Notifications', included: true },
+        { text: 'WhatsApp Integration', included: true },
         { text: 'Premium Dashboard', included: true },
         { text: 'Advanced Anti-spam (CAPTCHA + Honeypot)', included: true },
-        { text: 'Custom Chatbot Branding & Flows', included: true },
-        { text: 'Full Custom Branding', included: true },
-        { text: 'Lead Scoring & Priority Routing', included: true },
-        { text: 'Google Calendar Auto-booking', included: true },
         { text: 'Performance Analytics & Custom Reports', included: true },
-        { text: 'Multi-language Support', included: true },
-        { text: 'API Access & Webhooks', included: true },
+        // { text: 'Multi-language Support', included: true },
+        // { text: 'API Access & Webhooks', included: true },
+        { text: 'Priority Email Support (30 mins response)', included: true },
         { text: 'White-label Dashboard', included: true },
-        { text: 'Team Accounts (up to 5 users)', included: true },
+        // { text: 'Team Accounts (up to 5 users)', included: true },
         { text: 'Dedicated Account Manager', included: true },
         { text: 'White-glove Onboarding', included: true },
         { text: '24/7 Phone & WhatsApp Support', included: true },
         { text: 'Custom AI Training (coming Q2 2026)', included: true }
       ],
       isPopular: false,
-      isContactSales: true,
-      ctaText: 'Contact Sales'
+      isContactSales: false,
+      ctaText: 'Buy Elite'
     }
   ];
 
@@ -126,7 +127,7 @@ export default function PricingInteractive() {
 
   const handleSelectPlan = (planId) => {
     if (planId === 'elite') {
-      window.location.href = '/contact';
+      window.location.href = '/signup';
     } else {
       window.location.href = '/signup';
     }

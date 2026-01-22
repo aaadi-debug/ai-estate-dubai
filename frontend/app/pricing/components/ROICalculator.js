@@ -21,7 +21,7 @@ export default function ROICalculator() {
 
   if (!isHydrated) {
     return (
-      <section className="bg-muted py-20 px-4">
+      <section className="bg-muted py-20 px-4" id='roiCalculator'>
         <div className="max-w-5xl mx-auto">
           <div className="bg-card rounded-2xl p-8 shadow-lg">
             <div className="animate-pulse space-y-4">
@@ -98,7 +98,7 @@ export default function ROICalculator() {
                 <input
                   type="range"
                   min="10"
-                  max="200"
+                  max="300"
                   step="10"
                   value={monthlyLeads}
                   onChange={(e) => setMonthlyLeads(Number(e.target.value))}
@@ -106,7 +106,7 @@ export default function ROICalculator() {
                 />
                 <div className="flex justify-between text-xs text-gray-500 mt-1">
                   <span>10</span>
-                  <span>200</span>
+                  <span>300</span>
                 </div>
               </div>
 
@@ -163,9 +163,9 @@ export default function ROICalculator() {
                   onChange={(e) => setPlanCost(Number(e.target.value))}
                   className="w-full px-4 py-3 bg-gray-100 border border-gray-300 rounded-lg font-body text-primary focus:outline-none focus:ring-2 focus:ring-secondary"
                 >
-                  <option value="499">Starter - 499 AED</option>
-                  <option value="999">Professional - 999 AED</option>
-                  <option value="1999">Elite - 1,999 AED</option>
+                  <option value="499">Starter - $149</option>
+                  <option value="999">Professional - $349</option>
+                  <option value="1999">Elite - $499</option>
                 </select>
               </div>
             </div>

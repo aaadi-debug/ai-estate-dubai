@@ -766,11 +766,11 @@ export default function LeadsPage() {
                                             {getStatusBadge(selectedLead.status)}
                                         </div>
 
-                                        <div className="flex flex-wrap gap-3">
+                                        <div className="flex flex-wrap gap-1">
                                             {selectedLead.status !== 'contacted' && (
                                                 <button
                                                     onClick={() => updateLeadStatus(selectedLead._id, 'contacted')}
-                                                    className="flex-1 bg-green-600 text-white py-2.5 rounded-lg hover:bg-green-700"
+                                                    className="flex-1 bg-green-600 text-xs text-white py-2.5 rounded cursor-pointer hover:bg-green-700"
                                                 >
                                                     Mark Contacted
                                                 </button>
@@ -781,7 +781,7 @@ export default function LeadsPage() {
                                                     {selectedLead.status !== 'appointment_booked' && selectedLead.status !== 'closed' && (
                                                         <button
                                                             onClick={() => updateLeadStatus(selectedLead._id, 'appointment_booked')}
-                                                            className="flex-1 bg-blue-600 text-white py-2.5 rounded-lg hover:bg-blue-700"
+                                                            className="flex-1 bg-blue-600 text-xs text-white py-2.5 rounded cursor-pointer hover:bg-blue-700"
                                                         >
                                                             Booked Viewing
                                                         </button>
@@ -790,7 +790,7 @@ export default function LeadsPage() {
                                                     {selectedLead.status !== 'closed' && (
                                                         <button
                                                             onClick={() => updateLeadStatus(selectedLead._id, 'closed')}
-                                                            className="flex-1 bg-purple-600 text-white py-2.5 rounded-lg hover:bg-purple-700"
+                                                            className="flex-1 bg-purple-600 text-xs text-white py-2.5 rounded cursor-pointer hover:bg-purple-700"
                                                         >
                                                             Deal Closed
                                                         </button>
@@ -835,10 +835,10 @@ export default function LeadsPage() {
                                     </h3>
 
                                     {isStarter ? (
-                                        <div className="relative py-8 text-center opacity-70">
-                                            <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50/80 backdrop-blur-sm">
-                                                <Lock size={32} className="text-gray-400 mb-3" />
-                                                <p className="text-gray-600 font-medium">Notes are a Professional & Elite feature</p>
+                                        <div className="relative py-4 text-center">
+                                            <div className="absolute inset-0 flex flex-col items-center justify-center rounded-xl bg-gray-500/50">
+                                                <Lock size={32} className="text-primary mb-3" />
+                                                <p className="text-primary font-medium">Notes are a Professional & Elite feature</p>
                                                 <Link
                                                     href="/agent/dashboard/my-plan"
                                                     className="mt-4 inline-block bg-secondary text-primary px-5 py-2 rounded-lg text-sm font-medium hover:scale-105 transition"
@@ -847,9 +847,9 @@ export default function LeadsPage() {
                                                 </Link>
                                             </div>
                                             {/* Fake blurred notes for visual effect */}
-                                            <div className="space-y-3 blur-sm pointer-events-none">
+                                            <div className="space-y-2 pointer-events-none">
                                                 <div className="h-16 bg-gray-200 rounded"></div>
-                                                <div className="h-12 bg-gray-200 rounded w-3/4"></div>
+                                                <div className="h-12 bg-gray-200 rounded"></div>
                                             </div>
                                         </div>
                                     ) : selectedLead.notes?.length > 0 ? (

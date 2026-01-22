@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from "react";
 import Link from 'next/link';
 import Image from 'next/image';
-import { House, CircleDollarSign, Mail, ShieldCheck, X, UserCircle, LogOut, ChevronDown } from 'lucide-react';
+import { House, CircleDollarSign, Mail, ShieldCheck, X, UserCircle, LogOut, ChevronDown, ChevronRight } from 'lucide-react';
 import { FaTimes } from "react-icons/fa";
 import { LiaChartBarSolid } from "react-icons/lia";
 import { IoSearch, IoMenu } from "react-icons/io5";
@@ -13,9 +13,13 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [plan, setPlan] = useState('none')
+  const [isAccountOpen, setIsAccountOpen] = useState(false); // for accordion
 
   const toggleMobileMenu = () => setIsMobileMenuOpen((v) => !v);
-  const closeMobileMenu = () => setIsMobileMenuOpen(false);
+  const closeMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+    setIsAccountOpen(false); // optional: close accordion too
+  };
 
   // Function to get first name from full name
   function getFirstName(fullName) {
@@ -33,15 +37,6 @@ export function Header() {
     setPlan(storedPlan)
   }, [])
 
-  // const handleLogout = () => {
-  //   localStorage.removeItem('token')
-  //   localStorage.removeItem('agentId')
-  //   localStorage.removeItem('plan')
-  //   localStorage.removeItem('agentName')
-  //   localStorage.removeItem('agentEmail')
-  //   localStorage.removeItem('agentPhone')
-  //   window.location.href = '/login'
-  // }
   // In your sidebar (dashboard/layout.js or wherever)
   const handleLogout = async () => {
     try {
@@ -50,15 +45,6 @@ export function Header() {
         method: 'POST',
         credentials: 'include',
       });
-
-      // localStorage.removeItem('token')
-      // localStorage.removeItem('agentId')
-      // localStorage.removeItem('plan')
-      // localStorage.removeItem('agentName')
-      // localStorage.removeItem('agentEmail')
-      // localStorage.removeItem('agentPhone')
-
-      // console.log("User logged out")
     } catch (err) {
       console.error('Logout error:', err);
     }
@@ -69,6 +55,137 @@ export function Header() {
     // Redirect
     window.location.href = '/login';
     // window.location.replace('/login')
+  };
+
+  // Mobile auth content — same logic as desktop but vertical + accordion
+  const renderMobileAuth = () => {
+    if (!isLoggedIn) {
+      return (
+        <Link
+          href="/login"
+          className="mt-4 w-full bg-secondary text-primary text-center py-3 px-6 rounded-lg font-semibold hover:scale-105 transition block"
+          onClick={closeMobileMenu}
+        >
+          Login / Register
+        </Link>
+      );
+    }
+
+    const firstName = getFirstName(localStorage.getItem('agentName') || 'Agent');
+
+    if (plan !== 'none') {
+      // Paid plan → accordion with many options
+      return (
+        <div className="mt-4">
+          <button
+            onClick={() => setIsAccountOpen(!isAccountOpen)}
+            className="w-full flex items-center justify-between bg-gray-50 text-primary py-3 px-4 rounded-lg font-semibold"
+          >
+            <span>Hi, {firstName}</span>
+            {isAccountOpen ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
+          </button>
+
+          {isAccountOpen && (
+            <div className="mt-1 pl-4 border-l-2 border-gray-200 flex flex-col gap-1 py-2">
+              <Link
+                href="/agent/dashboard"
+                className="py-2 px-3 hover:bg-gray-100 rounded-md transition"
+                onClick={closeMobileMenu}
+              >
+                Dashboard
+              </Link>
+              <Link
+                href="/agent/dashboard/leads"
+                className="py-2 px-3 hover:bg-gray-100 rounded-md transition"
+                onClick={closeMobileMenu}
+              >
+                Leads
+              </Link>
+              <Link
+                href="/agent/dashboard/analytics"
+                className="py-2 px-3 hover:bg-gray-100 rounded-md transition"
+                onClick={closeMobileMenu}
+              >
+                Analytics
+              </Link>
+              <Link
+                href="/agent/dashboard/my-plan"
+                className="py-2 px-3 hover:bg-gray-100 rounded-md transition"
+                onClick={closeMobileMenu}
+              >
+                My Plan
+              </Link>
+              <Link
+                href="/agent/dashboard/profile"
+                className="py-2 px-3 hover:bg-gray-100 rounded-md transition"
+                onClick={closeMobileMenu}
+              >
+                Profile
+              </Link>
+              <Link
+                href="/agent/dashboard/upgrade"
+                className="py-2 px-3 hover:bg-gray-100 rounded-md transition"
+                onClick={closeMobileMenu}
+              >
+                Upgrade
+              </Link>
+              <Link
+                href="/agent/dashboard/settings"
+                className="py-2 px-3 hover:bg-gray-100 rounded-md transition"
+                onClick={closeMobileMenu}
+              >
+                Settings
+              </Link>
+              <button
+                onClick={() => {
+                  handleLogout();
+                  closeMobileMenu();
+                }}
+                className="py-2 px-3 text-red-600 hover:bg-red-50 rounded-md transition text-left cursor-pointer"
+              >
+                Log out
+              </button>
+            </div>
+          )}
+        </div>
+      );
+    }
+    // Logged in but no plan
+    return (
+      <div className="mt-4">
+        <button
+          onClick={() => setIsAccountOpen(!isAccountOpen)}
+          className="w-full flex items-center justify-between bg-gray-50 text-primary py-3 px-4 rounded-lg font-semibold"
+        >
+          <div className="flex flex-col items-start leading-tight">
+            <span>Hi, {firstName}</span>
+            <span className="text-xs text-gray-500">(start here)</span>
+          </div>
+          {isAccountOpen ? <ChevronDown size={20} /> : <ChevronRight size={20} />}
+        </button>
+
+        {isAccountOpen && (
+          <div className="mt-1 pl-4 border-l-2 border-gray-200 flex flex-col gap-1 py-2">
+            <Link
+              href="/agent-registration/buy-plan"
+              className="py-2 px-3 hover:bg-gray-100 rounded-md transition"
+              onClick={closeMobileMenu}
+            >
+              Buy A Plan
+            </Link>
+            <button
+              onClick={() => {
+                handleLogout();
+                closeMobileMenu();
+              }}
+              className="py-2 px-3 text-red-600 hover:bg-red-50 rounded-md transition text-left"
+            >
+              Log out
+            </button>
+          </div>
+        )}
+      </div>
+    );
   };
 
   // Determine what to show in the header
@@ -128,6 +245,13 @@ export function Header() {
               >
                 Profile
               </Link>
+              <Link
+                href="/agent/dashboard/upgrade"
+                className="block px-4 py-2 text-sm text-primary font-semibold hover:bg-gray-100 hover:text-secondary transition duration-300"
+              >
+                Upgrade
+              </Link>
+
               <Link
                 href="/agent/dashboard/settings"
                 className="block px-4 py-2 text-sm text-primary font-semibold hover:bg-gray-100 hover:text-secondary transition duration-300"
@@ -265,9 +389,9 @@ export function Header() {
               <Link href="/" className="flex gap-2 items-center text-primary font-semibold hover:bg-gray-100 rounded-lg py-3 px-2 hover:text-secondary transition duration-300">
                 <House size={20} /> Home
               </Link>
-              <Link href="/dashboard" className="flex gap-2 items-center text-primary font-semibold hover:bg-gray-100 rounded-lg py-3 px-2 hover:text-secondary transition duration-300">
+              {/* <Link href="/dashboard" className="flex gap-2 items-center text-primary font-semibold hover:bg-gray-100 rounded-lg py-3 px-2 hover:text-secondary transition duration-300">
                 <LiaChartBarSolid size={20} /> Dashboard
-              </Link>
+              </Link> */}
               <Link href="/pricing" className="flex gap-2 items-center text-primary font-semibold hover:bg-gray-100 rounded-lg py-3 px-2 hover:text-secondary transition duration-300">
                 <CircleDollarSign size={20} /> Pricing
               </Link>
@@ -278,8 +402,9 @@ export function Header() {
                 <Mail size={20} /> Contact Us
               </Link>
 
-              {/* <Link href="/dashboard" className="text-gray-700 hover:text-blue-600 font-medium">Login</Link> */}
-              <Link href='' className="mt-2 w-full bg-secondary text-primary text-center py-3 px-6 rounded-lg font-semibold hover:scale-105 transition duration-300">Start Here</Link>
+
+              {/* Authentication block */}
+              {renderMobileAuth()}
             </nav>
 
           </div>

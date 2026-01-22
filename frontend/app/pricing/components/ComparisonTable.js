@@ -9,11 +9,11 @@ export default function ComparisonTable() {
       category: 'Lead Capture',
       features: [
         { name: '24/7 AI Chatbot', starter: true, professional: true, elite: true },
-        { name: 'WhatsApp Integration', starter: true, professional: true, elite: true },
-        { name: 'SMS Notifications', starter: '50/month', professional: '200/month', elite: 'Unlimited' },
         { name: 'Email Notifications', starter: true, professional: true, elite: true },
-        { name: 'Lead Scoring', starter: false, professional: true, elite: true },
-        { name: 'Priority Lead Routing', starter: false, professional: false, elite: true }
+        { name: 'SMS Alert Setup', starter: false, professional: true, elite: true },
+        { name: 'WhatsApp Integration', starter: false, professional: false, elite: true },
+        // { name: 'SMS Notifications', starter: '50/month', professional: '200/month', elite: 'Unlimited' },
+        { name: 'Lead Segregation (Hot/Warm/Cold)', starter: false, professional: true, elite: true },
       ]
     },
     {
@@ -22,27 +22,26 @@ export default function ComparisonTable() {
         { name: 'Real-time Dashboard', starter: true, professional: true, elite: true },
         { name: 'Lead Management', starter: 'Basic', professional: 'Advanced', elite: 'Premium' },
         { name: 'Performance Analytics', starter: false, professional: true, elite: true },
-        { name: 'Custom Reports', starter: false, professional: false, elite: true },
-        { name: 'Export Data', starter: false, professional: true, elite: true },
-        { name: 'API Access', starter: false, professional: false, elite: true }
+        { name: 'Export Data', starter: true, professional: true, elite: true },
+        // { name: 'API Access', starter: false, professional: false, elite: true }
       ]
     },
     {
       category: 'Customization',
       features: [
-        { name: 'Branded Chatbot', starter: 'Basic', professional: 'Advanced', elite: 'Full Custom' },
-        { name: 'Custom Responses', starter: '10', professional: '50', elite: 'Unlimited' },
-        { name: 'Multi-language Support', starter: false, professional: true, elite: true },
+        { name: 'Branded Chatbot', starter: 'Basic(No Branding)', professional: 'Advanced(With Branding)', elite: 'Full Custom Branding & Flows' },
+        // { name: 'Custom Responses', starter: '10', professional: '50', elite: 'Unlimited' },
+        // { name: 'Multi-language Support', starter: false, professional: true, elite: true },
         { name: 'White-label Option', starter: false, professional: false, elite: true }
       ]
     },
     {
       category: 'Support & Training',
       features: [
-        { name: 'Email Support', starter: true, professional: true, elite: true },
+        { name: 'Email Support', starter: '48 hours response', professional: '2 hours response', elite: '30 mins reponse' },
         { name: 'Priority Support', starter: false, professional: true, elite: true },
         { name: 'Dedicated Account Manager', starter: false, professional: false, elite: true },
-        { name: 'Onboarding Training', starter: 'Self-service', professional: '1 session', elite: 'White-glove' },
+        { name: 'Onboarding Training', starter: '1 session', professional: '2-5 sessions', elite: 'White-glove' },
         { name: 'Monthly Strategy Calls', starter: false, professional: false, elite: true }
       ]
     }
@@ -126,7 +125,7 @@ export default function ComparisonTable() {
         {/* Bottom Note */}
         <div className="mt-8 text-center">
           <p className="text-gray-500 font-body text-sm">
-            All plans include 14-day free trial • No credit card required • Cancel anytime
+            Start your monthy subscriptions with this real estate intelligence • Cancel anytime
           </p>
         </div>
       </div>
