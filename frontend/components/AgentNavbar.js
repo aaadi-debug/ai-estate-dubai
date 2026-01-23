@@ -36,6 +36,9 @@ const AgentNavbar = () => {
         // Clear localStorage
         localStorage.clear();
 
+        // Small delay gives browser time to apply Set-Cookie: ... expires=past
+        await new Promise(resolve => setTimeout(resolve, 150)); // 150–300 ms
+
         // Redirect
         window.location.href = '/login';
     };
