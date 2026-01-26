@@ -75,7 +75,12 @@ export const createLead = async (req, res) => {
       email,
       budget,
       propertyType,
-      locationPrefs: Array.isArray(locationPrefs) ? locationPrefs : [locationPrefs].filter(Boolean),
+      // Force locationPrefs to always be an array (even if empty or malformed)
+      locationPrefs: Array.isArray(locationPrefs)
+        ? locationPrefs
+        : typeof locationPrefs === 'string'
+          ? locationPrefs.split(',').map(s => s.trim()).filter(Boolean)
+          : [],
       preferredDateTime: preferredDateTime ? new Date(preferredDateTime) : null,
       message,
       score

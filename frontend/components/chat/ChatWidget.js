@@ -17,7 +17,7 @@ const conversationSteps = [
     { key: 'email', bot: 'Perfect. And your email address?' },
     { key: 'budget', bot: 'What is your budget range in AED?', options: ['Under 1M', '1M - 3M', '3M - 5M', '5M - 10M', '10M+', 'Custom'] },
     { key: 'propertyType', bot: 'What type of property are you interested in?', options: ['Apartment', 'Villa', 'Townhouse', 'Penthouse', 'Office', 'Plot'] },
-    { key: 'location', bot: 'Which areas in Dubai are you considering? (e.g., Downtown, Palm Jumeirah, JVC)' },
+    { key: 'locationPrefs', bot: 'Which areas in Dubai are you considering? (e.g., Downtown, Palm Jumeirah, JVC)' },
     {
         key: 'datetime',
         bot: 'When would you like to schedule a viewing or call? (Dubai time)',
