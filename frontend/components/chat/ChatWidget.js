@@ -29,6 +29,8 @@ export function ChatWidget({ agentId, mode }) {
     const [currentStep, setCurrentStep] = useState(0);
     const [leadData, setLeadData] = useState({});
     const [isTyping, setIsTyping] = useState(false);
+    const [countryCode, setCountryCode] = useState('+971'); // default UAE
+
     const messagesEndRef = useRef(null);
     const sessionIdRef = useRef(null);
     const hasStartedRef = useRef(false);
@@ -108,7 +110,20 @@ export function ChatWidget({ agentId, mode }) {
         // Save to leadData based on step
         const stepKey = conversationSteps[currentStep]?.key;
         if (stepKey && stepKey !== 'greeting' && stepKey !== 'confirm') {
-            setLeadData(prev => ({ ...prev, [stepKey]: text }));
+            // setLeadData(prev => ({ ...prev, [stepKey]: text }));
+            if (stepKey === 'phone') {
+                setCountryCode(text); // save country code
+                setLeadData(prev => ({ ...prev, countryCode: text }));
+            } else if (stepKey === 'phoneNumber') {
+                const fullPhone = countryCode.split(' ')[0] + text.trim();
+                setLeadData(prev => ({
+                    ...prev,
+                    phone: fullPhone,
+                    whatsappNumber: fullPhone // same for WhatsApp
+                }));
+            } else {
+                setLeadData(prev => ({ ...prev, [stepKey]: text }));
+            }
         }
 
         // Move to next step
