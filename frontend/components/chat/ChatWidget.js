@@ -138,17 +138,11 @@ export function ChatWidget({ agentId, mode }) {
                 const now = new Date();
                 let targetDate = new Date(now);
 
-                if (text.includes('Today')) {
-                    // Today - keep current date
-                } else if (text.includes('Tomorrow')) {
+                if (text.includes('Tomorrow')) {
                     targetDate.setDate(now.getDate() + 1);
-                } else {
-                    // Fallback: tomorrow 10AM if something goes wrong
-                    targetDate.setDate(now.getDate() + 1);
-                    targetDate.setHours(10, 0, 0, 0);
                 }
-                // Parse time slot for Today/Tomorrow
-                const timeSlot = text.split(' - ')[1]; // e.g. "3PM to 6PM"
+
+                const timeSlot = text.split(' - ')[1];
                 const startHour = parseInt(timeSlot.split(/AM|PM/)[0]);
                 const isPM = timeSlot.includes('PM');
                 const hour = isPM ? startHour + 12 : startHour;
