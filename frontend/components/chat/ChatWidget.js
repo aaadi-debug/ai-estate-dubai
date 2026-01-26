@@ -119,7 +119,6 @@ export function ChatWidget({ agentId, mode }) {
         setMessages(prev => [...prev, { text, isBot: false }]);
         setInputValue('');
 
-
         // Save to leadData based on step
         const stepKey = conversationSteps[currentStep]?.key;
         if (stepKey && stepKey !== 'greeting' && stepKey !== 'confirm') {
@@ -134,6 +133,14 @@ export function ChatWidget({ agentId, mode }) {
                     phone: fullPhone,
                     whatsappNumber: fullPhone // same for WhatsApp
                 }));
+            } else if (stepKey === 'locationPrefs') {
+                // Split user input into array
+                const prefs = text
+                    .split(',')
+                    .map(pref => pref.trim())
+                    .filter(pref => pref.length > 0);
+
+                setLeadData(prev => ({ ...prev, locationPrefs: prefs }));
             } else if (stepKey === 'datetime') {
                 const now = new Date();
                 let targetDate = new Date(now);
