@@ -13,6 +13,13 @@ import { LuRefreshCw } from "react-icons/lu";
 import { ShieldCheck } from 'lucide-react';
 import { PiChats } from "react-icons/pi";
 
+import { RiMoneyDollarCircleLine } from "react-icons/ri";
+import { MdNotificationsActive } from "react-icons/md";
+import { FaRegCalendarAlt } from "react-icons/fa";
+import { RiCompassDiscoverLine } from "react-icons/ri";
+import { FaCode } from "react-icons/fa6";
+import { MdOutlineAdsClick } from "react-icons/md";
+
 
 const PricingSection = ({ className = '' }) => {
     const [billingPeriod, setBillingPeriod] = useState('monthly');
@@ -25,80 +32,51 @@ const PricingSection = ({ className = '' }) => {
         ShieldCheck: ShieldCheck,
         FaRegCreditCard: FaRegCreditCard,
         LuRefreshCw: LuRefreshCw,
-        PiChats: PiChats
+        PiChats: PiChats,
+
+        RiMoneyDollarCircleLine: RiMoneyDollarCircleLine,
+        MdNotificationsActive: MdNotificationsActive,
+        FaRegCalendarAlt: FaRegCalendarAlt,
+        RiCompassDiscoverLine: RiCompassDiscoverLine,
+        FaCode: FaCode,
+        MdOutlineAdsClick: MdOutlineAdsClick
     };
 
-    const plans = [
+    const features = [
         {
             id: 1,
-            name: "Starter",
-            monthlyPrice: 149,
-            annualPrice: 1499, // 10% discount example
-            oneTimeFee: 0,
-            period: billingPeriod === 'monthly' ? '/month' : '/year',
-            description: "Perfect for individual agents testing AI lead capture",
-            features: [
-                "24/7 AI Chatbot on your website",
-                "Up to 50 conversations/month",
-                "Basic Chatbot, No Branding",
-                "Email Notifications",
-                "Basic Leads Dashboard",
-                "Email support (48h response)"
-            ],
-            popular: false,
-            cta: "Buy Starter",
-            icon: "IoRocketSharp"
+            icon: "FaCode",
+            title: "Paste One Line of Code on Your Website",
+            description: "After signup, you receive a simple embed code. Paste it into your website — the AI assistant activates instantly.",
+            trustLine: "Works with any website — no developer required."
         },
         {
             id: 2,
-            name: "Professional",
-            monthlyPrice: 349,
-            annualPrice: 3499, // ≈ 3769.2, or set fixed 3499 as you have
-            oneTimeFee: 199,
-            period: billingPeriod === 'monthly' ? '/month' : '/year',
-            description: "Premium white-glove service for top agents & teams",
-            features: [
-                "Everything in Starter",
-                "Up to 300 conversations/month",
-                "Advanced Chatbot with Branding",
-                "Instant SMS Alerts",
-                "Google Calendar Auto-booking",
-                "Lead Segregation (Hot/Warm/Cold)",
-                "Advanced Analytics & Stats",
-                "Priority Email Support (2h response)",
-                "One-time Setup Assistance",
-            ],
-            popular: true,
-            cta: "Buy Professional",
-            icon: "HiSparkles"
+            icon: "RiCompassDiscoverLine",
+            title: "Buyers Are Automatically Qualified",
+            description: "The AI chats with visitors, asking the right questions: Budget, Preferred area, Property type, Timeline. Only serious buyers move forward.",
+            trustLine: "You never waste time on unqualified inquiries."
         },
         {
             id: 3,
-            name: "Elite",
-            monthlyPrice: 499,
-            annualPrice: 4799, // ≈ 5389.2, or fixed 4599
-            oneTimeFee: 499,
-            period: billingPeriod === 'monthly' ? '/month' : '/year',
-            description: "Premium solution for top-performing agents and teams",
-            features: [
-                "Everything in Professional",
-                "Unlimited conversations",
-                "Custom Chatbot Branding & Flows",
-                "Instant SMS & Email Notifications",
-                "WhatsApp Integration",
-                "Premium Dashboard'",
-                "Advanced Anti-spam (CAPTCHA + Honeypot)",
-                "Performance Analytics & Custom Reports",
-                "Priority Email Support (30 mins response)",
-                "White-label Dashboard",
-                "Dedicated Account Manager",
-                "White-glove Onboarding",
-                "24/7 Phone & WhatsApp Support",
-                "Custom AI Training (coming Q2 2026)",
-            ],
-            popular: false,
-            cta: "Buy Elite",
-            icon: "FaTrophy"
+            icon: "FaRegCalendarAlt",
+            title: "Qualified Buyers Book Directly into Your Calendar",
+            description: "Serious buyers choose a time slot and book a viewing. The meeting is added to your Google Calendar automatically.",
+            trustLine: "Google Meet link included (or you can call)."
+        },
+        {
+            id: 4,
+            icon: "MdNotificationsActive",
+            title: "Get Notified Instantly",
+            description: "As soon as an appointment is booked, you receive: WhatsApp notification, Email with full buyer details, Calendar invite & SMS Alerts.",
+            trustLine: "No follow-ups. No chasing."
+        },
+        {
+            id: 5,
+            icon: "RiMoneyDollarCircleLine",
+            title: "Focus Only on Buyers Who Are Ready",
+            description: "You speak only with qualified buyers who are ready to move forward — not casual browsers.",
+            trustLine: "Most agents recover the monthly cost from just one deal."
         }
     ];
 
@@ -108,134 +86,76 @@ const PricingSection = ({ className = '' }) => {
             <div className="flex flex-col items-center justify-center">
                 <div className="text-center flex justify-center items-center gap-2 text-secondary font-semibold">
                     <AiFillDollarCircle size={16} />
-                    Transparent Pricing
+                    How it Works
                 </div>
                 <h2 className="max-w-3xl mt-6 lg:text-5xl md:text-4xl text-3xl font-semibold text-primary text-center leading-none font-playfair">
-                    Choose Your <span className="text-secondary">Success Plan</span>
+                    Turn Website Visitors into <span className="text-secondary">Booked Property</span> Appointments
                 </h2>
                 <p className="text-gray-500 mt-6 lg:text-lg text-center">
-                    Flexible pricing designed for Dubai's real estate professionals. No hidden fees.
+                    No technical work. No manual follow-ups. Fully automated.
                 </p>
             </div>
 
-            {/* Pricing Main Content */}
-            <div className="text-center max-w-3xl mx-auto mb-16 mt-10">
-                {/* Billing Toggle */}
-                <div className="inline-flex items-center bg-gray-100 rounded-full p-1">
-                    <button
-                        onClick={() => setBillingPeriod('monthly')}
-                        className={`px-6 py-2 cursor-pointer rounded-full font-cta font-semibold text-sm transition-all duration-300 ${billingPeriod === 'monthly'
-                            ? 'bg-secondary text-primary shadow-md'
-                            : 'text-gray-500 hover:text-foreground'
-                            }`}
-                    >
-                        Monthly
-                    </button>
-                    <button
-                        onClick={() => setBillingPeriod('annual')}
-                        className={`px-6 py-2 cursor-pointer rounded-full font-cta font-semibold text-sm transition-all duration-300 relative ${billingPeriod === 'annual'
-                            ? 'bg-secondary text-primary shadow-md'
-                            : 'text-gray-500 hover:text-foreground'
-                            }`}
-                    >
-                        Annual
-                        <span className="absolute -top-2 -right-2 bg-green-500 text-white text-xs px-2 py-0.5 rounded-full">
-                            Save 10%
-                        </span>
-                    </button>
-                </div>
-            </div>
+            {/* Features Grid */}
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 my-10">
+                {features.map((feature, index) => {
+                    const IconComponent = iconMap[feature.icon] || PiChats; // fallback icon
 
-            {/* Pricing Cards */}
-            <div className="grid md:grid-cols-3 gap-8 mb-12">
-                {plans.map((plan) => {
-                    const IconComponent = iconMap[plan.icon] || IoRocketSharp; // fallback icon
-                    const currentPrice = billingPeriod === 'monthly'
-                        ? plan.monthlyPrice
-                        : plan.annualPrice;
-
-                    const savings = billingPeriod === 'annual'
-                        ? Math.round(plan.monthlyPrice * 12 - plan.annualPrice)
-                        : 0;
                     return (
                         <div
-                            key={plan.id}
-                            className={`relative bg-white rounded-2xl p-8 border-2 transition-all duration-300 hover:shadow-2xl ${plan.popular
-                                ? 'border-secondary shadow-xl scale-105'
-                                : 'border-gray-200 hover:border-accent/50'
-                                }`}
+                            key={feature.id}
+                            className="group relative bg-white rounded-2xl p-8 border border-gray-200 hover:border-secondary/30 transition-all duration-300 hover:shadow-2xl cursor-pointer"
                         >
-                            {/* Popular Badge */}
-                            {plan.popular && (
-                                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                                    <div className="bg-secondary text-primary px-4 py-1 rounded-full font-semibold text-sm shadow-lg">
-                                        Most Popular
-                                    </div>
+                            {/* Dynamic Icon */}
+                            <div className='flex gap-2 items-center mb-6'>
+                                <div className="w-10 h-10 rounded-2xl bg-secondary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                                    <IconComponent size={18} className="text-secondary" />
                                 </div>
-                            )}
-
-                            {/* Icon */}
-                            <div className="w-14 h-14 rounded-xl bg-accent/10 flex items-center justify-center mb-6">
-                                <IconComponent size={28} className="text-secondary" />
+                                <div className='font-semibold text-secondary text-lg uppercase'>
+                                    Step {index + 1}
+                                </div>
                             </div>
 
-                            {/* Plan Name */}
-                            <h3 className="font-playfair font-bold text-2xl text-foreground mb-2">
-                                {plan.name}
+                            {/* Title & Description */}
+                            <h3 className="text-xl font-bold text-primary mb-3">
+                                {feature.title}
                             </h3>
-                            <p className="text-gray-500 mb-6">
-                                {plan.description}
+                            <p className="text-gray-600 mb-6 leading-relaxed">
+                                {feature.description}
                             </p>
-
-                            {/* Price */}
-                            <div className="mb-6">
-                                <div className="flex items-baseline">
-                                    <span className="text-sm text-gray-500 mr-1">USD</span>
-                                    <span className="font-playfair font-bold text-4xl text-foreground">
-                                        {currentPrice.toLocaleString()}
-                                    </span>
-                                    <span className="text-gray-500 ml-2">
-                                        {billingPeriod === 'monthly' ? '/month' : '/year'}
-                                    </span>
-                                </div>
-
-                                {billingPeriod === 'annual' && savings > 0 && (
-                                    <p className="text-sm text-green-600 mt-2">
-                                        Save USD {savings} annually (vs monthly billing)
-                                    </p>
-                                )}
-
-                                {plan.oneTimeFee > 0 && (
-                                    <p className="text-sm text-gray-500 mt-1">
-                                        + USD {plan.oneTimeFee} one-time setup fee
-                                    </p>
-                                )}
-                            </div>
-
-
-                            {/* CTA Button */}
-                            <Link
-                                href={plan.id === 3 ? '/signup' : '/signup'}
-                                className={`block w-full text-center px-6 py-3 rounded-lg font-cta font-semibold transition-all duration-300 mb-6 ${plan.popular
-                                    ? 'bg-secondary text-primary hover:scale-105 shadow-lg'
-                                    : 'bg-gray-100 text-black hover:bg-secondary hover:text-primary'
-                                    }`}
-                            >
-                                {plan.cta}
-                            </Link>
-
-                            {/* Features List */}
-                            <div className="space-y-3">
-                                {plan.features.map((feature, index) => (
-                                    <div key={index} className="flex items-start space-x-3">
-                                        <IoIosCheckmarkCircle size={20} className="text-green-600 mt-0.5 flex-shrink-0" />
-                                        <span className="text-sm text-gray-500">{feature}</span>
-                                    </div>
-                                ))}
-                            </div>
+                            <p className='text-sm border-t pt-2 border-gray-300'>
+                                💡{feature.trustLine}
+                            </p>
                         </div>
-                    )
+                    );
                 })}
+
+                <div
+                    className="group relative bg-white rounded-2xl p-8 border border-gray-200 hover:border-secondary/30 transition-all duration-300 hover:shadow-2xl cursor-pointer"
+                >
+                    {/* Dynamic Icon */}
+                    <div className='flex gap-2 items-center mb-6'>
+                        <div className="w-10 h-10 rounded-2xl bg-secondary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                            <MdOutlineAdsClick size={18} className="text-secondary" />
+                        </div>
+                        <div className='font-semibold text-secondary text-lg uppercase'>
+                            Step 6
+                        </div>
+                    </div>
+
+                    {/* Title & Description */}
+                    <h3 className="text-xl font-bold text-primary mb-3">
+                        Ready to Stop Wasting Time on Bad Leads?
+                    </h3>
+                    <p className="mb-10 leading-relaxed mt-10">
+                        <Link href="/contact-us" className=' bg-secondary text-primary py-3 px-6 rounded-lg'>
+                            Book a Free 2-Minute Demo
+                        </Link>
+                    </p>
+                    <p className='text-sm border-t pt-2 border-gray-300'>
+                        💡Limited onboarding slots available.
+                    </p>
+                </div>
             </div>
 
             {/* ROI Calculator CTA */}

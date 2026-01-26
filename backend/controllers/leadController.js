@@ -90,21 +90,42 @@ export const createLead = async (req, res) => {
     // SUCCESS: Trigger n8n webhook later
     // Trigger n8n webhook
     try {
-      await axios.post('https://n8n-production-5430.up.railway.app/webhook/lead-notification', {
+      // await axios.post('https://n8n-production-5430.up.railway.app/webhook/lead-notification', {
+      const webhookPayload = {
         name: newLead.name,
         phone: newLead.phone,
         email: newLead.email,
         budget: newLead.budget,
         propertyType: newLead.propertyType,
         locationPrefs: newLead.locationPrefs,
-        preferredDateTime: newLead.preferredDateTime,
+        preferredDateTime: newLead.preferredDateTime?.toISOString(),
         whatsappNumber: agent.whatsappNumber, // from agent document
-        agentId: agent._id,
-        agentName: agent.name
-      });
+        agentId: agent._id.toString(), // from agent document
+        agentName: agent.name, // from agent document
+        plan: agent.plan || 'none' // from agent document
+      };
+
+      await axios.post(
+        'https://n8n-production-5430.up.railway.app/webhook/lead-notification',
+        webhookPayload,
+        {
+          timeout: 10000, // 10 seconds timeout
+          headers: {
+            'Content-Type': 'application/json',
+            'User-Agent': 'AI-Estate-Dubai-Backend' // helps debug in n8n logs
+          }
+        }
+      );
+
       console.log('n8n webhook triggered successfully');
     } catch (webhookError) {
-      console.error('Failed to trigger n8n webhook:', webhookError.message);
+      console.error('Failed to trigger n8n webhook:', {
+        message: webhookError.message,
+        code: webhookError.code,
+        response: webhookError.response?.data,
+        status: webhookError.response?.status,
+        leadId: newLead._id
+      });
       // Don't fail the lead save if n8n fails
     }
 
@@ -331,5 +352,27 @@ export const getAnalytics = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to load analytics' });
+  }
+};
+
+/*
+📌 Get All Lead for admin
+*/
+export const getAllLeads = async (req, res) => {
+  try {
+    // Optional: Admin check
+    // if (req.user?.role !== 'admin') {
+    //   return res.status(403).json({ error: 'Admin access required' });
+    // }
+
+    const leads = await Lead.find({})
+      .populate('agentId', 'name email')
+      .sort({ createdAt: -1 })
+      .lean();
+
+    res.json({ leads });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
   }
 };

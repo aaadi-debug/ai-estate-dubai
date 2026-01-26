@@ -216,4 +216,25 @@ export const deleteAccount = async (req, res) => {
 //   }
 // };
 
-export default { getProfile, updateProfile, getUsageStats, updateNotifications, deleteAccount };
+
+// Get All Agents for Admin
+export const getAllAgents = async (req, res) => {
+  try {
+    // Optional: Add admin-only check (using role from JWT)
+    if (req.user?.role !== 'admin') {
+      return res.status(403).json({ error: 'Admin access required' });
+    }
+
+    const agents = await Agent.find({})
+      .select('-password -__v -apiKeys')
+      .sort({ createdAt: -1 })
+      .lean();
+
+    res.json({ agents });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+export default { getProfile, updateProfile, getUsageStats, updateNotifications, deleteAccount, getAllAgents };

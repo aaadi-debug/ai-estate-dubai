@@ -5,3 +5,4 @@ echo "node_modules/
 dist/
 build/
 *.log" > .gitignore
+frontend-admin/

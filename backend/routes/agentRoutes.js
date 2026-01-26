@@ -5,9 +5,12 @@ import {
   updateProfile,
   getUsageStats,
   updateNotifications,
-  deleteAccount
+  deleteAccount,
+  getAllAgents
   // incrementConversation
 } from '../controllers/agentController.js';
+
+import { adminOnly } from '../middleware/admin.js';
 
 const router = express.Router();
 
@@ -27,5 +30,7 @@ router.put('/notifications/:agentId', updateNotifications);
 // router.post('/conversation/increment', incrementConversation);
 
 router.post('/delete/:agentId', deleteAccount);
+
+router.get('/all', adminOnly, getAllAgents); // Add this
 
 export default router;

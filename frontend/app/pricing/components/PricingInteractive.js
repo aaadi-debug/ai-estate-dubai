@@ -23,7 +23,7 @@ export default function PricingInteractive() {
       price: '149',
       oneTimeFee: 0,
       period: 'month',
-      description: 'Perfect for individual agents testing AI lead capture',
+      description: 'For agents who want to test AI-qualified buyer inquiries',
       features: [
         { text: '24/7 AI Chatbot on your website', included: true },
         { text: 'Up to 50 conversations/month', included: true },
@@ -51,7 +51,7 @@ export default function PricingInteractive() {
       price: '349',
       oneTimeFee: 199,
       period: 'month',
-      description: 'Premium white-glove service for top agents & teams',
+      description: 'Best for active Dubai agents closing 1–3 deals/month',
       features: [
         { text: 'Everything in Starter', included: true },
         { text: 'Up to 300 conversations/month', included: true },
@@ -77,7 +77,7 @@ export default function PricingInteractive() {
       price: '499',
       oneTimeFee: 499,
       period: 'month',
-      description: 'Premium solution for top-performing agents and teams',
+      description: 'For high-volume agents & teams who want full automation',
       features: [
         { text: 'Everything in Professional', included: true },
         { text: 'Unlimited conversations', included: true },
@@ -138,6 +138,7 @@ export default function PricingInteractive() {
       {/* Pricing Plans */}
       <section ref={plansRef} className="py-20 px-4 bg-[#FAFBFC]">
         <div className="max-w-7xl mx-auto">
+          <p className='text-primary mb-10 mx-auto text-center'>💡 Most agents recover the monthly cost from just one closed deal.</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {plans.map((plan) => (
               <PlanCard

@@ -1,7 +1,9 @@
 //backend/routes/leadRoutes.js
 import express from 'express';
 // import { createLead } from '../controllers/leadController.js';
-import { createLead, getAgentLeads, updateLeadStatus, addNote, deleteLead, deleteNote, getAnalytics } from '../controllers/leadController.js';
+import { createLead, getAgentLeads, updateLeadStatus, addNote, deleteLead, deleteNote, getAnalytics, getAllLeads } from '../controllers/leadController.js';
+
+import { adminOnly } from '../middleware/admin.js';
 
 const router = express.Router();
 
@@ -16,5 +18,7 @@ router.delete('/:leadId/notes/:noteId', deleteNote);
 
 // Analytics
 router.get('/analytics', getAnalytics);
+
+router.get('/all', adminOnly, getAllLeads); // Add this
 
 export default router;

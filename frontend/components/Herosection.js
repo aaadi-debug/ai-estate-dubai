@@ -5,6 +5,7 @@ import Link from "next/link";
 import { HiSparkles } from "react-icons/hi2";
 import { FaArrowRightLong } from "react-icons/fa6";
 import { House, CircleDollarSign, Mail, ShieldCheck, Lock, CircleCheck, EllipsisVertical, SendHorizontal, Bell, ChevronDown } from 'lucide-react';
+import { FaCheck } from "react-icons/fa6";
 
 export function Herosection() {
     const [isHydrated, setIsHydrated] = useState(false);
@@ -44,30 +45,30 @@ export function Herosection() {
                         <HiSparkles size={16} />
                         AI-Powered Real Estate Intelligence
                     </div>
-                    <h1 className="2xl:text-[60px] xl:text-[60px] lg:text-[48px] md:text-[64px] text-[36px] text-white mt-6 font-playfair font-semibold leading-none">
-                        Never Miss a Lead <span className="text-secondary">Again</span>
+                    <h1 className="2xl:text-[36px] xl:text-[32px] lg:text-[26px] md:text-[34px] text-[24px] text-white mt-6 font-playfair font-semibold leading-none">
+                        We Book Qualified Dubai Property Appointments —  <span className="text-secondary">Automatically</span>
                     </h1>
                     <p className="text-gray-500 mt-6 lg:text-lg">
-                        24/7 AI-powered lead capture for Dubai's elite real estate professionals. Instant notifications, intelligent responses, and seamless WhatsApp integration.
+                        Our AI - chats with buyers, qualifies them, and schedules property viewings directly for Dubai real estate agents — 24/7.
                     </p>
                     <div className="flex max-sm:flex-col gap-4 items-center mt-10">
                         {!isLoggedIn && (
                             <Link
-                                href='/signup'
+                                href='/contact-us'
                                 className="flex gap-2 justify-center items-center text-center bg-secondary text-primary py-4 px-8 rounded-lg font-semibold hover:scale-105 transition duration-300 max-sm:w-full"
-                            >Start Here <FaArrowRightLong size={16} /></Link>
+                            >Free Demo <FaArrowRightLong size={16} /></Link>
                         )}
 
                         {!isLoggedIn ? (
                             <Link
                                 href='/pricing'
                                 className="flex gap-2 justify-center items-center text-center bg-transparent text-white border border-white py-4 px-8 rounded-lg font-semibold max-sm:w-full"
-                            ><CircleDollarSign size={16} /> View Pricing</Link>
+                            ><FaCheck size={16} /> How it Works</Link>
                         ) : (
                             <Link
                                 href='/pricing'
                                 className="flex gap-2 justify-center items-center text-center bg-secondary text-primary py-4 px-8 rounded-lg font-semibold hover:scale-105 transition duration-300 max-sm:w-full"
-                            ><CircleDollarSign size={16} /> View Pricing</Link>
+                            ><FaCheck size={16} /> How it Works</Link>
                         )}
 
 

@@ -112,7 +112,7 @@ export function Testimonials() {
                 <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
                     <div className="grid lg:grid-cols-2 gap-0">
                         {/* Image Side */}
-                        <div className="relative h-64 lg:h-[500px]">
+                        <div className="relative lg:h-[450px]">
                             <div className="absolute inset-0 bg-gradient-to-br from-accent/20 to-transparent"></div>
                             {isHydrated ? (
                                 <Image
@@ -120,7 +120,7 @@ export function Testimonials() {
                                     alt={currentTestimonial.alt}
                                     height={100}
                                     width={100}
-                                    className="w-full h-full object-contain" 
+                                    className="w-full h-full object-cover" 
                                 />
                             ) : (
                                 <Image

@@ -119,10 +119,10 @@ export function Features() {
                     Powerful Features
                 </div>
                 <h2 className="max-w-3xl mt-6 lg:text-5xl md:text-4xl text-3xl font-semibold text-primary text-center leading-none font-playfair">
-                    Everything You Need to <span className="text-secondary">Dominate</span> Dubai Real Estate
+                    Dubai Agents Are <span className="text-secondary">Wasting Time</span> on Bad Leads
                 </h2>
                 <p className="text-gray-500 mt-6 lg:text-lg text-center">
-                    Cutting-edge AI technology designed specifically for luxury property professionals
+                    Cutting-edge AI Intelligence designed specifically for booking quailified property leads
                 </p>
             </div>
 

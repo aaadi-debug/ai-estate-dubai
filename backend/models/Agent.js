@@ -10,6 +10,11 @@ const agentSchema = new Schema(
       required: true,
       trim: true,
     },
+    role: {
+      type: String,
+      enum: ['agent', 'admin'],  // 'agent' for normal users, 'admin' for you/superadmins
+      default: 'agent',
+    },
     email: {
       type: String,
       required: true,
@@ -39,7 +44,7 @@ const agentSchema = new Schema(
       sms: { type: Boolean, default: false },
       whatsapp: { type: Boolean, default: true },
     },
-    
+
     plan: {
       type: String,
       enum: ['starter', 'professional', 'elite', 'none'],
@@ -51,8 +56,8 @@ const agentSchema = new Schema(
 
     password: { type: String, required: true }, // hashed
 
-    isDeleted: { type: Boolean, default: false }, 
-    deletionReason: Object, 
+    isDeleted: { type: Boolean, default: false },
+    deletionReason: Object,
     deletionDate: Date
   },
   {

@@ -9,6 +9,8 @@ export const protect = async (req, res, next) => {
 
     if (req.headers.authorization?.startsWith('Bearer')) {
       token = req.headers.authorization.split(' ')[1];
+    } else if (req.cookies?.token) {
+      token = req.cookies.token;
     }
 
     if (!token) {
@@ -16,10 +18,15 @@ export const protect = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, JWT_SECRET);
-    req.agentId = decoded.agentId; // attach agentId to request
+
+    req.user = {
+      agentId: decoded.agentId,
+      role: decoded.role || 'agent'  // fallback
+    };
+
     next();
   } catch (error) {
-    console.error('Auth error:', error);
+    console.error('Auth error:', error.message);
     res.status(401).json({ error: 'Not authorized - invalid token' });
   }
 };
