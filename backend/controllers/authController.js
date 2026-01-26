@@ -74,7 +74,7 @@ export const login = async (req, res) => {
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for cross-site in prod
       maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
       path: '/',                     // Available on all routes
-      domain: '.aiestatedubai.com'     // ← THIS IS THE KEY: shared across subdomains - disabled for local dev
+      // domain: '.aiestatedubai.com'     // ← THIS IS THE KEY: shared across subdomains - disabled for local dev
     });
 
     // NEW: Set plan cookie (so middleware can read it)
@@ -84,7 +84,7 @@ export const login = async (req, res) => {
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       maxAge: 30 * 24 * 60 * 60 * 1000,
       path: '/',
-      domain: '.aiestatedubai.com'     // ← same here - disabled for local dev
+      // domain: '.aiestatedubai.com'     // ← same here - disabled for local dev
     });
     
     res.json({
@@ -116,14 +116,14 @@ export const logout = async (req, res) => {
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       path: '/',
-      domain: '.aiestatedubai.com',
+      // domain: '.aiestatedubai.com',
     });
 
     res.clearCookie('plan', {
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
       path: '/',
-      domain: '.aiestatedubai.com',
+      // domain: '.aiestatedubai.com',
     });
 
     return res.status(200).json({ message: 'Logged out successfully' });

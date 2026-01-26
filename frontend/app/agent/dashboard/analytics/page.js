@@ -177,21 +177,21 @@ export default function AnalyticsPage() {
         />
         <StatCard
           title="Qualified Leads"
-          value={stats.qualifiedLeads.toLocaleString()}
+          value={isStarter ? 0 : stats.qualifiedLeads.toLocaleString()}
           icon={CheckCircle2}
           color="text-green-600"
           locked={isStarter}
         />
         <StatCard
           title="Converted Leads"
-          value={stats.convertedLeads.toLocaleString()}
+          value={isStarter ? 0 : stats.convertedLeads.toLocaleString()}
           icon={DollarSign}
           color="text-purple-600"
           locked={isStarter}
         />
         <StatCard
           title="Conversion Rate"
-          value={stats.conversionRate}
+          value={isStarter ? 0 : stats.conversionRate}
           icon={TrendingUp}
           color="text-amber-600"
           locked={isStarter}
