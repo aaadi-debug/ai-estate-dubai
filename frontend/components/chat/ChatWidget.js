@@ -18,7 +18,23 @@ const conversationSteps = [
     { key: 'budget', bot: 'What is your budget range in AED?', options: ['Under 1M', '1M - 3M', '3M - 5M', '5M - 10M', '10M+', 'Custom'] },
     { key: 'propertyType', bot: 'What type of property are you interested in?', options: ['Apartment', 'Villa', 'Townhouse', 'Penthouse', 'Office', 'Plot'] },
     { key: 'location', bot: 'Which areas in Dubai are you considering? (e.g., Downtown, Palm Jumeirah, JVC)' },
-    { key: 'datetime', bot: 'When would you like to schedule a viewing or call?' },
+    // { key: 'datetime', bot: 'When would you like to schedule a viewing or call?' },
+    {
+        key: 'datetime',
+        bot: 'When would you like to schedule a viewing or call? (Dubai time)',
+        options: [
+            'Today - 9AM to 12PM',
+            'Today - 12PM to 3PM',
+            'Today - 3PM to 6PM',
+            'Today - 6PM to 9PM',
+            'Tomorrow - 9AM to 12PM',
+            'Tomorrow - 12PM to 3PM',
+            'Tomorrow - 3PM to 6PM',
+            'Tomorrow - 6PM to 9PM',
+            'Later (enter custom date/time)'
+        ]
+    },
+    { key: 'datetimeCustom', bot: 'Please enter your preferred date and time (e.g., 2025-12-30 14:30):', conditional: true },
     { key: 'confirm', bot: 'Thank you! I\'ve captured all your details. An agent will contact you shortly via WhatsApp or call. Have a great day! 🌟', isFinal: true },
 ];
 
@@ -121,6 +137,26 @@ export function ChatWidget({ agentId, mode }) {
                     phone: fullPhone,
                     whatsappNumber: fullPhone // same for WhatsApp
                 }));
+            } else if (stepKey === 'datetime') {
+                // Handle predefined time slots
+                if (text.includes('Later')) {
+                    setCurrentStep(currentStep + 1); // go to custom input
+                    triggerBotMessage(conversationSteps[currentStep + 1].bot);
+                    return;
+                } else {
+                    // Parse Today/Tomorrow + time slot into ISO datetime
+                    const now = new Date();
+                    const isTomorrow = text.includes('Tomorrow');
+                    const timeSlot = text.split(' - ')[1]; // e.g. "9AM to 12PM"
+                    const startHour = parseInt(timeSlot.split('AM')[0] || timeSlot.split('PM')[0]);
+                    const isPM = timeSlot.includes('PM');
+                    const hour = isPM ? startHour + 12 : startHour;
+
+                    if (isTomorrow) now.setDate(now.getDate() + 1);
+                    now.setHours(hour, 0, 0, 0);
+
+                    setLeadData(prev => ({ ...prev, preferredDateTime: now.toISOString() }));
+                }
             } else {
                 setLeadData(prev => ({ ...prev, [stepKey]: text }));
             }
@@ -199,7 +235,8 @@ export function ChatWidget({ agentId, mode }) {
                 setMessages(prev => [
                     ...prev,
                     {
-                        text: error.response.data.error || "You've reached your monthly conversation limit. Upgrade your plan to continue!",
+                        // text: error.response.data.error || "You've reached your monthly conversation limit. Upgrade your plan to continue!",
+                        text: "Sorry, there was an issue. Please try again.",
                         isBot: true,
                         isError: true
                     }
