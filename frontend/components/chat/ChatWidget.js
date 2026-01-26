@@ -138,17 +138,31 @@ export function ChatWidget({ agentId, mode }) {
                 const now = new Date();
                 let targetDate = new Date(now);
 
+                // Always set a date (Today or Tomorrow)
                 if (text.includes('Tomorrow')) {
                     targetDate.setDate(now.getDate() + 1);
                 }
 
-                const timeSlot = text.split(' - ')[1];
-                const startHour = parseInt(timeSlot.split(/AM|PM/)[0]);
-                const isPM = timeSlot.includes('PM');
-                const hour = isPM ? startHour + 12 : startHour;
+                // Parse time slot (safe guard)
+                let hour = 10; // default 10 AM if parsing fails
+                if (text.includes(' - ')) {
+                    const timeSlot = text.split(' - ')[1];
+                    if (timeSlot) {
+                        const startStr = timeSlot.split(' to ')[0];
+                        const startHourStr = startStr.replace(/AM|PM/g, '').trim();
+                        const startHour = parseInt(startHourStr, 10);
+                        const isPM = startStr.includes('PM');
+                        hour = isNaN(startHour) ? 10 : (isPM ? startHour + 12 : startHour);
+                    }
+                }
+
                 targetDate.setHours(hour, 0, 0, 0);
 
-                setLeadData(prev => ({ ...prev, preferredDateTime: targetDate.toISOString() }));
+                // Always save ISO string
+                const isoDate = targetDate.toISOString();
+                setLeadData(prev => ({ ...prev, preferredDateTime: isoDate }));
+
+                console.log('Saved preferredDateTime:', isoDate); // debug log
             } else {
                 setLeadData(prev => ({ ...prev, [stepKey]: text }));
             }
