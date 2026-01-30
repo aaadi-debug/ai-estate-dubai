@@ -60,7 +60,7 @@ const conversationSteps = {
         bot: "No problem — what's your email address?",
     },
     name: {
-        bot: "One last thing — your good name?",
+        bot: "One last thing — your good name? 😊",
         // no options → free text
     },
     confirm: {
@@ -138,6 +138,7 @@ export function ChatWidget({ agentId, mode }) {
     };
 
     const getNextStepKey = (currentKey, userResponse = '') => {
+        console.log(`[STEP] Current: ${currentKey} | User said: "${userResponse}"`);
         const lower = userResponse.toLowerCase();
 
         if (currentKey === 'greeting') return 'budget';
@@ -161,7 +162,7 @@ export function ChatWidget({ agentId, mode }) {
 
         // After collecting contact → confirm
         if (['whatsappNumber', 'phoneNumber', 'email'].includes(currentKey)) {
-            return 'confirm';
+            return 'name';
         }
 
         if (currentKey === 'name') {
