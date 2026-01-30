@@ -14,6 +14,7 @@ import agentRoutes from './routes/agentRoutes.js';
 import leadRoutes from './routes/leadRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import razorpayRoutes from './routes/razorpayRoutes.js';
+import contactRoutes from './routes/contactRoutes.js';
 import { handleSubscriptionWebhook } from './controllers/razorpayController.js';
 
 // console.log("RAZORPAY_KEY_ID     →", process.env.RAZORPAY_KEY_ID ? 'exists' : 'MISSING!');
@@ -88,6 +89,8 @@ app.use('/api/leads/new', leadLimiter);
 
 // Apply only to delete route
 app.use('/api/agents/delete', deleteLimiter);
+
+app.use('/api/contact', contactRoutes);
 
 // Razorpay routes (with raw for webhook)
 app.use('/api/razorpay', razorpayRoutes);

@@ -7,40 +7,177 @@ import axios from 'axios';
 /*
 📌 Create leads for agent 
 */
+// export const createLead = async (req, res) => {
+//   try {
+//     const { agentId, name, phone, email, budget, propertyType, locationPrefs, preferredDateTime, message } = req.body;
+
+//     // Basic validation (less strict)
+//     if (!name || name.trim().length < 2) {
+//       return res.status(400).json({ error: 'Name must be at least 2 characters' });
+//     }
+
+//     if (!email || !validator.isEmail(email)) {
+//       return res.status(400).json({ error: 'Invalid email address' });
+//     }
+
+//     // Block disposable emails
+//     const disposableDomains = ['mailinator.com', 'tempmail.com', '10minutemail.com'];
+//     if (disposableDomains.some(domain => email.toLowerCase().endsWith(domain))) {
+//       return res.status(400).json({ error: 'Please use a real email address' });
+//     }
+
+//     if (!phone || phone.trim().length < 5) { // Allow without + for now
+//       return res.status(400).json({ error: 'Invalid phone number' });
+//     }
+
+//     if (!budget || budget.trim().length === 0) {
+//       return res.status(400).json({ error: 'Please provide a budget' });
+//     }
+
+//     // Agent check (already there)
+//     const agent = await Agent.findById(agentId);
+//     if (!agent) {
+//       return res.status(404).json({ error: 'Agent not found' });
+//     }
+
+//     // Monthly reset (same as before)
+//     const now = new Date();
+//     const lastReset = agent.lastConversationReset || new Date(0);
+//     if (
+//       now.getMonth() !== lastReset.getMonth() ||
+//       now.getFullYear() !== lastReset.getFullYear()
+//     ) {
+//       agent.conversationCountThisMonth = 0;
+//       agent.lastConversationReset = now;
+//     }
+
+//     // Enforce limit for starter only
+//     if (agent.plan === 'starter' && agent.conversationCountThisMonth >= 50) {
+//       return res.status(403).json({
+//         error: 'Monthly conversation limit reached (50). Please upgrade your plan.',
+//       });
+//     }
+
+//     // Simple budget-based scoring (you can make this smarter later)
+//     let score = 'Cold';
+//     const budgetLower = budget?.toLowerCase() || '';
+
+//     if (budgetLower.includes('5m - 10m') || budgetLower.includes('10m+') || budgetLower.includes('custom')) {
+//       score = 'Hot';
+//     } else if (budgetLower.includes('3m - 5m')) {
+//       score = 'Warm';
+//     }
+
+//     const newLead = new Lead({
+//       agentId,
+//       name,
+//       phone,
+//       email,
+//       budget,
+//       propertyType,
+//       // Force locationPrefs to always be an array (even if empty or malformed)
+//       locationPrefs: Array.isArray(locationPrefs)
+//         ? locationPrefs
+//         : typeof locationPrefs === 'string'
+//           ? locationPrefs.split(',').map(s => s.trim()).filter(Boolean)
+//           : [],
+//       preferredDateTime: preferredDateTime ? new Date(preferredDateTime) : null,
+//       message,
+//       score
+//     });
+
+//     await newLead.save();
+
+//     // 🔥 FIX: Increment count here (for all plans, after successful save)
+//     agent.conversationCountThisMonth += 1;
+//     await agent.save();
+
+//     // SUCCESS: Trigger n8n webhook later
+//     // Trigger n8n webhook
+//     try {
+//       // await axios.post('https://n8n-production-5430.up.railway.app/webhook/lead-notification', {
+//       const webhookPayload = {
+//         name: newLead.name,
+//         phone: newLead.phone,
+//         email: newLead.email,
+//         budget: newLead.budget,
+//         propertyType: newLead.propertyType,
+//         locationPrefs: newLead.locationPrefs,
+//         preferredDateTime: newLead.preferredDateTime?.toISOString(),
+//         whatsappNumber: agent.whatsappNumber, // from agent document
+//         agentId: agent._id.toString(), // from agent document
+//         agentName: agent.name, // from agent document
+//         plan: agent.plan || 'none' // from agent document
+//       };
+
+//       await axios.post(
+//         'https://n8n-production-5430.up.railway.app/webhook/lead-notification',
+//         webhookPayload,
+//         {
+//           timeout: 10000, // 10 seconds timeout
+//           headers: {
+//             'Content-Type': 'application/json',
+//             'User-Agent': 'AI-Estate-Dubai-Backend' // helps debug in n8n logs
+//           }
+//         }
+//       );
+
+//       console.log('n8n webhook triggered successfully');
+//     } catch (webhookError) {
+//       console.error('Failed to trigger n8n webhook:', {
+//         message: webhookError.message,
+//         code: webhookError.code,
+//         response: webhookError.response?.data,
+//         status: webhookError.response?.status,
+//         leadId: newLead._id
+//       });
+//       // Don't fail the lead save if n8n fails
+//     }
+
+//     res.status(201).json({ message: 'Lead saved successfully', lead: newLead });
+//   } catch (error) {
+//     console.error('❌ Lead creation error:', error);
+
+//     res.status(500).json({
+//       error: 'Failed to save lead',
+//       message: error.message,
+//     });
+//   }
+// };
+
+// backend/controllers/leadController.js
+// ... other imports remain ...
+
 export const createLead = async (req, res) => {
   try {
-    const { agentId, name, phone, email, budget, propertyType, locationPrefs, preferredDateTime, message } = req.body;
+    const {
+      agentId,
+      intent,
+      budget,
+      locationPrefs,
+      preferredAction,
+      whatsappNumber,
+      phone,
+      email,
+      message,
+    } = req.body;
 
-    // Basic validation (less strict)
-    if (!name || name.trim().length < 2) {
-      return res.status(400).json({ error: 'Name must be at least 2 characters' });
+    // ── VERY RELAXED VALIDATION ──
+    if (!agentId) {
+      return res.status(400).json({ error: 'agentId is required' });
     }
 
-    if (!email || !validator.isEmail(email)) {
-      return res.status(400).json({ error: 'Invalid email address' });
+    // At minimum we want budget or whatsapp/phone — but even that's not hard-required
+    if (!budget?.trim() && !whatsappNumber?.trim() && !phone?.trim()) {
+      return res.status(400).json({ error: 'Please provide at least budget or contact info' });
     }
 
-    // Block disposable emails
-    const disposableDomains = ['mailinator.com', 'tempmail.com', '10minutemail.com'];
-    if (disposableDomains.some(domain => email.toLowerCase().endsWith(domain))) {
-      return res.status(400).json({ error: 'Please use a real email address' });
-    }
-
-    if (!phone || phone.trim().length < 5) { // Allow without + for now
-      return res.status(400).json({ error: 'Invalid phone number' });
-    }
-
-    if (!budget || budget.trim().length === 0) {
-      return res.status(400).json({ error: 'Please provide a budget' });
-    }
-
-    // Agent check (already there)
     const agent = await Agent.findById(agentId);
     if (!agent) {
       return res.status(404).json({ error: 'Agent not found' });
     }
 
-    // Monthly reset (same as before)
+    // Monthly conversation reset + limit check (keep your existing logic)
     const now = new Date();
     const lastReset = agent.lastConversationReset || new Date(0);
     if (
@@ -51,97 +188,96 @@ export const createLead = async (req, res) => {
       agent.lastConversationReset = now;
     }
 
-    // Enforce limit for starter only
-    if (agent.plan === 'starter' && agent.conversationCountThisMonth >= 50) {
+    const maxConversations = {
+      starter: 50,
+      professional: 300,
+      elite: Infinity,
+      none: 0,
+    }[agent.plan] || 0;
+
+    if (agent.conversationCountThisMonth >= maxConversations && maxConversations !== Infinity) {
       return res.status(403).json({
-        error: 'Monthly conversation limit reached (50). Please upgrade your plan.',
+        error: `Monthly conversation limit reached (${maxConversations}). Please upgrade your plan.`,
       });
     }
 
-    // Simple budget-based scoring (you can make this smarter later)
+    // ── Simple but better scoring ──
     let score = 'Cold';
-    const budgetLower = budget?.toLowerCase() || '';
 
-    if (budgetLower.includes('5m - 10m') || budgetLower.includes('10m+') || budgetLower.includes('custom')) {
+    const budgetStr = (budget || '').toLowerCase();
+    if (budgetStr.includes('5m') || budgetStr.includes('10m') || budgetStr.includes('custom')) {
       score = 'Hot';
-    } else if (budgetLower.includes('3m - 5m')) {
+    } else if (budgetStr.includes('3m') || budgetStr.includes('high')) {
       score = 'Warm';
+    }
+
+    // Boost score if high intent + contact info
+    if (
+      (intent?.toLowerCase().includes('buy') || intent?.toLowerCase().includes('invest')) &&
+      (whatsappNumber || phone || email) &&
+      locationPrefs?.length > 0
+    ) {
+      score = score === 'Cold' ? 'Warm' : score;
     }
 
     const newLead = new Lead({
       agentId,
-      name,
-      phone,
-      email,
-      budget,
-      propertyType,
-      // Force locationPrefs to always be an array (even if empty or malformed)
+      intent: intent?.trim(),
+      budget: budget?.trim(),
       locationPrefs: Array.isArray(locationPrefs)
         ? locationPrefs
         : typeof locationPrefs === 'string'
           ? locationPrefs.split(',').map(s => s.trim()).filter(Boolean)
           : [],
-      preferredDateTime: preferredDateTime ? new Date(preferredDateTime) : null,
-      message,
-      score
+      preferredAction: preferredAction?.trim(),
+      whatsappNumber: whatsappNumber?.trim().replace(/\s+/g, ''),
+      phone: phone?.trim().replace(/\s+/g, ''),
+      email: email?.trim().toLowerCase(),
+      message: message?.trim(),
+      score,
     });
 
     await newLead.save();
 
-    // 🔥 FIX: Increment count here (for all plans, after successful save)
+    // Increment count AFTER successful save
     agent.conversationCountThisMonth += 1;
     await agent.save();
 
-    // SUCCESS: Trigger n8n webhook later
-    // Trigger n8n webhook
+    // n8n webhook (update payload fields)
     try {
-      // await axios.post('https://n8n-production-5430.up.railway.app/webhook/lead-notification', {
       const webhookPayload = {
-        name: newLead.name,
+        leadId: newLead._id.toString(),
+        agentId: agent._id.toString(),
+        agentName: agent.name,
+        agentWhatsapp: agent.whatsappNumber,
+        intent: newLead.intent,
+        budget: newLead.budget,
+        locations: newLead.locationPrefs.join(', '),
+        preferredAction: newLead.preferredAction,
+        whatsappNumber: newLead.whatsappNumber,
         phone: newLead.phone,
         email: newLead.email,
-        budget: newLead.budget,
-        propertyType: newLead.propertyType,
-        locationPrefs: newLead.locationPrefs,
-        preferredDateTime: newLead.preferredDateTime?.toISOString(),
-        whatsappNumber: agent.whatsappNumber, // from agent document
-        agentId: agent._id.toString(), // from agent document
-        agentName: agent.name, // from agent document
-        plan: agent.plan || 'none' // from agent document
+        score: newLead.score,
+        createdAt: newLead.createdAt.toISOString(),
       };
 
       await axios.post(
         'https://n8n-production-5430.up.railway.app/webhook/lead-notification',
         webhookPayload,
-        {
-          timeout: 10000, // 10 seconds timeout
-          headers: {
-            'Content-Type': 'application/json',
-            'User-Agent': 'AI-Estate-Dubai-Backend' // helps debug in n8n logs
-          }
-        }
+        { timeout: 8000 }
       );
-
-      console.log('n8n webhook triggered successfully');
-    } catch (webhookError) {
-      console.error('Failed to trigger n8n webhook:', {
-        message: webhookError.message,
-        code: webhookError.code,
-        response: webhookError.response?.data,
-        status: webhookError.response?.status,
-        leadId: newLead._id
-      });
-      // Don't fail the lead save if n8n fails
+    } catch (webhookErr) {
+      console.error('n8n webhook failed:', webhookErr.message);
+      // non-blocking
     }
 
-    res.status(201).json({ message: 'Lead saved successfully', lead: newLead });
-  } catch (error) {
-    console.error('❌ Lead creation error:', error);
-
-    res.status(500).json({
-      error: 'Failed to save lead',
-      message: error.message,
+    res.status(201).json({
+      message: 'Lead created successfully',
+      lead: newLead,
     });
+  } catch (error) {
+    console.error('Lead creation error:', error);
+    res.status(500).json({ error: 'Failed to create lead', detail: error.message });
   }
 };
 
@@ -159,6 +295,7 @@ export const getAgentLeads = async (req, res) => {
 
     const leads = await Lead.find({ agentId })
       .sort({ createdAt: -1 })
+      .select('intent budget locationPrefs preferredAction whatsappNumber phone email score status createdAt')
       .lean();
 
     // Add simple score (optional, since n8n does it)

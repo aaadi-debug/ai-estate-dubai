@@ -10,26 +10,52 @@ const leadSchema = new Schema(
       ref: 'Agent',
       required: true,
     },
-    name: {
+
+    // ── New minimal + intent-focused fields ──
+    intent: {
       type: String,
-      required: true,
+      trim: true,
+      // Examples: "Buy for myself / family", "Invest (rental or resale)", "Just browsing for now"
+    },
+
+    budget: {
+      type: String,
+      trim: true,
+    },
+    locationPrefs: {
+      type: [String],
+      default: [],
+    },
+    preferredAction: {
+      type: String,
+      trim: true,
+      // Examples: "Send properties on WhatsApp", "Book a call / viewing", "Email some options"
+    },
+
+    // Contact fields – whatsappNumber is now most important
+    whatsappNumber: {
+      type: String,
       trim: true,
     },
     phone: {
       type: String,
-      required: true,
-    },
-    email: String,
-    budget: String, // e.g., "AED 1M - 2M"
-    propertyType: {
-      type: String,
-      enum: ['apartment', 'villa', 'townhouse', 'penthouse', 'plot', 'office'],
-      lowercase: true,  // ← Add this line
       trim: true,
     },
-    locationPrefs: [String], // e.g., ["Downtown Dubai", "Palm Jumeirah"]
-    preferredDateTime: Date,
-    message: String,
+    email: {
+      type: String,
+      trim: true,
+      lowercase: true,
+      // NO required: true anymore
+    },
+
+    // propertyType: {
+    //   type: String,
+    //   enum: ['apartment', 'villa', 'townhouse', 'penthouse', 'plot', 'office'],
+    //   lowercase: true,  // ← Add this line
+    //   trim: true,
+    // },
+    // preferredDateTime: Date,
+    // message: String,
     status: {
       type: String,
       enum: ['new', 'contacted', 'appointment_booked', 'closed'],
@@ -40,7 +66,6 @@ const leadSchema = new Schema(
       enum: ['Hot', 'Warm', 'Cold'],
       default: 'Cold',
     },
-
     notes: [
       {
         text: { type: String, required: true },
@@ -48,6 +73,13 @@ const leadSchema = new Schema(
         createdBy: { type: Schema.Types.ObjectId, ref: 'Agent' }, // optional: who added it
       }
     ],
+    name: {
+      type: String,
+      // required: true,
+      trim: true,
+    },
+    // Optional: keep message if user types something extra
+    message: String,
   },
   {
     timestamps: true,

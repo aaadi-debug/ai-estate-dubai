@@ -26,11 +26,11 @@ export default function ContactForm() {
             newErrors.name = 'Name is required';
         }
 
-        if (!formData.email.trim()) {
-            newErrors.email = 'Email is required';
-        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-            newErrors.email = 'Please enter a valid email address';
-        }
+        // if (!formData.email.trim()) {
+        //     newErrors.email = 'Email is required';
+        // } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+        //     newErrors.email = 'Please enter a valid email address';
+        // }
 
         if (!formData.phone.trim()) {
             newErrors.phone = 'Phone number is required';
@@ -57,26 +57,28 @@ export default function ContactForm() {
 
         setIsSubmitting(true);
 
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        try {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/contact`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData),
+            });
 
-        setIsSubmitting(false);
-        setSubmitSuccess(true);
+            const data = await res.json();
 
-        // Reset form
-        setFormData({
-            name: '',
-            email: '',
-            phone: '',
-            company: '',
-            message: '',
-            contactMethod: 'email'
-        });
+            if (!res.ok) {
+                throw new Error(data.error || 'Failed to send message');
+            }
 
-        // Hide success message after 5 seconds
-        setTimeout(() => {
-            setSubmitSuccess(false);
-        }, 5000);
+            setSubmitSuccess(true);
+            setFormData({ name: '', phone: '', message: '', contactMethod: 'phone' });
+
+            setTimeout(() => setSubmitSuccess(false), 5000);
+        } catch (err) {
+            alert(err.message || 'Something went wrong. Please try again.');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const handleChange = (e) => {
@@ -97,7 +99,7 @@ export default function ContactForm() {
                     <FaRegCircleCheck size={20} className="text-success mt-0.5 flex-shrink-0" />
                     <div>
                         <p className="font-semibold">Message sent successfully!</p>
-                        <p className="text-sm mt-1">We'll get back to you within 24 hours.</p>
+                        <p className="text-sm mt-1">We'll get back to you within 2-3 hours.</p>
                     </div>
                 </div>
             )}
@@ -106,7 +108,7 @@ export default function ContactForm() {
                 Send Us a Message
             </h2>
             <p className="text-gray-500 text-left leading-none -mt-2">
-                Fill out the form below and our team will get back to you within 24 hours.
+                Fill out the form below and our team will get back to you within 2-3 hours.
             </p>
             {/* Name */}
             <div>
@@ -129,7 +131,7 @@ export default function ContactForm() {
             </div>
 
             {/* Email */}
-            <div>
+            {/* <div>
                 <label htmlFor="email" className="block font-medium text-primary mb-2">
                     Email Address <span className='text-red-500'>*</span>
                 </label>
@@ -146,7 +148,7 @@ export default function ContactForm() {
                 {errors.email && (
                     <p className="mt-1 text-sm text-error">{errors.email}</p>
                 )}
-            </div>
+            </div> */}
 
             {/* Phone */}
             <div>
@@ -169,7 +171,7 @@ export default function ContactForm() {
             </div>
 
             {/* Company */}
-            <div>
+            {/* <div>
                 <label htmlFor="company" className="block font-medium text-primary mb-2">
                     Company / Agency (Optional)
                 </label>
@@ -182,7 +184,7 @@ export default function ContactForm() {
                     className="w-full px-4 py-3 rounded-md border border-gray-300 bg-gray-100 text-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary transition-all"
                     placeholder="Dubai Properties Group"
                 />
-            </div>
+            </div> */}
 
             {/* Preferred Contact Method */}
             <div>
@@ -196,7 +198,7 @@ export default function ContactForm() {
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded-md border border-gray-300 bg-gray-100 text-gray-500 focus:outline-none focus:ring-2 focus:ring-secondary transition-all"
                 >
-                    <option value="email">Email</option>
+                    {/* <option value="email">Email</option> */}
                     <option value="phone">Phone Call</option>
                     <option value="whatsapp">WhatsApp</option>
                 </select>
