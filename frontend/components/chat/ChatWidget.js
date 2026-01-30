@@ -78,6 +78,7 @@ const stepOrder = [
     'whatsappNumber',
     'phoneNumber',
     'email',
+    'name',
     'confirm'
 ];
 
@@ -129,11 +130,11 @@ export function ChatWidget({ agentId, mode }) {
             setMessages(prev => [...prev, { text: formattedText, isBot: true, options }]);
             setIsTyping(false);
 
-            if (isFinal) {
-                setTimeout(() => {
-                    sendLeadToBackend(leadData);
-                }, 1200);
-            }
+            // if (isFinal) {
+            //     setTimeout(() => {
+            //         sendLeadToBackend({ ...leadData });
+            //     }, 1200);
+            // }
         }, 700 + Math.random() * 900);
     };
 
@@ -195,9 +196,7 @@ export function ChatWidget({ agentId, mode }) {
             update.phone = text.trim().replace(/\s+/g, '');
         } else if (stepKey === 'email') {
             update.email = text.trim().toLowerCase();
-        }
-
-        if (stepKey === 'name') {
+        } else if (stepKey === 'name') {
             const cleanName = text.trim();
             update.name = cleanName;
             // Optional: you can store first name only if you want
@@ -217,7 +216,45 @@ export function ChatWidget({ agentId, mode }) {
         setInputValue('');
 
         // Save answer
-        saveUserResponse(currentStepKey, text);
+        // saveUserResponse(currentStepKey, text);
+        // Save answer
+        setLeadData(prev => {
+            const update = {};
+
+            // ── all your save logic here (same as before) ──
+            if (currentStepKey === 'greeting') {
+                update.intent = text;
+            } else if (currentStepKey === 'budget') {
+                update.budget = text;
+            } else if (currentStepKey === 'locationPrefs') {
+                const areas = text.split(',').map(s => s.trim()).filter(Boolean);
+                update.locationPrefs = areas;
+            } else if (currentStepKey === 'valueProposition') {
+                update.preferredAction = text;
+            } else if (currentStepKey === 'whatsappNumber') {
+                const clean = text.trim().replace(/\s+/g, '');
+                update.whatsappNumber = clean;
+                update.phone = clean;
+            } else if (currentStepKey === 'phoneNumber') {
+                update.phone = text.trim().replace(/\s+/g, '');
+            } else if (currentStepKey === 'email') {
+                update.email = text.trim().toLowerCase();
+            } else if (currentStepKey === 'name') {
+                update.name = text.trim();
+            }
+
+            const newData = { ...prev, ...update };
+
+            // ── If we just saved the name → send lead immediately after update ──
+            if (currentStepKey === 'name') {
+                // We use setTimeout(0) so the state has time to settle
+                setTimeout(() => {
+                    sendLeadToBackend(newData);
+                }, 0);
+            }
+
+            return newData;
+        });
 
         // Decide next step
         const nextKey = getNextStepKey(currentStepKey, text);
@@ -239,6 +276,7 @@ export function ChatWidget({ agentId, mode }) {
 
     const sendLeadToBackend = async (data) => {
         console.log('Sending lead:', { ...data, agentId });
+        console.log('Full payload being sent:', JSON.stringify({ ...data, agentId }, null, 2));
 
         try {
             const response = await axios.post(
@@ -247,7 +285,13 @@ export function ChatWidget({ agentId, mode }) {
             );
             console.log('Lead saved:', response.data);
         } catch (err) {
-            console.error('Lead save failed:', err.response?.data || err.message);
+            // console.error('Lead save failed:', err.response?.data || err.message);
+            console.error('Lead save failed:', {
+                message: err.message,
+                response: err.response?.data,
+                status: err.response?.status,
+                headers: err.response?.headers
+            });
             // Optional: show error in chat
             setMessages(prev => [
                 ...prev,
