@@ -152,6 +152,7 @@ export const createLead = async (req, res) => {
   try {
     const {
       agentId,
+      name,
       intent,
       budget,
       locationPrefs,
@@ -222,6 +223,7 @@ export const createLead = async (req, res) => {
 
     const newLead = new Lead({
       agentId,
+      name: name?.trim() || undefined,
       intent: intent?.trim(),
       budget: budget?.trim(),
       locationPrefs: Array.isArray(locationPrefs)
@@ -250,6 +252,7 @@ export const createLead = async (req, res) => {
         agentId: agent._id.toString(),
         agentName: agent.name,
         agentWhatsapp: agent.whatsappNumber,
+        name: newLead.name || '(not provided)',
         intent: newLead.intent,
         budget: newLead.budget,
         locations: newLead.locationPrefs.join(', '),
