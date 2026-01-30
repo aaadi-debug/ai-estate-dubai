@@ -8,6 +8,7 @@ import {
     ChevronDown, ChevronUp, User, DollarSign,
     X, Calendar, MapPin, MessageSquare, Plus, Edit3, Building, Eye, Lock, Trash2
 } from 'lucide-react';
+import { PiTargetBold } from "react-icons/pi";
 import { format } from 'date-fns';
 import Link from 'next/link';
 
@@ -348,6 +349,8 @@ export default function LeadsPage() {
         }
     };
 
+    console.log("Leads: ", leads);
+
     return (
         <div className="p-6 min-h-screen bg-[#FAFBFC]">
             {/* Header */}
@@ -449,9 +452,9 @@ export default function LeadsPage() {
                             <table className="w-full min-w-max">
                                 <thead className="bg-primary text-white">
                                     <tr>
-                                        <th className="text-left py-4 px-6 font-medium">Date</th>
+                                        <th className="text-left py-4 px-6 font-medium">Date & Time</th>
                                         <th className="text-left py-4 px-6 font-medium">Name</th>
-                                        <th className="text-left py-4 px-6 font-medium">Contact</th>
+                                        <th className="text-left py-4 px-6 font-medium">Contact Preferred</th>
                                         <th className="text-left py-4 px-6 font-medium">Budget</th>
                                         {isStarter ? null : (
                                             <th className="text-left py-4 px-6 font-medium">Score</th>
@@ -488,7 +491,7 @@ export default function LeadsPage() {
                                                 </div>
                                             </td>
                                             <td className="py-4 px-6">
-                                                <div className="flex items-center gap-2 uppercase">
+                                                <div className="flex items-center gap-2">
                                                     <DollarSign size={16} className="text-secondary" />
                                                     {lead.budget || '—'}
                                                 </div>
@@ -708,10 +711,12 @@ export default function LeadsPage() {
                                         Contact Information
                                     </h3>
                                     <div className="space-y-3">
-                                        <div className="flex items-center gap-3 text-gray-500">
-                                            <Phone size={16} />
-                                            <span>{selectedLead.phone}</span>
-                                        </div>
+                                        {selectedLead.phone && (
+                                            <div className="flex items-center gap-3 text-gray-500">
+                                                <Phone size={16} />
+                                                <span>{selectedLead.phone}</span>
+                                            </div>
+                                        )}
                                         {selectedLead.email && (
                                             <div className="flex items-center gap-3 text-gray-500">
                                                 <Mail size={16} />
@@ -724,10 +729,14 @@ export default function LeadsPage() {
                                 <div className="bg-gray-50 p-5 rounded-xl border border-gray-200">
                                     <h3 className="font-semibold mb-4 flex items-center gap-2">
                                         {/* <DollarSign size={20} />  */}
-                                        Budget & Preferences
+                                        Intent, Budget & Preferences
                                     </h3>
                                     <div className="space-y-3">
-                                        <div className="flex items-center gap-3 text-gray-500 uppercase">
+                                        <div className="flex items-center gap-3 text-gray-500">
+                                            <PiTargetBold size={16} />
+                                            <span className="font-medium">{selectedLead.intent || 'Not specified'}</span>
+                                        </div>
+                                        <div className="flex items-center gap-3 text-gray-500">
                                             <DollarSign size={16} />
                                             <span className="font-medium">{selectedLead.budget || 'Not specified'}</span>
                                         </div>

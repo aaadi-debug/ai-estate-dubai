@@ -298,14 +298,14 @@ export const getAgentLeads = async (req, res) => {
 
     const leads = await Lead.find({ agentId })
       .sort({ createdAt: -1 })
-      .select('intent budget locationPrefs preferredAction whatsappNumber phone email score status createdAt')
+      .select('intent budget locationPrefs preferredAction whatsappNumber phone email name score status createdAt')
       .lean();
 
     // Add simple score (optional, since n8n does it)
     const scoredLeads = leads.map(lead => {
       let score = 'Cold';
-      if (lead.budget?.includes('10m+') || lead.budget?.includes('5m - 10m')) score = 'Hot';
-      else if (lead.budget?.includes('3m - 5m')) score = 'Warm';
+      if (lead.budget?.includes('10M+') || lead.budget?.includes('5M - 10M')) score = 'Hot';
+      else if (lead.budget?.includes('3M- 5M')) score = 'Warm';
       return { ...lead, score };
     });
 
