@@ -350,6 +350,7 @@ export default function LeadsPage() {
     };
 
     console.log("Leads: ", leads);
+    console.log("Filtered Leads: ", filteredLeads);
 
     return (
         <div className="p-6 min-h-screen bg-[#FAFBFC]">
