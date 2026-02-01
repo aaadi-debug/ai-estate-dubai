@@ -252,6 +252,7 @@ export const createLead = async (req, res) => {
         agentId: agent._id.toString(),
         agentName: agent.name,
         agentWhatsapp: agent.whatsappNumber,
+        agentWhatsapp: agent.plan,
         name: newLead.name || '(not provided)',
         intent: newLead.intent,
         budget: newLead.budget,
